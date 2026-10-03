@@ -408,6 +408,26 @@
   .scard small{display:block;font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
   nav.tabs button{font-size:10.5px}
   nav.tabs .ic{width:46px}
+  /* ---- v10: game presets ---- */
+  [hidden]{display:none!important}
+  .ppicks{display:flex;flex-direction:column;gap:8px}
+  .ppick{display:flex;align-items:center;gap:10px;width:100%;min-height:58px;padding:10px 12px;border-radius:14px;border:1.5px solid var(--line);background:#fff;font:inherit;text-align:left;cursor:pointer;touch-action:manipulation}
+  .ppick .ppn{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--g50);color:var(--g700);font-weight:800;font-size:13px;border:1px solid var(--line)}
+  .ppick .ppt{flex:1;min-width:0}
+  .ppick b{display:block;font-size:15px}
+  .ppick b em{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--g700);background:var(--g100);border-radius:6px;padding:2px 6px;margin-left:4px;vertical-align:2px}
+  .ppick small{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:2px}
+  .ppick.on{border-color:var(--g600);background:var(--g50);box-shadow:0 0 0 2px var(--g200)}
+  .ppick.on .ppn{background:var(--g700);color:#fff;border-color:var(--g700)}
+  .stakes{display:flex;flex-wrap:wrap;gap:6px}
+  .stakeb{min-width:52px;min-height:44px;padding:0 12px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font:inherit;font-weight:800;font-size:14px;cursor:pointer;touch-action:manipulation}
+  .stakeb.on{background:var(--g700);border-color:var(--g700);color:#fff}
+  .pills.two{grid-template-columns:1fr 1fr}
+  .presscard .pressbtn{margin-top:8px;min-height:46px;font-size:14px}
+  .presscard .pressbtn:first-of-type{margin-top:0}
+  .gh-p{color:#fff;font-weight:800}
+  .sc tr.mr.co .nm{font-size:11px;line-height:1.15;padding-top:2px;padding-bottom:2px}
+  .sc td.cod{background:repeating-linear-gradient(135deg,#f4f6f5 0 4px,#fff 4px 8px)}
   /* ---- v9: pairings teams ---- */
   .swaphint{font-size:13px;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:12px;padding:9px 12px;margin:0 0 10px}
   .swaphint.on{color:#7a5300;background:#fff6d6;border:1px solid #f0d97a}
@@ -1227,7 +1247,8 @@ function friendForm(f){
 /* ---------- Games: settings ---------- */
 var GKEY='fairwayClub.gameDefaults.v1';
 var STANDARD={front:80, back:80, overall:80, matchUnits:'perPlayer', autoPress:true, pressAmount:40, pressTrigger:2, pressOverall:true,
-  greenieAmt:10, greenieHoles:'all', sandyAmt:10, birdieAmt:20, eagleAmt:100, junkUnits:'perTeam', junkScoring:'gross', allowance:100};
+  greenieAmt:10, greenieHoles:'all', sandyAmt:10, birdieAmt:20, eagleAmt:100, junkUnits:'perTeam', junkScoring:'gross', allowance:100,
+  preset:'egn', format:'nassau', junkOn:true, manualPress:false};   // = the "East Greenwich Nassau" preset
 var GVER_KEY='fairwayClub.gameDefaults.ver', GVER=2; // v2: standard junk units changed per-player -> per-team
 function loadDefaults(){
   try{
@@ -1241,6 +1262,38 @@ function loadDefaults(){
   return Object.assign({},STANDARD);
 }
 function saveDefaults(s){ try{ localStorage.setItem(GKEY, JSON.stringify(s)); localStorage.setItem(GVER_KEY, String(GVER)); }catch(e){} }
+/* ---- Game presets (Games setup picker, in this order). Saved settings from before presets existed = East Greenwich Nassau. ---- */
+var PRESETS=[
+  {id:'closeout', name:'Close Out', def:Object.assign({},STANDARD,{front:20,back:20,overall:0,autoPress:false,pressAmount:20,greenieAmt:5,sandyAmt:5,birdieAmt:10,eagleAmt:50,preset:'closeout',format:'closeout',junkOn:false,manualPress:false}),
+   blurb:'Front & back 9 matches · a new bet starts whenever one is closed out · no overall, no presses'},
+  {id:'egn', name:'East Greenwich Nassau', def:STANDARD,
+   blurb:'auto press at 2 down · greenies, sandies, birdies & eagles'},
+  {id:'nassau', name:'Nassau', def:Object.assign({},STANDARD,{front:20,back:20,overall:20,autoPress:false,pressAmount:20,greenieAmt:5,sandyAmt:5,birdieAmt:10,eagleAmt:50,preset:'nassau',format:'nassau',junkOn:false,manualPress:true}),
+   blurb:'no auto press (manual Press button) · junk off'}
+];
+var PKEY='fairwayClub.presetDefaults.v1', AMT_KEYS=['front','back','overall','pressAmount','greenieAmt','sandyAmt','birdieAmt','eagleAmt'], STAKES=[10,20,40,50,80,100];
+function presetById(id){ return PRESETS.filter(function(x){return x.id===id;})[0]||PRESETS[1]; }
+function readPresets(){ try{ return JSON.parse(localStorage.getItem(PKEY))||{}; }catch(e){ return {}; } }
+function loadPreset(id){
+  var P=presetById(id);
+  if(P.id==='egn'){ var d=loadDefaults(); d.preset='egn'; d.format='nassau'; return d; }
+  return Object.assign({},P.def,readPresets()[P.id]||{},{preset:P.id,format:P.def.format});
+}
+function savePreset(id,v){ if(presetById(id).id==='egn'){ saveDefaults(v); return; } var a=readPresets(); a[id]=v; try{ localStorage.setItem(PKEY,JSON.stringify(a)); }catch(e){} }
+function resetPreset(id){ if(presetById(id).id==='egn'){ saveDefaults(Object.assign({},STANDARD)); return; } var a=readPresets(); delete a[id]; try{ localStorage.setItem(PKEY,JSON.stringify(a)); }catch(e){} }
+function mainAmt(S){ return +S.front||+S.back||+S.overall||0; }
+function scaleS(S,f){ var o=Object.assign({},S); if(f>0 && f!==1) AMT_KEYS.forEach(function(k){ o[k]=Math.round((+S[k]||0)*f*100)/100; }); return o; }
+/* settings for the round being set up: chosen preset (default Close Out) scaled by the stakes chooser */
+function setupSettings(){
+  var su=state.gameSetup, S=loadPreset(su.preset||'closeout'), m=mainAmt(S), st=+su.stake>0?+su.stake:m;
+  var o=m>0?scaleS(S,st/m):S; if(su.junk===true||su.junk===false) o.junkOn=su.junk; return o;
+}
+function presetTitle(S){
+  var id=S.preset||'egn';
+  if(S.format==='closeout') return money(S.front===S.back||!+S.back?S.front:mainAmt(S))+' Close Out';
+  if(id==='egn') return 'East Greenwich Nassau';
+  return 'Nassau '+money(S.front)+'/'+money(S.back)+'/'+money(S.overall);
+}
 var QCC_SRC='Club scorecard (quidnessett.com, posted May 2026)';
 var QCC=[ // Quidnessett Country Club, North Kingstown RI. Par + per-tee handicaps + yards from the club's 2026 scorecard.
   {id:'qcc-blue',   tee:'Blue',   yds:[379,176,543,465,214,405,422,416,516, 412,592,185,362,526,331,181,410,400], hcp:[13,15,11,1,5,9,3,7,17, 10,4,16,8,12,18,14,2,6]},
@@ -1259,6 +1312,7 @@ function ensureGameState(){
   if(!state.teeTimes) state.teeTimes=[]; if(!state.signups) state.signups={}; if(!state.pairings) state.pairings={}; if(!state.rounds) state.rounds=[];
   if(!state.ui) state.ui={tab:'games', balance:true, lbMode:'net'};
   if(!state.gameSetup) state.gameSetup={mode:'teams', keys:[null,null,null,null], useHandicap:true, course:DEFAULT_GCOURSE, qccDefault:1};
+  if(!state.gameSetup.preset) state.gameSetup.preset='closeout';   // new rounds always default to $20 Close Out
   if(!state.gameSetup.qccDefault){ state.gameSetup.course=DEFAULT_GCOURSE; state.gameSetup.qccDefault=1; }
   if(!GCOURSES.some(function(c){return c.id===state.gameSetup.course;})) state.gameSetup.course=DEFAULT_GCOURSE;
   while(state.gameSetup.keys.length<4) state.gameSetup.keys.push(null);
@@ -1288,15 +1342,27 @@ function computeGame(g){
     }
     holes.push(hd);
   }
-  // Nassau + auto presses
-  var segs=[{seg:'F',name:'Front 9',start:0,end:8,amt:+S.front},{seg:'B',name:'Back 9',start:9,end:17,amt:+S.back},{seg:'O',name:'Overall 18',start:0,end:17,amt:+S.overall}];
-  var bets=[], pc={F:0,B:0,O:0};
+  // Bets: Nassau (+ auto / manual presses) or Close Out (front & back; a closed-out bet spawns a new bet on the holes left)
+  var CO=S.format==='closeout';
+  var segs=[{seg:'F',name:'Front 9',start:0,end:8,amt:+S.front},{seg:'B',name:'Back 9',start:9,end:17,amt:+S.back}];
+  if(!CO) segs.push({seg:'O',name:'Overall 18',start:0,end:17,amt:+S.overall});
+  var bets=[], pc={F:0,B:0,O:0}, cc={F:0,B:0}, segEnd={F:8,B:17,O:17}, NM={F:'Front',B:'Back',O:'Overall'};
   segs.forEach(function(s){ if(s.amt>0) bets.push({id:s.seg+'0',seg:s.seg,segName:s.name,label:s.name,start:s.start,end:s.end,amount:s.amt,press:false,status:0,played:0,thru:null,pressed:false,hist:{}}); });
+  var mp=(!CO && S.manualPress && g.presses)||[];
   for(h=0;h<18;h++){
     if(!holes[h].complete) continue;
-    var active=bets.filter(function(b){return b.start<=h&&h<=b.end;});
+    var active=bets.filter(function(b){return b.start<=h&&h<=b.end&&!b.co;});
     active.forEach(function(b){ b.status+=holes[h].res; b.played++; b.thru=h; b.hist[h]=b.status; });
-    if(S.autoPress && +S.pressAmount>0 && +S.pressTrigger>0){
+    if(CO){
+      active.forEach(function(b){
+        var left=b.end-h;
+        if(left>0 && Math.abs(b.status)>left){          // closed out (e.g. 4&3): bet is decided, a new bet starts next hole
+          b.co=true; b.coHole=h; b.coLeft=left; cc[b.seg]++;
+          bets.push({id:b.seg+'c'+cc[b.seg],seg:b.seg,segName:b.segName,label:NM[b.seg]+' closeout '+cc[b.seg],start:h+1,end:b.end,amount:b.seg==='F'?+S.front:+S.back,
+            press:false,closeout:true,num:cc[b.seg],parent:b.label,trigHole:h,status:0,played:0,thru:null,pressed:false,hist:{}});
+        }
+      });
+    } else if(S.autoPress && +S.pressAmount>0 && +S.pressTrigger>0){
       active.forEach(function(b){
         if(b.pressed || Math.abs(b.status)<+S.pressTrigger || h>=b.end) return;
         if(b.seg==='O' && !S.pressOverall) return;
@@ -1305,10 +1371,17 @@ function computeGame(g){
           start:h+1,end:b.end,amount:+S.pressAmount,press:true,parent:b.label,trigHole:h,downSide:b.status>0?'B':'A',status:0,played:0,thru:null,pressed:false,hist:{}});
       });
     }
+    mp.forEach(function(m){                              // manual press by the side that's down, for the rest of that nine / the 18
+      if(m.after!==h || h>=segEnd[m.seg] || !(+S.pressAmount>0) || !bets.some(function(b){return b.seg===m.seg;})) return;
+      pc[m.seg]++;
+      bets.push({id:m.seg+pc[m.seg],seg:m.seg,segName:{F:'Front 9',B:'Back 9',O:'Overall 18'}[m.seg],label:NM[m.seg]+' press #'+pc[m.seg],start:h+1,end:segEnd[m.seg],amount:+S.pressAmount,
+        press:true,manual:true,parent:{F:'Front 9',B:'Back 9',O:'Overall 18'}[m.seg],trigHole:h,downSide:m.side,status:0,played:0,thru:null,pressed:false,hist:{}});
+    });
   }
   bets.forEach(function(b){
     var rem=0; for(var i=b.start;i<=b.end;i++) if(!holes[i].complete) rem++;
-    b.remaining=rem; b.final=rem===0; b.closed=!b.final&&Math.abs(b.status)>rem;
+    if(b.co){ b.remaining=0; b.final=true; b.closed=false; }
+    else { b.remaining=rem; b.final=rem===0; b.closed=!b.final&&Math.abs(b.status)>rem; }
     b.winner=b.played&&b.status>0?'A':b.played&&b.status<0?'B':null;
   });
   var ledger=[];
@@ -1323,7 +1396,7 @@ function computeGame(g){
     var per=S.matchUnits==='perTeam'?amt/(W.length*L.length):amt/W.length;
     L.forEach(function(l){ W.forEach(function(w){ ledger.push({from:l,to:w,amt:per,cat:cat,desc:desc}); }); });
   }
-  bets.forEach(function(b){ if(b.winner) payMatch(b.winner,b.amount,b.press?'Presses':'Nassau',b.label); });
+  bets.forEach(function(b){ if(b.winner) payMatch(b.winner,b.amount,b.closeout?'Close-outs':b.press?'Presses':CO?'Match':'Nassau',b.label); });
   // Junk
   var junk=[];
   function payJunk(k,amt,cat,desc){
@@ -1338,7 +1411,8 @@ function computeGame(g){
       else opp.forEach(function(o){ mine.forEach(function(m){ ledger.push({from:o,to:m,amt:amt*Math.max(opp.length,mine.length)/(opp.length*mine.length),cat:cat,desc:desc}); }); });
     } else all.forEach(function(o){ if(o!==k) ledger.push({from:o,to:k,amt:amt,cat:cat,desc:desc}); });
   }
-  for(h=0;h<18;h++){
+  var junkOn=S.junkOn!==false;
+  for(h=0;h<18 && junkOn;h++){
     var hd2=holes[h], par=C.par[h];
     all.forEach(function(k){
       var gv=hd2.gross[k]; if(gv==null) return;
@@ -1371,7 +1445,7 @@ function computeGame(g){
     transfers.push({from:db[i].k,to:cr[j].k,amt:Math.round(m*100)/100});
     db[i].v-=m; cr[j].v-=m; if(db[i].v<0.004) i++; if(cr[j].v<0.004) j++;
   }
-  return {A:A,B:B,all:all,ch:ch,rec:rec,strokes:strokes,holes:holes,bets:bets,junk:junk,ledger:ledger,net:net,cats:cats,transfers:transfers,doneCount:doneCount,lastDone:lastDone,final:doneCount===18,C:C,teams:teams};
+  return {A:A,B:B,all:all,ch:ch,rec:rec,strokes:strokes,holes:holes,bets:bets,junk:junk,ledger:ledger,net:net,cats:cats,transfers:transfers,doneCount:doneCount,lastDone:lastDone,final:doneCount===18,C:C,teams:teams,closeout:CO,junkOn:junkOn};
 }
 
 /* ---------- Games: helpers ---------- */
@@ -1382,6 +1456,7 @@ function relCls(gv,par){ var d=gv-par; return d<=-2?'eagle':d===-1?'bird':d===0?
 function betStatus(g,R,b){
   if(!b.played) return 'Starts hole '+(b.start+1);
   var lead=b.status>0?'A':'B', nm=sideLabel(g,R,lead), up=Math.abs(b.status);
+  if(b.co) return nm+' won '+up+'&'+b.coLeft;
   if(b.final) return b.status===0?'Halved · push':nm+' won '+up+' UP';
   if(b.closed) return nm+' won '+up+'&'+b.remaining;
   if(b.status===0) return 'All square thru '+(b.thru+1);
@@ -1397,8 +1472,9 @@ function shortStatus(g,R,b){
 function newGame(su){
   var players=su.keys.slice(0,su.mode==='teams'?4:2).map(keyInfo);
   var scores={}; players.forEach(function(p){ scores[p.key]=new Array(18).fill(null); });
+  var S=su===state.gameSetup?setupSettings():su.preset?loadPreset(su.preset):loadDefaults();
   return {id:uid(), date:iso(new Date()), course:su.course, mode:su.mode, useHandicap:!!su.useHandicap, players:players,
-    settings:loadDefaults(), scores:scores, greenies:new Array(18).fill(null), sandies:Array.apply(null,Array(18)).map(function(){return [];}), hole:0};
+    settings:S, presses:[], scores:scores, greenies:new Array(18).fill(null), sandies:Array.apply(null,Array(18)).map(function(){return [];}), hole:0};
 }
 
 /* ---------- Games: rendering ---------- */
@@ -1407,12 +1483,36 @@ function playerOptions(sel, taken){
   return '<option value=""'+(sel?'':' selected')+'>'+(state.friends.length?'Choose player…':'Add players above ↑')+'</option>'+fr;
 }
 function settingsChips(S){
-  return '<div class="tagchips">'+
-    '<span class="chip">Nassau '+money(S.front)+'/'+money(S.back)+'/'+money(S.overall)+'</span>'+
-    (S.autoPress?'<span class="chip">Auto press '+money(S.pressAmount)+' @ '+S.pressTrigger+' down</span>':'<span class="chip">No auto press</span>')+
-    '<span class="chip">Greenies '+money(S.greenieAmt)+(S.greenieHoles==='all'?' · every hole':' · par 3s')+'</span>'+
-    '<span class="chip">Sandies '+money(S.sandyAmt)+'</span><span class="chip">Birdies '+money(S.birdieAmt)+'</span><span class="chip">Eagles '+money(S.eagleAmt)+'</span>'+
-    '<span class="chip">'+(S.matchUnits==='perTeam'?'Match: per team':'Match: per player')+' · '+(S.junkUnits==='perTeam'?'Junk: per team':'Junk: per player')+'</span></div>';
+  var CO=S.format==='closeout', jk=S.junkOn!==false, c=[];
+  if(CO){ c.push('Front '+money(S.front)+' · Back '+money(S.back)); c.push('New '+money(S.front)+(+S.back!==+S.front?'/'+money(S.back):'')+' bet after each close-out'); c.push('No overall · no presses'); }
+  else {
+    c.push('Nassau '+money(S.front)+'/'+money(S.back)+'/'+money(S.overall));
+    c.push(S.autoPress?'Auto press '+money(S.pressAmount)+' @ '+S.pressTrigger+' down':'No auto press');
+    if(S.manualPress) c.push('Manual press '+money(S.pressAmount));
+  }
+  if(jk){ c.push('Greenies '+money(S.greenieAmt)+(S.greenieHoles==='all'?' · every hole':' · par 3s')); c.push('Sandies '+money(S.sandyAmt)); c.push('Birdies '+money(S.birdieAmt)); c.push('Eagles '+money(S.eagleAmt)); }
+  else c.push('Junk off');
+  c.push((S.matchUnits==='perTeam'?'Match: per team':'Match: per player')+(jk?' · '+(S.junkUnits==='perTeam'?'Junk: per team':'Junk: per player'):''));
+  return '<div class="tagchips">'+c.map(function(x){ return '<span class="chip">'+esc(x)+'</span>'; }).join('')+'</div>';
+}
+function presetPickerHtml(){
+  var su=state.gameSetup, cur=su.preset||'closeout', S=setupSettings(), m=mainAmt(loadPreset(cur)), st=mainAmt(S);
+  var cards=PRESETS.map(function(P,i){
+    var on=P.id===cur, PS=on?S:loadPreset(P.id), title=P.id==='closeout'?money(mainAmt(PS))+' Close Out':P.name;
+    var jk=PS.junkOn!==false?'junk on':'junk off';
+    var sub=PS.format==='closeout'?P.blurb+(PS.junkOn!==false?' · junk on':''):(money(PS.front)+'/'+money(PS.back)+'/'+money(PS.overall)+' · '+(PS.autoPress?money(PS.pressAmount)+' auto press at '+PS.pressTrigger+' down':'no auto press'+(PS.manualPress?' (manual Press button)':''))+' · '+jk);
+    return '<button class="ppick'+(on?' on':'')+'" data-act="preset" data-preset-pick="'+P.id+'" aria-pressed="'+on+'"><span class="ppn">'+(on?'✓':i+1)+'</span><span class="ppt"><b>'+esc(title)+(i===0?' <em>Default</em>':'')+'</b><small>'+esc(sub)+'</small></span></button>';
+  }).join('');
+  var custom=su.stakeCustom || STAKES.indexOf(st)<0, f=m>0?st/m:1;
+  var chips=STAKES.map(function(v){ var on=!custom&&v===st; return '<button class="stakeb'+(on?' on':'')+'" data-act="stake" data-v="'+v+'" aria-pressed="'+on+'">$'+v+'</button>'; }).join('')+
+    '<button class="stakeb'+(custom?' on':'')+'" data-act="stakeCustom" aria-pressed="'+custom+'">Custom</button>';
+  var fx=Math.round(f*100)/100;
+  return '<div style="margin-top:14px"><label class="fl">Game</label><div class="ppicks" id="presetPick">'+cards+'</div>'+
+    '<label class="fl" style="margin-top:10px">Stakes · '+(S.format==='closeout'?'each bet':'main bet (front/back/overall)')+'</label><div class="stakes" id="stakePick">'+chips+'</div>'+
+    (custom?'<div class="money-in" style="margin-top:8px;max-width:170px"><span>$</span><input class="in" id="suStake" type="number" min="1" step="1" inputmode="decimal" value="'+st+'" aria-label="Custom stake"></div>':'')+
+    '<div class="muted" id="stakeNote" style="font-size:12px;margin:6px 2px 0">'+(fx===1?'Preset amounts':'×'+fx+' — every amount in this preset scaled')+' · fine-tune any amount in Game settings ⚙️</div>'+
+    '<div class="toggle" style="margin-top:10px"><div><b>Junk</b><small>Greenies '+money(S.greenieAmt)+', sandies '+money(S.sandyAmt)+', birdies '+money(S.birdieAmt)+', eagles '+money(S.eagleAmt)+'</small></div><label class="switch"><input type="checkbox" id="suJunk" '+(S.junkOn!==false?'checked':'')+'><span></span></label></div>'+
+    '<div style="margin-top:10px"><label class="fl">Bets for this round</label>'+settingsChips(S)+'</div></div>';
 }
 function courseOptions(cur){
   return '<optgroup label="Quidnessett CC · North Kingstown, RI">'+GCOURSES.map(function(c){
@@ -1423,7 +1523,7 @@ function courseInfo(id){
   return 'Strokes fall on the '+esc(c.tee)+' tees’ hardest holes first (hole handicaps from the club’s 2026 scorecard).';
 }
 function setupHtml(){
-  var su=state.gameSetup, teams=su.mode==='teams', S=loadDefaults(), need=teams?4:2;
+  var su=state.gameSetup, teams=su.mode==='teams', S=setupSettings(), need=teams?4:2;
   var keys=su.keys.slice(0,need).map(function(k){ return keyInfo(k)?k:null; });
   var filled=keys.filter(Boolean).length, has=state.friends.length>0;
   function slot(i,lab){
@@ -1446,7 +1546,7 @@ function setupHtml(){
     '<p class="muted" style="font-size:11.5px;margin:6px 2px 0">CH = course handicap from GHIN, used as entered (plus handicap: +2). Strokes are given off the lowest CH.</p>'+
     '<div style="margin-top:12px"><label class="fl" for="suCourse">Course · tees</label><select class="in" id="suCourse">'+courseOptions(su.course)+'</select><div class="muted" id="suCourseInfo" style="font-size:12px;margin:6px 2px 0">'+courseInfo(su.course)+'</div></div>'+
     '<div class="toggle" style="margin-top:12px"><div><b>Handicap strokes</b><small>Net match play: '+(+S.allowance===100?'full':S.allowance+'% of')+' course handicap, strokes off the lowest player</small></div><label class="switch"><input type="checkbox" id="suHcp" '+(su.useHandicap?'checked':'')+'><span></span></label></div>'+
-    '<div style="margin-top:12px"><label class="fl">Bets (from Game settings)</label>'+settingsChips(S)+'</div>'+
+    presetPickerHtml()+
     '<div class="err" id="suErr" style="margin-top:8px"></div>'+
     '<div class="row" style="margin-top:10px"><button class="btn block" data-act="start"'+(filled<need?' disabled':'')+'>'+(filled<need?'Add '+(need-filled)+' more player'+(need-filled>1?'s':'')+' to start':'Start round')+'</button></div>'+
   '</div>';
@@ -1471,7 +1571,7 @@ function renderGames(){
   var R=computeGame(g), v=state.ui.gameView;
   var head='<div class="ghead"><div class="row" style="align-items:flex-start"><div style="flex:1;min-width:0">'+
     '<div class="gh-t">'+esc(R.C.name)+'</div>'+
-    '<div class="gh-s">'+esc(R.C.tees)+'<br>'+(R.teams?'2v2 best ball':'1v1 match play')+' · '+(g.useHandicap?'Net':'Gross')+' · '+(R.final?'Final':'Thru '+R.doneCount+' of 18')+'</div></div>'+
+    '<div class="gh-s">'+esc(R.C.tees)+'<br><b class="gh-p">'+esc(presetTitle(g.settings))+'</b> · '+(R.teams?'2v2 best ball':'1v1 match play')+' · '+(g.useHandicap?'Net':'Gross')+' · '+(R.final?'Final':'Thru '+R.doneCount+' of 18')+'</div></div>'+
     '<button class="btn sm glass" data-act="newround">New round</button></div>'+
     '<div class="vs"><div class="side A"><b>'+(R.teams?'Team A':'Side A')+'</b>'+esc(sideLabel(g,R,'A'))+'</div><div class="vsx">VS</div><div class="side B"><b>'+(R.teams?'Team B':'Side B')+'</b>'+esc(sideLabel(g,R,'B'))+'</div></div></div>';
   var seg='<div class="seg" style="margin:12px 0"><button data-gv="score" class="'+(v==='score'?'on':'')+'">Scoring</button><button data-gv="card" class="'+(v==='card'?'on':'')+'">Card</button><button data-gv="bets" class="'+(v==='bets'?'on':'')+'">Bets<span class="cnt">'+R.bets.length+'</span></button><button data-gv="settle" class="'+(v==='settle'?'on':'')+'">Settle</button></div>';
@@ -1491,8 +1591,8 @@ function scoringHtml(g,R){
     var best=hd.complete&&(g.useHandicap?nv:gv)===(side==='A'?hd.bestA:hd.bestB);
     return '<div class="prow '+side+(best?' best':'')+'" data-k="'+k+'">'+gAv(p)+
       '<div class="pinfo"><b>'+esc(p.name)+'</b><small>'+(g.useHandicap?'CH '+fmtCH(R.ch[k])+' · '+(st?'<span class="dots">'+'●'.repeat(st)+'</span> '+st+' stroke'+(st>1?'s':''):'no stroke'):'CH '+fmtCH(p.hcp)+' · gross')+'</small>'+
-      '<div class="jrow"><button class="jb'+(isG?' on':'')+'" data-act="greenie" data-k="'+k+'"'+(elig?'':' disabled title="Greenies are par 3s only (Game settings)"')+'>⛳ Greenie</button>'+
-      '<button class="jb'+(isS?' on':'')+(sandyBad?' warn':'')+'" data-act="sandy" data-k="'+k+'" title="'+(sandyBad?'Not counted: needs par or better':'Up & down from a bunker for par or better')+'">🏖 Sandy</button></div></div>'+
+      (R.junkOn?'<div class="jrow"><button class="jb'+(isG?' on':'')+'" data-act="greenie" data-k="'+k+'"'+(elig?'':' disabled title="Greenies are par 3s only (Game settings)"')+'>⛳ Greenie</button>'+
+      '<button class="jb'+(isS?' on':'')+(sandyBad?' warn':'')+'" data-act="sandy" data-k="'+k+'" title="'+(sandyBad?'Not counted: needs par or better':'Up & down from a bunker for par or better')+'">🏖 Sandy</button></div>':'')+'</div>'+
       '<div class="sbox"><div class="stp"><button data-act="dec" data-k="'+k+'" aria-label="Decrease '+esc(p.name)+'">−</button><span class="sv'+(gv==null?' empty':'')+'" data-sv="'+k+'">'+(gv==null?'–':gv)+'</span><button data-act="inc" data-k="'+k+'" aria-label="Increase '+esc(p.name)+'">+</button></div>'+
       '<div class="rel '+(gv==null?'':relCls(gv,par))+'">'+(gv==null?'':relName(gv,par)+(g.useHandicap&&st?' · net '+nv:''))+'</div></div></div>';
   }
@@ -1508,47 +1608,78 @@ function scoringHtml(g,R){
   var card='<div class="card"><div class="holehead"><div><div class="hn">Hole '+(h+1)+'</div><div class="hm">Par '+par+(R.C.yds?' · '+R.C.yds[h]+' yds':'')+' · Hcp '+hd.hcp+(elig?' · greenie hole':'')+'</div></div>'+
     '<div class="nav"><button data-act="prev" aria-label="Previous hole"'+(h===0?' disabled':'')+'>‹</button><button data-act="next1" aria-label="Next hole"'+(h===17?' disabled':'')+'>›</button></div></div>'+
     rows+res+'</div>';
-  var pills='<div class="pills">'+['F','B','O'].map(function(s){
+  var pills=R.closeout?'<div class="pills two">'+['F','B'].map(function(s){
+    var list=R.bets.filter(function(b){return b.seg===s;}), live=list.filter(function(b){return !b.co;}).slice(-1)[0]||list.slice(-1)[0], ss=shortStatus(g,R,live), nco=list.filter(function(b){return b.co;}).length;
+    return '<button class="pill" data-gv="bets"><div class="k">'+{F:'Front 9',B:'Back 9'}[s]+(live&&live.closeout?' · closeout '+live.num:'')+'</div><div class="v '+ss.c+'">'+ss.t+'</div><small>'+(list.length?list.length+' bet'+(list.length>1?'s':'')+(nco?' · '+nco+' closed out':''):'off')+'</small></button>';
+  }).join('')+'</div>'
+  :'<div class="pills">'+['F','B','O'].map(function(s){
     var base=R.bets.filter(function(b){return b.seg===s&&!b.press;})[0], np=R.bets.filter(function(b){return b.seg===s&&b.press;}).length, ss=shortStatus(g,R,base);
     return '<button class="pill" data-gv="bets"><div class="k">'+{F:'Front 9',B:'Back 9',O:'Overall'}[s]+'</div><div class="v '+ss.c+'">'+ss.t+'</div><small>'+(np?np+' press'+(np>1?'es':''):'no presses')+'</small></button>';
   }).join('')+'</div>';
   var mrow='<div class="card" style="padding:10px 12px"><h3 class="sec" style="margin-bottom:8px">Running money <span class="muted" style="font-size:11.5px;font-weight:600">'+(R.final?'final':'if it ended now')+'</span></h3><div class="mrow">'+
     R.all.map(function(k){ var x=R.net[k]; return '<div class="mchip">'+esc(first(gp(g,k).name))+'<b class="'+mcls(x)+'">'+smoney(x)+'</b></div>'; }).join('')+'</div></div>';
   var navb='<div class="row" style="gap:8px;margin-bottom:12px"><button class="btn ghost" data-act="prev"'+(h===0?' disabled':'')+'>← '+(h===0?'Hole 1':'Hole '+h)+'</button><button class="btn" style="flex:1" data-act="next">'+(h===17?'Finish → Settle up':'Next: Hole '+(h+2)+' →')+'</button></div>';
-  return strip+card+navb+pills+mrow;
+  return strip+card+navb+pills+pressHtml(g,R)+mrow;
+}
+/* manual press (Nassau preset): the side that's down in a nine (or the overall) can start a new bet for the rest of it */
+function pressOptions(g,R){
+  var S=g.settings, out=[];
+  if(R.closeout || !S.manualPress || !(+S.pressAmount>0)) return out;
+  [['F',0,8],['B',9,17],['O',0,17]].forEach(function(x){
+    var seg=x[0], end=x[2], list=R.bets.filter(function(b){return b.seg===seg;}); if(!list.length) return;
+    var lh=-1; for(var h=x[1];h<=end;h++) if(R.holes[h].complete) lh=h;
+    if(lh<0 || lh>=end) return;
+    var mine=(g.presses||[]).filter(function(p){return p.seg===seg&&p.after===lh;})[0];
+    var cur=list.filter(function(b){return b.played&&b.status!==0&&!b.final&&b.start<=lh;}).sort(function(a,b){return b.start-a.start;})[0];
+    if(mine){ out.push({seg:seg,after:lh,undo:true,side:mine.side,end:end}); return; }
+    if(!cur) return;
+    out.push({seg:seg,after:lh,side:cur.status>0?'B':'A',down:Math.abs(cur.status),end:end,of:cur.label});
+  });
+  return out;
+}
+function pressHtml(g,R){
+  var o=pressOptions(g,R); if(!o.length) return '';
+  var NMs={F:'front',B:'back',O:'overall'};
+  return '<div class="card presscard"><h3 class="sec" style="margin-bottom:8px">Press <span class="muted" style="font-size:11.5px;font-weight:600">side that’s down · new '+money(g.settings.pressAmount)+' bet</span></h3>'+o.map(function(x){
+    return x.undo?'<button class="btn ghost block pressbtn" data-act="unpress" data-seg="'+x.seg+'" data-after="'+x.after+'">↩︎ Undo '+esc(sideLabel(g,R,x.side))+'’s '+NMs[x.seg]+' press (holes '+(x.after+2)+'–'+(x.end+1)+')</button>'
+      :'<button class="btn block pressbtn" data-act="press" data-seg="'+x.seg+'" data-after="'+x.after+'" data-side="'+x.side+'">🔥 '+esc(sideLabel(g,R,x.side))+' press the '+NMs[x.seg]+' · '+x.down+' down · holes '+(x.after+2)+'–'+(x.end+1)+'</button>';
+  }).join('')+'</div>';
 }
 function betsHtml(g,R){
   var S=g.settings;
   var toggle='<div class="card"><div class="toggle"><div><b>Handicap strokes</b><small>'+(g.useHandicap?'Net: strokes off the low player ('+S.allowance+'% allowance)':'Gross: no strokes')+'</small></div><label class="switch"><input type="checkbox" data-act="hcp" '+(g.useHandicap?'checked':'')+'><span></span></label></div>'+
     (g.useHandicap?'<div style="font-size:12.5px;margin-top:8px;line-height:1.5">'+R.all.map(function(k){ var hs=[]; for(var h=0;h<18;h++){ var s=R.strokes(k,h); if(s) hs.push((h+1)+(s>1?'×'+s:'')); } return '<b>'+esc(first(gp(g,k).name))+'</b> CH '+R.ch[k]+' → '+R.rec[k]+' stroke'+(R.rec[k]===1?'':'s')+(hs.length?' <span class="muted">(holes '+hs.join(', ')+')</span>':''); }).join('<br>')+'</div>':'')+'</div>';
-  var segsHtml=['F','B','O'].map(function(s){
+  var segsHtml=(R.closeout?['F','B']:['F','B','O']).map(function(s){
     var list=R.bets.filter(function(b){return b.seg===s;});
-    var title={F:'Front 9 · holes 1–9',B:'Back 9 · holes 10–18',O:'Overall · holes 1–18'}[s];
+    var title={F:'Front 9 · holes 1–9',B:'Back 9 · holes 10–18',O:'Overall · holes 1–18'}[s]+(R.closeout?' · close out':'');
     if(!list.length) return '<div class="card"><h3 class="sec">'+title+' <span class="chip fin">Off</span></h3><div class="muted" style="font-size:13px">No bet ($0).</div></div>';
     return '<div class="card"><h3 class="sec">'+title+'</h3>'+list.map(function(b){
-      var stc=b.final?'<span class="chip fin">Final</span>':b.closed?'<span class="chip fin">Closed out</span>':b.played?'<span class="chip live">Active</span>':'<span class="chip">Pending</span>';
-      return '<div class="bet'+(b.press?' press':'')+'"><div class="bt"><b>'+esc(b.label)+' '+stc+'</b><small>'+money(b.amount)+' · holes '+(b.start+1)+'–'+(b.end+1)+(b.press?' · auto: '+esc(sideLabel(g,R,b.downSide))+' '+S.pressTrigger+' down in '+esc(b.parent)+' after #'+(b.trigHole+1):'')+'</small></div>'+
+      var stc=b.co||b.closed?'<span class="chip fin">Closed out</span>':b.final?'<span class="chip fin">Final</span>':b.played?'<span class="chip live">Active</span>':'<span class="chip">Pending</span>';
+      var why=b.closeout?' · new bet: '+esc(b.parent)+' closed out after #'+(b.trigHole+1):b.press?(b.manual?' · manual: '+esc(sideLabel(g,R,b.downSide))+' pressed after #'+(b.trigHole+1):' · auto: '+esc(sideLabel(g,R,b.downSide))+' '+S.pressTrigger+' down in '+esc(b.parent)+' after #'+(b.trigHole+1)):'';
+      return '<div class="bet'+(b.press||b.closeout?' press':'')+'" data-bet-id="'+b.id+'"><div class="bt"><b>'+esc(b.label)+' '+stc+'</b><small>'+money(b.amount)+' · '+holesTxt(b)+why+'</small></div>'+
         '<div class="bs"><span class="st '+(b.winner||'')+'">'+esc(betStatus(g,R,b))+'</span><small>'+(b.winner?(b.final||b.closed?'':'live · ')+money(b.amount)+' → '+esc(sideLabel(g,R,b.winner)):b.played?'push so far':'')+'</small></div></div>';
     }).join('')+'</div>';
   }).join('');
+  if(!R.junkOn) return toggle+segsHtml+pressHtml(g,R)+'<div class="card"><h3 class="sec">Junk <span class="chip fin">Off</span></h3><div class="muted" style="font-size:13px">Junk is off for this round — turn it on in Game settings ⚙️.</div></div>';
   var unit=S.junkUnits==='perTeam'&&R.teams?'per team · each opponent pays, each partner collects':'from each other player';
   var junk=R.junk.slice().sort(function(a,b){return a.h-b.h;});
   var jh='<div class="card"><h3 class="sec">Junk <span class="muted" style="font-size:11.5px;font-weight:600">'+unit+'</span></h3>'+(junk.length?'<ul class="jlist">'+junk.map(function(j){
     return '<li><span class="hno">#'+(j.h+1)+'</span><span style="flex:1" class="'+(j.ok?'':'no')+'">'+({Greenie:'⛳',Sandy:'🏖',Birdie:'🐦',Eagle:'🦅'}[j.type])+' '+j.type+' · <b>'+esc(gp(g,j.k).name)+'</b></span><span class="'+(j.ok?'pos':'muted')+'" style="font-weight:700;font-size:12.5px">'+(j.ok?money(j.amt)+' '+(S.junkUnits==='perTeam'&&R.teams?'ea · team':'ea'):'not counted · '+esc(j.why||''))+'</span></li>';
   }).join('')+'</ul>':'<div class="muted" style="font-size:13px">No greenies, sandies, birdies or eagles yet.</div>')+'</div>';
-  return toggle+segsHtml+jh;
+  return toggle+segsHtml+pressHtml(g,R)+jh;
 }
-var CATS=['Nassau','Presses','Greenies','Sandies','Birdies','Eagles'];
+var CATS=['Match','Close-outs','Nassau','Presses','Greenies','Sandies','Birdies','Eagles'];
 function settlementText(g,R){
   var S=g.settings, L=[];
   L.push('Fairway Club — round settlement');
   L.push(R.C.name+' · '+fmtDate(g.date)+' · '+(R.teams?'2v2 best ball':'1v1 match')+' · '+(g.useHandicap?'Net':'Gross'));
+  L.push('Game: '+presetTitle(S)+(R.junkOn?'':' · junk off'));
   L.push(sideLabel(g,R,'A')+' vs '+sideLabel(g,R,'B'));
   L.push(R.final?'FINAL (18/18 holes)':'LIVE — as if the round ended after '+R.doneCount+' of 18 holes');
   L.push(''); L.push('MATCH');
-  R.bets.forEach(function(b){ L.push('• '+b.label+' ('+money(b.amount)+(b.press?', holes '+(b.start+1)+'–'+(b.end+1):'')+'): '+betStatus(g,R,b)); });
+  R.bets.slice().sort(function(a,b){ return 'FBO'.indexOf(a.seg)-'FBO'.indexOf(b.seg) || a.start-b.start; }).forEach(function(b){ L.push('• '+b.label+' ('+money(b.amount)+(b.press||b.closeout||R.closeout?', '+holesTxt(b):'')+'): '+betStatus(g,R,b)); });
   var jk=R.junk.filter(function(j){return j.ok;}).sort(function(a,b){return a.h-b.h;});
-  L.push(''); L.push('JUNK'+(jk.length?'':' — none'));
+  L.push(''); L.push('JUNK'+(R.junkOn?(jk.length?'':' — none'):' — off'));
   jk.forEach(function(j){ L.push('• #'+(j.h+1)+' '+j.type+' — '+gp(g,j.k).name+' ('+money(j.amt)+(S.junkUnits==='perTeam'&&R.teams?' per team: each opponent pays, each partner collects':' from each')+')'); });
   L.push(''); L.push('NET');
   R.all.slice().sort(function(a,b){return R.net[b]-R.net[a];}).forEach(function(k){ L.push('• '+gp(g,k).name+': '+smoney(R.net[k])); });
@@ -1568,7 +1699,7 @@ function settleHtml(g,R){
       :'<div class="muted" style="font-size:13px">All square — nobody owes anything.</div>')+
     '<div class="muted" style="font-size:11.5px;margin-top:6px" id="zeroCheck">Check: net totals sum to '+money(Math.abs(sum))+' '+(Math.abs(sum)<0.01?'✓':'⚠︎')+'</div></div>';
   var bk='<div class="card"><h3 class="sec">Breakdown</h3><table class="bk"><thead><tr><th></th>'+R.all.map(function(k){return '<th>'+esc(first(gp(g,k).name))+'</th>';}).join('')+'</tr></thead><tbody>'+
-    CATS.map(function(c){ return '<tr><td>'+c+'</td>'+R.all.map(function(k){ var x=R.cats[k][c]||0; return '<td class="'+mcls(x)+'">'+(Math.abs(x)<0.004?'–':smoney(x))+'</td>'; }).join('')+'</tr>'; }).join('')+
+    CATS.filter(function(c){ var rel=R.closeout?(c==='Match'||c==='Close-outs'):(c==='Nassau'||c==='Presses'); if(['Greenies','Sandies','Birdies','Eagles'].indexOf(c)>=0) rel=R.junkOn; return rel || R.all.some(function(k){ return Math.abs(R.cats[k][c]||0)>0.004; }); }).map(function(c){ return '<tr><td>'+c+'</td>'+R.all.map(function(k){ var x=R.cats[k][c]||0; return '<td class="'+mcls(x)+'">'+(Math.abs(x)<0.004?'–':smoney(x))+'</td>'; }).join('')+'</tr>'; }).join('')+
     '<tr class="tot"><td>Net</td>'+R.all.map(function(k){ return '<td class="'+mcls(R.net[k])+'">'+smoney(R.net[k])+'</td>'; }).join('')+'</tr></tbody></table></div>';
   var txt='<div class="card"><h3 class="sec">'+(R.final?'End-of-round summary':'Summary so far')+'</h3><pre class="sumtext" id="sumText">'+esc(settlementText(g,R))+'</pre>'+
     '<div class="row" style="margin-top:10px;gap:8px"><button class="btn" style="flex:1" data-act="copy">Copy settlement</button><button class="btn ghost" data-act="share">Share</button></div></div>';
@@ -1580,6 +1711,7 @@ function copyText(txt,okMsg){
 }
 
 /* ---------- Games: scorecard ---------- */
+function holesTxt(b){ return b.start===b.end?'hole '+(b.start+1):'holes '+(b.start+1)+'–'+(b.end+1); }
 function fmtMatch(s){ return s===0?'AS':(s>0?'+':'−')+Math.abs(s); }
 function cardHtml(g,R){
   var C=R.C, S=g.settings, nine=state.ui.cardNine||(g.hole<9?'front':'back');
@@ -1622,20 +1754,21 @@ function cardHtml(g,R){
   var vis=R.bets.filter(function(b){ return cols.some(function(c){ return c.t==='h'&&c.h>=b.start&&c.h<=b.end; }); });
   var order={F:0,B:1,O:2};
   vis.sort(function(a,b){ return order[a.seg]-order[b.seg] || (a.press-b.press) || a.start-b.start; });
-  var msec='<tr class="msec"><td class="nm" style="font-size:10px;color:var(--muted)">Nassau</td><td colspan="'+cols.length+'" style="padding-left:6px">+ = '+esc(sideLabel(g,R,'A'))+' up · − = '+esc(sideLabel(g,R,'B'))+' up</td></tr>';
+  var msec='<tr class="msec"><td class="nm" style="font-size:10px;color:var(--muted)">'+(R.closeout?'Bets':'Nassau')+'</td><td colspan="'+cols.length+'" style="padding-left:6px">+ = '+esc(sideLabel(g,R,'A'))+' up · − = '+esc(sideLabel(g,R,'B'))+' up</td></tr>';
   var mrows=vis.map(function(b){
-    var short=b.press?'↳ Press '+b.id.slice(1):b.segName.replace(' 18','');
+    var sub=b.press||b.closeout, short=b.closeout?'Closeout '+b.num:b.press?'↳ Press '+b.id.slice(1):b.segName.replace(' 18','');
     var resCol=b.seg==='F'?'out':b.seg==='B'?'in':'tot';
-    return '<tr class="mr'+(b.press?' press':'')+'" data-betrow="'+b.id+'"><td class="nm" title="'+esc(b.label)+' · '+money(b.amount)+'">'+esc(short)+(b.press?'':' <small style="display:inline;font-size:9.5px;color:var(--muted)">'+money(b.amount)+'</small>')+'</td>'+cols.map(function(c){
+    return '<tr class="mr'+(sub?' press':'')+(b.closeout?' co':'')+'" data-betrow="'+b.id+'"><td class="nm" title="'+esc(b.label)+' · '+holesTxt(b)+' · '+money(b.amount)+'">'+esc(short)+(b.closeout?'<small>'+holesTxt(b)+'</small>':b.press?'':' <small style="display:inline;font-size:9.5px;color:var(--muted)">'+money(b.amount)+'</small>')+'</td>'+cols.map(function(c){
       if(c.t==='h'){
         var h=c.h; if(h<b.start||h>b.end) return '<td class="oor"></td>';
-        var v=b.hist[h], pst=b.press&&h===b.start?' pst':'';
+        var v=b.hist[h], pst=(b.press||b.closeout)&&h===b.start?' pst':'';
+        if(b.co && h>b.coHole) return '<td class="oor cod" data-bet="'+b.id+'" data-h="'+h+'"></td>';
         if(v==null) return '<td class="'+pst.trim()+'" data-bet="'+b.id+'" data-h="'+h+'"></td>';
         return '<td class="'+(v>0?'up':v<0?'dn':'')+pst+'" data-bet="'+b.id+'" data-h="'+h+'">'+fmtMatch(v)+'</td>';
       }
       if(c.t===resCol && b.played){
         var w=b.winner, done=b.final||b.closed;
-        return '<td class="sum '+(b.status>0?'up':b.status<0?'dn':'')+'" data-betres="'+b.id+'" title="'+esc(betStatus(g,R,b))+'">'+fmtMatch(b.status)+'<small>'+(w?(done?'':'live ')+money(b.amount):'push')+'</small></td>';
+        return '<td class="sum '+(b.status>0?'up':b.status<0?'dn':'')+'" data-betres="'+b.id+'" title="'+esc(betStatus(g,R,b))+'">'+fmtMatch(b.status)+'<small>'+(b.co?b.status*(b.status>0?1:-1)+'&'+b.coLeft+' ':'')+(w?(done?'':'live ')+money(b.amount):'push')+'</small></td>';
       }
       return '<td class="sum"></td>';
     }).join('')+'</tr>';
@@ -1646,7 +1779,7 @@ function cardHtml(g,R){
     '<span><span class="sn bird">3</span>Birdie</span><span><span class="sn eagle">2</span>Eagle+</span><span><span class="sn bog">5</span>Bogey</span><span><span class="sn dbl">6</span>Double+</span>'+
     '<span><i class="jd g"></i>Greenie</span><span><i class="jd s"></i>Sandy</span><span><i class="jd s off"></i>not counted</span>'+
     (g.useHandicap?'<span><b style="color:#9aa8a0;font-size:11px">/</b>Handicap stroke</span>':'')+'<span><b style="text-decoration:underline;color:var(--g800)">4</b>Best ball won hole</span>'+
-    '<span><b style="color:#c9a227">▏</b>Press starts</span></div>';
+    '<span><b style="color:#c9a227">▏</b>'+(R.closeout?'New bet starts (after a close-out)':'Press starts')+'</span></div>';
   var top='<div class="sc-top"><div class="seg" id="cardNine"><button data-nine="front" class="'+(nine==='front'?'on':'')+'">Front 9</button><button data-nine="back" class="'+(nine==='back'?'on':'')+'">Back 9</button><button data-nine="all" class="'+(nine==='all'?'on':'')+'">All 18</button></div></div>';
   return '<div class="card scard">'+top+table+legend+'</div><p class="muted" style="font-size:12px;margin:-4px 4px 12px">Tap any score to edit that hole in Scoring.</p>';
 }
@@ -1654,11 +1787,11 @@ function cardHtml(g,R){
 /* ---------- Game ideas (researched; scoring coming soon except Nassau + junk) ---------- */
 var GD='Golf Digest — Golf Games Explained';
 var IDEAS=[
- {id:'nassau', name:'Nassau + junk', aka:'Your current game', types:['team','individual'], min:2, max:4, counts:[2,4], ideal:[2,4], diff:'Easy', scoring:true,
+ {id:'nassau', name:'Nassau · Close Out', aka:'Your presets: $20 Close Out · East Greenwich Nassau · Nassau', types:['team','individual'], min:2, max:4, counts:[2,4], ideal:[2,4], diff:'Easy', scoring:true,
   one:'Three matches in one: front 9, back 9 and overall, with presses and junk on the side.',
   how:'Match play 1v1 or 2v2 best ball. The front nine, back nine and full 18 are three separate bets. A side that goes 2 down can press (a new bet for the rest of that nine). Junk such as greenies, sandies and birdies is tallied separately.',
-  money:'Each of the three matches pays the agreed amount; each press pays its own amount. Junk is settled on top.',
-  stake:'Your standard: $80-$80-$80, $40 auto press at 2 down, $10 greenies & sandies, $20 birdies, $100 eagles.',
+  money:'Each of the three matches pays the agreed amount; each press pays its own amount. Junk is settled on top. Close Out drops the overall and presses: when a nine’s bet is closed out, a new bet of the same amount starts on the holes left.',
+  stake:'$20 Close Out (default) · East Greenwich Nassau: $80-$80-$80, $40 auto press at 2 down, $10 greenies & sandies, $20 birdies, $100 eagles · Nassau: $20-$20-$20, manual press.',
   why:'Simple, fair with handicaps, and three bets mean a bad nine never knocks you out.',
   src:[{l:GD+': Nassau',u:'https://www.golfdigest.com/story/how-to-play-a-nassau-golf-gambling-game'}]},
  {id:'hammer', name:'Hammer', types:['team','individual'], min:2, max:4, counts:[2,4], ideal:[2,4], diff:'Medium', fixed2v2:true, oneVsOne:true, side:true, action:true, sameEngine:true,
@@ -1775,10 +1908,10 @@ var IDEAS=[
   src:[{l:GD+': Defender',u:'https://www.golfdigest.com/story/how-to-play-defender-golf-games-explained'}]}
 ];
 function ideaCtx(){
-  var g=state.game, su=state.gameSetup, mode=g?g.mode:su.mode, S=g?g.settings:loadDefaults();
-  var junkAmts=[S.greenieAmt,S.sandyAmt,S.birdieAmt,S.eagleAmt].map(Number).filter(function(x){return x>0;});
+  var g=state.game, su=state.gameSetup, mode=g?g.mode:su.mode, S=g?g.settings:setupSettings();
+  var junkAmts=S.junkOn===false?[]:[S.greenieAmt,S.sandyAmt,S.birdieAmt,S.eagleAmt].map(Number).filter(function(x){return x>0;});
   var amts=[S.front,S.back,S.overall,S.pressAmount].map(Number).filter(function(x){return x>0;}).concat(junkAmts);
-  return {players:mode==='teams'?4:2, teams:mode==='teams', hasJunk:junkAmts.length>0, nassau:Math.max(+S.front,+S.back,+S.overall),
+  return {players:mode==='teams'?4:2, teams:mode==='teams', hasJunk:junkAmts.length>0, nassau:Math.max(+S.front,+S.back,+S.overall), game:presetTitle(S),
     lo:amts.length?Math.min.apply(null,amts):0, hi:amts.length?Math.max.apply(null,amts):0, inRound:!!g};
 }
 function recommend(ctx){
@@ -1830,7 +1963,7 @@ function ideasHtml(){
   var t=state.ui.ideaType||'all', p=state.ui.ideaPlayers||'any';
   var head='<div class="ideas-head"><button class="btn ghost sm" data-act="ideasBack">← '+(ctx.inRound?'Round':'Setup')+'</button><h3>Game ideas</h3><span class="chip">'+IDEAS.length+' games</span></div>'+
     '<p class="muted" style="font-size:12.5px;margin:-2px 2px 10px">Popular golf betting games, summarised from Golf Digest, GOLF.com and other golf sites (links on each card). Only Nassau + junk is scored in the app for now.</p>';
-  var rec='<div class="rec" id="recBox"><h4>⭐ Recommended for your group</h4><div class="ctx">Based on your setup: '+ctx.players+' players · '+(ctx.teams?'2v2 best ball':'1v1 match')+' · Nassau '+money(ctx.nassau)+(ctx.hasJunk?' + junk':'')+' · $'+ctx.lo+'–$'+ctx.hi+' units</div>'+
+  var rec='<div class="rec" id="recBox"><h4>⭐ Recommended for your group</h4><div class="ctx">Based on your setup: '+ctx.players+' players · '+(ctx.teams?'2v2 best ball':'1v1 match')+' · '+esc(ctx.game)+(ctx.hasJunk?' + junk':'')+' · $'+ctx.lo+'–$'+ctx.hi+' units</div>'+
     (recs.length?'<ol>'+recs.map(function(r,i){ var gm=idea(r.id); return '<li data-idea="'+gm.id+'"><b><span class="rk">'+(i+1)+'</span>'+esc(gm.name)+'</b><small>'+esc(ctx.teams&&gm.fitT?gm.fitT:gm.one)+'</small><small style="opacity:.75">Why: '+esc(r.why.join(' · '))+'</small></li>'; }).join('')+'</ol>':'<div class="ctx">No strong matches for this setup.</div>')+'</div>';
   function fc(kind,val,label,cur){ return '<button class="fchip'+(cur===val?' on':'')+'" data-f="'+kind+'" data-v="'+val+'">'+label+'</button>'; }
   var filters='<div class="filters"><div class="chips"><span class="lab">Type</span>'+fc('type','all','All',t)+fc('type','individual','Individual',t)+fc('type','team','Team',t)+'</div>'+
@@ -1873,6 +2006,9 @@ gameRoot.addEventListener('click',function(e){
   var b=e.target.closest('[data-act]'); if(!b || b.tagName==='INPUT') return;
   var act=b.getAttribute('data-act'), g=state.game, su=state.gameSetup;
   if(act==='mode'){ su.mode=b.getAttribute('data-mode'); save(); renderGames(); return; }
+  if(act==='preset'){ var pid=b.getAttribute('data-preset-pick'); if(su.preset!==pid){ su.preset=pid; su.stake=null; su.junk=null; su.stakeCustom=false; } save(); renderGames(); toast(presetTitle(setupSettings())+' selected'); return; }
+  if(act==='stake'){ su.stake=+b.getAttribute('data-v'); su.stakeCustom=false; save(); renderGames(); var S2=setupSettings(); toast(presetTitle(S2)+' · '+(S2.format==='closeout'?money(S2.front)+' per bet':'all amounts scaled')); return; }
+  if(act==='stakeCustom'){ su.stakeCustom=true; save(); renderGames(); setTimeout(function(){ var x=$('#suStake'); if(x){ x.focus(); x.select(); } },30); return; }
   if(act==='qaAdd'){ setupQuickAdd(); return; }
   if(act==='addkey'){ var nd=su.mode==='teams'?4:2, ki=su.keys.slice(0,nd).findIndex(function(x){ return !x || !keyInfo(x); }); if(ki>=0){ su.keys[ki]=b.getAttribute('data-key'); save(); renderGames(); } return; }
   if(act==='balteams'){ var four=su.keys.slice(0,4).slice().sort(function(a,b2){ return keyInfo(a).hcp-keyInfo(b2).hcp; }); su.keys=[four[0],four[3],four[1],four[2]]; syncSetupToPairings(); save(); renderGames(); toast('Teams balanced: low + high vs the middle two'); return; }
@@ -1881,7 +2017,9 @@ gameRoot.addEventListener('click',function(e){
     var need=su.mode==='teams'?4:2, ks=su.keys.slice(0,need);
     if(ks.some(function(k){return !k||!keyInfo(k);})){ $('#suErr').textContent='Pick '+need+' players.'; return; }
     if(new Set(ks).size!==ks.length){ $('#suErr').textContent='Each player can only be in the round once.'; return; }
-    syncSetupToPairings(); state.game=newGame(su); state.ui.gameView='score'; save(); renderGames(); toast('Round started — good luck!'); return;
+    syncSetupToPairings(); state.game=newGame(su); state.ui.gameView='score';
+    su.preset='closeout'; su.stake=null; su.junk=null; su.stakeCustom=false;   // next round starts from the $20 Close Out default again
+    save(); renderGames(); toast(presetTitle(state.game.settings)+' — good luck!'); return;
   }
   if(!g) return;
   var h=g.hole, k=b.getAttribute('data-k'), par=gcourse(g.course).par[h];
@@ -1890,6 +2028,8 @@ gameRoot.addEventListener('click',function(e){
     if(act==='inc') v=v==null?par:Math.min(15,v+1); else v=v==null?par-1:(v-1<1?null:v-1);
     g.scores[k][h]=v; save(); renderGames(); return;
   }
+  if(act==='press'){ g.presses=g.presses||[]; g.presses.push({seg:b.getAttribute('data-seg'),after:+b.getAttribute('data-after'),side:b.getAttribute('data-side')}); save(); renderGames(); toast('Press on — new '+money(g.settings.pressAmount)+' bet'); return; }
+  if(act==='unpress'){ var sg=b.getAttribute('data-seg'), af=+b.getAttribute('data-after'); g.presses=(g.presses||[]).filter(function(p){ return !(p.seg===sg&&p.after===af); }); save(); renderGames(); toast('Press removed'); return; }
   if(act==='greenie'){ g.greenies[h]=g.greenies[h]===k?null:k; save(); renderGames(); return; }
   if(act==='sandy'){ var a=g.sandies[h]||(g.sandies[h]=[]), i=a.indexOf(k); if(i>=0) a.splice(i,1); else a.push(k); save(); renderGames(); return; }
   if(act==='prev'){ if(h>0){ g.hole--; save(); renderGames(); } return; }
@@ -1917,34 +2057,42 @@ gameRoot.addEventListener('change',function(e){
   }
   if(t.id==='suCourse'){ su.course=t.value; save(); var ci=$('#suCourseInfo'); if(ci) ci.innerHTML=courseInfo(su.course); return; }
   if(t.id==='suHcp'){ su.useHandicap=t.checked; save(); return; }
+  if(t.id==='suJunk'){ su.junk=t.checked; save(); renderGames(); toast(t.checked?'Junk on for this round':'Junk off for this round'); return; }
+  if(t.id==='suStake'){ var sv=+t.value; if(!(sv>0&&sv<=100000)){ toast('Enter a stake of $1 or more'); renderGames(); return; } su.stake=Math.round(sv*100)/100; su.stakeCustom=true; save(); renderGames(); toast(presetTitle(setupSettings())); return; }
   if(t.getAttribute('data-act')==='hcp' && state.game){ state.game.useHandicap=t.checked; save(); renderGames(); toast(t.checked?'Handicap strokes on (net)':'Handicap strokes off (gross)'); }
 });
 
 /* ---------- Games: settings sheet ---------- */
 function openSettings(){
-  var S=state.game?state.game.settings:loadDefaults();
-  function mf(id,lab,val){ return '<div><label class="fl" for="gs_'+id+'">'+lab+'</label><div class="money-in"><span>$</span><input class="in" id="gs_'+id+'" type="number" min="0" step="1" inputmode="decimal" value="'+val+'"></div></div>'; }
-  function sw(id,lab,sub,on){ return '<div class="toggle full"><div><b>'+lab+'</b><small>'+sub+'</small></div><label class="switch"><input type="checkbox" id="gs_'+id+'" '+(on?'checked':'')+'><span></span></label></div>'; }
+  var g=state.game, S=g?g.settings:setupSettings(), pid=S.preset||'egn', P=presetById(pid), CO=S.format==='closeout';
+  function mf(id,lab,val,hide){ return '<div'+(hide?' hidden':'')+'><label class="fl" for="gs_'+id+'">'+lab+'</label><div class="money-in"><span>$</span><input class="in" id="gs_'+id+'" type="number" min="0" step="1" inputmode="decimal" value="'+val+'"></div></div>'; }
+  function sw(id,lab,sub,on,hide){ return '<div class="toggle full"'+(hide?' hidden':'')+'><div><b>'+lab+'</b><small>'+sub+'</small></div><label class="switch"><input type="checkbox" id="gs_'+id+'" '+(on?'checked':'')+'><span></span></label></div>'; }
   function sl(id,lab,opts,val){ return '<div><label class="fl" for="gs_'+id+'">'+lab+'</label><select class="in" id="gs_'+id+'">'+opts.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===val?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select></div>'; }
-  openSheet('<h3>Game settings</h3><p>'+(state.game?'Changes apply to the current round right away and are saved as your default for new rounds.':'Saved as your default for new rounds.')+'</p>'+
+  var desc={closeout:'$20 Close Out: $20 front-9 and back-9 matches (2v2 best ball or 1v1). When a bet is closed out (a side is up by more holes than are left in that nine), a new bet for the same amount starts on the holes left; this repeats. A bet that ends on the last hole of the nine starts nothing new. No overall, no presses; halved bets push. Junk off by default.',
+    egn:'East Greenwich Nassau: $80 Nassau (front/back/overall), auto press $40 at 2 down, greenies $10 every hole, sandies $10, birdies $20, eagles $100. Match bets per player; junk paid per team (each opposing player pays the amount and each partner on the winning team collects it).',
+    nassau:'Nassau: $20 front, back and overall. No auto press — the side that’s down can tap Press during play for a new bet on the rest of that nine. Junk off by default.'}[P.id];
+  openSheet('<h3>Game settings · '+esc(presetTitle(S))+'</h3><p>'+(g?'Changes apply to this round right away and are saved as your '+esc(P.name)+' preset.':'For the round you’re setting up; saved as your '+esc(P.name)+' preset. New rounds still start on $20 Close Out unless you pick another game.')+'</p>'+
     '<form id="gsForm" novalidate>'+
-    '<div class="sec-t">Nassau</div><div class="fgrid">'+mf('front','Front 9',S.front)+mf('back','Back 9',S.back)+mf('overall','Overall 18',S.overall)+
+    '<div class="sec-t">'+(CO?'Close out bets':'Nassau')+'</div><div class="fgrid">'+mf('front',CO?'Front 9 bet':'Front 9',S.front)+mf('back',CO?'Back 9 bet':'Back 9',S.back)+mf('overall','Overall 18',S.overall,CO)+
       sl('matchUnits','Units',[['perPlayer','Per player'],['perTeam','Per team']],S.matchUnits)+'</div>'+
-    '<div class="sec-t">Auto press</div><div class="fgrid">'+sw('autoPress','Auto press','New press when a side goes N down; runs to end of that nine',S.autoPress)+
+      (CO?'<p class="muted" style="font-size:12px;margin:8px 2px 0">Each new bet after a close-out is worth the same as that nine’s bet.</p>':'')+
+    '<div class="sec-t"'+(CO?' hidden':'')+'>Presses</div><div class="fgrid"'+(CO?' hidden':'')+'>'+sw('autoPress','Auto press','New press when a side goes N down; runs to end of that nine',S.autoPress)+
       mf('pressAmount','Press amount',S.pressAmount)+'<div><label class="fl" for="gs_pressTrigger">Trigger (holes down)</label><input class="in" id="gs_pressTrigger" type="number" min="1" max="9" step="1" value="'+S.pressTrigger+'"></div>'+
-      sw('pressOverall','Press the overall too','Overall presses run to hole 18',S.pressOverall)+'</div>'+
-    '<div class="sec-t">Junk</div><div class="fgrid">'+mf('greenieAmt','Greenie',S.greenieAmt)+sl('greenieHoles','Greenies on',[['all','Every hole'],['par3','Par 3s only']],S.greenieHoles)+
+      sw('pressOverall','Press the overall too','Overall presses run to hole 18',S.pressOverall)+
+      sw('manualPress','Manual press button','The side that’s down can press during play (new bet at the press amount for the rest of that nine)',S.manualPress)+'</div>'+
+    '<div class="sec-t">Junk</div><div class="fgrid">'+sw('junkOn','Junk on','Greenies, sandies, birdies & eagles',S.junkOn!==false)+mf('greenieAmt','Greenie',S.greenieAmt)+sl('greenieHoles','Greenies on',[['all','Every hole'],['par3','Par 3s only']],S.greenieHoles)+
       mf('sandyAmt','Sandy',S.sandyAmt)+mf('birdieAmt','Birdie',S.birdieAmt)+mf('eagleAmt','Eagle (or better)',S.eagleAmt)+
       sl('junkUnits','Junk units (2v2)',[['perTeam','Per team'],['perPlayer','Per player']],S.junkUnits)+
       sl('junkScoring','Birdies/eagles on',[['gross','Gross (natural)'],['net','Net scores']],S.junkScoring)+
       '<div><label class="fl" for="gs_allowance">Handicap allowance</label><div class="money-in"><input class="in" id="gs_allowance" type="number" min="0" max="100" step="5" value="'+S.allowance+'" style="padding-left:12px"></div></div></div>'+
     '<div class="err" id="gsErr" style="margin-top:10px"></div>'+
-    '<div class="sheet-actions"><button type="submit" class="btn full" id="gsSave">Save settings (new default)</button><button type="button" class="btn ghost" id="gsStd">Restore standard</button><button type="button" class="btn ghost" data-close>Cancel</button></div>'+
-    '<p style="font-size:12px;margin-top:10px">Standard game: $80 Nassau (front/back/overall), auto press $40 at 2 down, greenies $10 every hole, sandies $10, birdies $20, eagles $100. Match bets per player; junk paid per team (each opposing player pays the amount and each partner on the winning team collects it).</p>'+
+    '<div class="sheet-actions"><button type="submit" class="btn full" id="gsSave">Save settings</button><button type="button" class="btn ghost" id="gsStd">Restore '+esc(P.name)+' preset</button><button type="button" class="btn ghost" data-close>Cancel</button></div>'+
+    '<p style="font-size:12px;margin-top:10px">'+desc+'</p>'+
     '</form>');
   $('#gsStd').onclick=function(){
-    var s=Object.assign({},STANDARD); saveDefaults(s); if(state.game){ state.game.settings=Object.assign({},s); save(); }
-    closeSheet(); renderGames(); openSettings(); toast('Standard game restored');
+    resetPreset(P.id);
+    if(g){ g.settings=loadPreset(P.id); } else { var su=state.gameSetup; su.stake=null; su.junk=null; su.stakeCustom=false; }
+    save(); closeSheet(); renderGames(); openSettings(); toast(P.name+' preset restored');
   };
   $('#gsForm').onsubmit=function(e){
     e.preventDefault();
@@ -1954,9 +2102,12 @@ function openSettings(){
     s.allowance=+$('#gs_allowance').value; if(isNaN(s.allowance)||s.allowance<0||s.allowance>100) err=err||'Handicap allowance must be 0–100%.';
     ['matchUnits','greenieHoles','junkUnits','junkScoring'].forEach(function(id){ s[id]=$('#gs_'+id).value; });
     s.autoPress=$('#gs_autoPress').checked; s.pressOverall=$('#gs_pressOverall').checked;
+    s.preset=P.id; s.format=CO?'closeout':'nassau'; s.junkOn=$('#gs_junkOn').checked; s.manualPress=$('#gs_manualPress').checked;
+    if(CO){ s.overall=0; s.autoPress=false; s.manualPress=false; }
     if(err){ $('#gsErr').textContent=err; return; }
-    saveDefaults(s); if(state.game) state.game.settings=Object.assign({},s); save();
-    closeSheet(); renderGames(); toast(state.game?'Settings applied to this round & saved as default':'Saved as default game');
+    savePreset(P.id,s);
+    if(g) g.settings=Object.assign({},s); else { var su=state.gameSetup; su.stake=null; su.junk=null; su.stakeCustom=false; }
+    save(); closeSheet(); renderGames(); toast(g?'Applied to this round · saved as your '+P.name+' preset':'Saved as your '+P.name+' preset');
   };
 }
 $('#gSettingsBtn').addEventListener('click',openSettings);
