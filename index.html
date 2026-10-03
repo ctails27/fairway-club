@@ -408,6 +408,27 @@
   .scard small{display:block;font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
   nav.tabs button{font-size:10.5px}
   nav.tabs .ic{width:46px}
+  /* ---- v9: pairings teams ---- */
+  .swaphint{font-size:13px;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:12px;padding:9px 12px;margin:0 0 10px}
+  .swaphint.on{color:#7a5300;background:#fff6d6;border:1px solid #f0d97a}
+  .teams{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:6px 8px 4px}
+  .tcol{padding:4px 6px 6px}
+  .tcol.A{border-right:2px dashed var(--line)}
+  .tcol .tlabel{margin:2px 2px 6px}
+  .tsum{margin-left:auto;font-weight:700;color:var(--muted);letter-spacing:0;text-transform:none;font-size:11px}
+  .pbtn{display:flex;align-items:center;gap:8px;width:100%;min-height:56px;margin:0 0 8px;padding:8px 9px;border-radius:14px;border:1.5px solid var(--line);background:#fff;font:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .pbtn.A{border-left:5px solid #2f9e6b;background:#f3fbf6}
+  .pbtn.B{border-left:5px solid #3d7cc0;background:#f2f7fd}
+  .pbtn .pn{flex:1;min-width:0;font-weight:700;font-size:14px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .pbtn .hcp{font-weight:800;font-size:13px;color:var(--muted)}
+  .pbtn.sel{border-color:#e0a800;box-shadow:0 0 0 3px #ffd84d;background:#fff8d9;transform:scale(1.02)}
+  .plain{padding:8px 14px 2px}
+  .presets{padding:2px 14px 6px}
+  .presets .lab{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:0 2px 6px}
+  .preset{display:block;width:100%;min-height:46px;margin:0 0 6px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font:inherit;font-size:14px;font-weight:600;text-align:left;cursor:pointer;touch-action:manipulation}
+  .preset.on{border-color:var(--g600);background:var(--g100);color:var(--g800);font-weight:800}
+  .gbtns{gap:8px;padding:2px 14px 12px}
+  .gbtns .btn{flex:1;min-height:46px}
   /* ---- v8: player entry ---- */
   .qa{background:var(--g50);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
   .welcome{text-align:center;padding:4px 6px 12px}
@@ -781,7 +802,8 @@ $('#ttList').addEventListener('click',function(e){
   if(act==='addtt') ttForm();
   else if(act==='pair'){ state.ui.pairTT=tt; save(); go('pairings'); }
   else if(act==='togame'){
-    var ids=signed(ttById(tt));
+    var ids=signed(ttById(tt)), prg=state.pairings[tt];
+    if(prg && prg.groups && prg.groups[0] && prg.groups[0].length===4 && prg.groups[0].every(function(id){ return ids.indexOf(id)>=0; })) ids=prg.groups[0].slice();  // use the teams from Pairings
     if(state.game){ toast('A round is in progress — finish or start a new round first'); go('games'); return; }
     var su=state.gameSetup; su.mode=ids.length>=4?'teams':'singles';
     su.keys=[0,1,2,3].map(function(j){ return ids[j]?'F:'+ids[j]:null; });
@@ -828,16 +850,37 @@ function makeGroups(ids, balance){
       }
     }
   }
-  groups.forEach(function(gr){ gr.sort(function(a,b){ return hc(a)-hc(b); }); });
+  groups.forEach(function(gr){ gr.sort(function(a,b){ return hc(a)-hc(b); }); if(gr.length===4) balanceFour(gr); });
   return groups;
 }
+/* ---- 2v2 teams inside a foursome: positions 0-1 = Team A, 2-3 = Team B ---- */
+function balanceFour(gr){ var s=gr.slice().sort(function(a,b){ return hc(a)-hc(b); }); gr.splice(0,4,s[0],s[3],s[1],s[2]); return gr; }
+function splitsOf(gr){ var s=gr.slice().sort(function(a,b){ return hc(a)-hc(b) || player(a).name.localeCompare(player(b).name); });
+  return [[s[0],s[1],s[2],s[3]],[s[0],s[2],s[1],s[3]],[s[0],s[3],s[1],s[2]]]; }   // the 3 possible 2v2 splits (low player always on Team A)
+function sameTeams(g,t){ var a=[g[0],g[1]].sort().join(), b=[g[2],g[3]].sort().join(), x=[t[0],t[1]].sort().join(), y=[t[2],t[3]].sort().join(); return (a===x&&b===y)||(a===y&&b===x); }
+function teamLabel(t){ return first(player(t[0]).name)+' & '+first(player(t[1]).name)+' vs '+first(player(t[2]).name)+' & '+first(player(t[3]).name); }
+/* keep Games setup and Pairings in step when they hold the same 4 players */
+function setupFour(){ var su=state.gameSetup; if(su.mode!=='teams') return null; var k=su.keys.slice(0,4); if(k.some(function(x){ return !x || !keyInfo(x); })) return null; return k.map(function(x){ return x.slice(2); }); }
+function syncSetupToPairings(){
+  var f=setupFour(); if(!f) return;
+  Object.keys(state.pairings).forEach(function(t){ var pr=state.pairings[t]; (pr.groups||[]).forEach(function(g){
+    if(g.length===4 && sameSet(g,f) && !sameTeams(g,f)){ g.splice(0,4,f[0],f[1],f[2],f[3]); pr.manual=true; } }); });
+}
+function syncPairingGroupToSetup(g){
+  if(state.game || g.length!==4) return false;
+  var f=setupFour(); if(!f || !sameSet(g,f)) return false;
+  state.gameSetup.keys=g.map(function(id){ return 'F:'+id; }); return true;
+}
+var pairSel=null;   // player id picked for a tap-to-swap (not saved)
 function sameSet(a,b){ if(a.length!==b.length) return false; var s={}; a.forEach(function(x){s[x]=1;}); return b.every(function(x){return s[x];}); }
 function generate(ttId, silent){
   var t = ttById(ttId); if(!t){ if(!silent) toast('Add a tee time first'); return; }
-  var ids = signed(t);
-  state.pairings[ttId] = {groups:makeGroups(ids, state.ui.balance), balanced:state.ui.balance, at:Date.now()};
-  save(); renderPairings();
-  if(!silent) toast(ids.length ? 'Shuffled '+ids.length+' players into '+state.pairings[ttId].groups.length+' group'+(state.pairings[ttId].groups.length>1?'s':'')+(state.ui.balance?' (balanced)':'') : 'No players in this tee time yet');
+  var ids = signed(t), old = state.pairings[ttId], hadManual = !!(old && old.manual);
+  state.pairings[ttId] = {groups:makeGroups(ids, state.ui.balance), balanced:state.ui.balance, at:Date.now(), tv:1, manual:false};
+  pairSel=null; save(); renderPairings();
+  var reset = hadManual ? ' — your manual team changes were reset' : '';
+  if(!silent) toast(ids.length ? 'Shuffled '+ids.length+' players into '+state.pairings[ttId].groups.length+' group'+(state.pairings[ttId].groups.length>1?'s':'')+(state.ui.balance?' (balanced)':'')+reset : 'No players in this tee time yet');
+  else if(hadManual) toast('Groups redone — your manual team changes were reset');
 }
 function renderPairings(){
   var sel=$('#pairTT'), out=$('#pairOut'), list=ttSorted();
@@ -853,8 +896,14 @@ function renderPairings(){
   sel.value = state.ui.pairTT;
   var t = ttById(state.ui.pairTT), ids = signed(t), pr = state.pairings[t.id];
   if(!ids.length){ out.innerHTML = '<div class="card empty"><div class="big">🏌️</div>No players in this tee time yet.<br>Add players to its slots on the Tee Times tab.<br><br><button class="btn" id="goTT">Go to Tee Times</button></div>'; $('#goTT').onclick=function(){go('tee-times');}; return; }
-  if(!pr){ state.pairings[t.id] = pr = {groups:makeGroups(ids,state.ui.balance), balanced:state.ui.balance, at:Date.now()}; save(); }
+  if(!pr){ state.pairings[t.id] = pr = {groups:makeGroups(ids,state.ui.balance), balanced:state.ui.balance, at:Date.now(), tv:1, manual:false}; save(); }
   pr.groups = pr.groups.map(function(g){ return g.filter(function(id){ return player(id); }); }).filter(function(g){ return g.length; });
+  if(!pr.tv){   // pairings made before teams existed: use the Games-setup teams for the same 4 players, else balanced
+    var sf=setupFour();
+    pr.groups.forEach(function(g){ if(g.length===4){ if(sf && sameSet(g,sf)) g.splice(0,4,sf[0],sf[1],sf[2],sf[3]); else balanceFour(g); } });
+    pr.tv=1; save();
+  }
+  if(pairSel && [].concat.apply([],pr.groups).indexOf(pairSel)<0) pairSel=null;
   var flat = [].concat.apply([],pr.groups);
   var stale = !sameSet(flat, ids);
   var c = course(t.course);
@@ -865,24 +914,73 @@ function renderPairings(){
   '</div>';
   if(stale) html += '<div class="card" style="display:flex;align-items:center;gap:10px;background:#fffaf0;border-color:#f3e2b3"><span class="chip warn">Out of date</span><span style="flex:1;font-size:13px">Players changed since these pairings were made.</span><button class="btn" id="regen" style="padding:8px 12px">Regenerate</button></div>';
   html += '<div class="muted" style="font-size:12.5px;margin:0 2px 8px;display:flex;justify-content:space-between"><span>'+esc(c.name)+' · '+fmtDate(t.date,{weekday:'long',month:'short',day:'numeric'})+'</span><span>'+(pr.balanced?'⚖️ Balanced':'🎲 Random')+'</span></div>';
+  var selP = pairSel && player(pairSel);
+  html += '<div class="swaphint'+(selP?' on':'')+'" id="swapHint">'+(selP ? '👆 Now tap the player to swap with <b>'+esc(first(selP.name))+'</b> (tap again to cancel)' : '👆 Tap a player, then another player, to swap them'+(pr.groups.length>1?' — works across groups too':''))+'</div>';
+  if(pr.manual) html += '<div class="muted" style="font-size:12px;margin:-2px 2px 8px">✋ Teams set by you · Shuffle or the balance switch will reset them</div>';
+  function pbtn(id,side){ var p=player(id); return '<button class="pbtn'+(side?' '+side:'')+(id===pairSel?' sel':'')+'" data-swap="'+id+'" aria-pressed="'+(id===pairSel)+'">'+avatar(id)+'<span class="pn">'+esc(p.name)+'</span><span class="hcp">'+fmtCH(p.hcp)+'</span></button>'; }
   pr.groups.forEach(function(g,i){
     var avg = mean(g.map(hc));
-    html += '<div class="card group">'+
+    var body;
+    if(g.length===4){
+      var sp=splitsOf(g), ta=hc(g[0])+hc(g[1]), tb=hc(g[2])+hc(g[3]);
+      body='<div class="teams"><div class="tcol A"><div class="tlabel A">Team A <span class="tsum">CH '+ta+'</span></div>'+pbtn(g[0],'A')+pbtn(g[1],'A')+'</div>'+
+             '<div class="tcol B"><div class="tlabel B">Team B <span class="tsum">CH '+tb+'</span></div>'+pbtn(g[2],'B')+pbtn(g[3],'B')+'</div></div>'+
+           '<div class="presets"><div class="lab">Quick splits</div>'+sp.map(function(t,j){ var on=sameTeams(g,t); return '<button class="preset'+(on?' on':'')+'" data-preset="'+i+':'+j+'" aria-pressed="'+on+'">'+(on?'✓ ':'')+esc(teamLabel(t))+'</button>'; }).join('')+'</div>'+
+           '<div class="row gbtns"><button class="btn ghost" data-gbal="'+i+'">⚖️ Balance teams</button><button class="btn" data-ggame="'+i+'">Set up game →</button></div>';
+    } else {
+      body='<div class="plain">'+g.map(function(id){ return pbtn(id,''); }).join('')+'</div>'+(g.length===2?'<div class="row gbtns"><button class="btn" data-ggame="'+i+'">Set up 1 v 1 →</button></div>':'<div class="muted" style="font-size:12px;padding:0 14px 10px">2 v 2 teams need 4 players — swap someone in from another group.</div>');
+    }
+    html += '<div class="card group" data-gi="'+i+'">'+
       '<div class="group-h"><h4><span class="num">'+(i+1)+'</span>'+(g.length===4?'Foursome':g.length===3?'Threesome':g.length===2?'Twosome':'Single')+'</h4><span class="gt">🕒 '+fmtTime(t.time,i*10)+'</span></div>'+
-      '<ul class="plist">'+g.map(function(id){ var p=player(id); return '<li>'+avatar(id)+'<span class="pn">'+esc(p.name)+'</span><span class="hcp">'+fmtCH(p.hcp)+'</span></li>'; }).join('')+'</ul>'+
+      body+
       '<div class="group-f"><span>Avg CH <b>'+avg.toFixed(1)+'</b></span><span>Total <b>'+g.reduce(function(s,id){return s+hc(id);},0)+'</b></span></div>'+
     '</div>';
   });
   out.innerHTML = html;
   var rg=$('#regen'); if(rg) rg.onclick=function(){ generate(t.id); };
 }
-$('#pairTT').addEventListener('change',function(e){ state.ui.pairTT=e.target.value; save(); renderPairings(); });
-$('#balance').addEventListener('change',function(e){ state.ui.balance=e.target.checked; save(); if(ttById(state.ui.pairTT)) generate(state.ui.pairTT, true); toast(state.ui.balance?'Balancing groups by course handicap':'Random groups (no balancing)'); });
+$('#pairTT').addEventListener('change',function(e){ state.ui.pairTT=e.target.value; pairSel=null; save(); renderPairings(); });
+function curPairing(){ var t=ttById(state.ui.pairTT); return t && state.pairings[t.id]; }
+function afterTeamChange(pr, g, msg){
+  pr.manual=true; var synced=syncPairingGroupToSetup(g); save(); renderPairings(); if(synced) renderGames();
+  toast(msg+(synced?' · Games setup updated':''));
+}
+$('#pairOut').addEventListener('click',function(e){
+  var pr=curPairing(); if(!pr) return;
+  var b=e.target.closest('[data-swap]');
+  if(b){
+    var id=b.getAttribute('data-swap');
+    if(!pairSel){ pairSel=id; renderPairings(); return; }
+    if(pairSel===id){ pairSel=null; renderPairings(); return; }
+    var a=pairSel, pa=null, pb=null; pairSel=null;
+    pr.groups.forEach(function(g,gi){ var x=g.indexOf(a), y=g.indexOf(id); if(x>=0) pa=[gi,x]; if(y>=0) pb=[gi,y]; });
+    if(!pa||!pb){ renderPairings(); return; }
+    pr.groups[pa[0]][pa[1]]=id; pr.groups[pb[0]][pb[1]]=a;
+    var g1=pr.groups[pa[0]], g2=pr.groups[pb[0]];
+    pr.manual=true; var s1=syncPairingGroupToSetup(g1), s2=pa[0]!==pb[0] && syncPairingGroupToSetup(g2); save(); renderPairings(); if(s1||s2) renderGames();
+    toast('Swapped '+first(player(a).name)+' ↔ '+first(player(id).name)+(pa[0]!==pb[0]?' (between groups)':'')+((s1||s2)?' · Games setup updated':''));
+    return;
+  }
+  var ps=e.target.closest('[data-preset]');
+  if(ps){ var q=ps.getAttribute('data-preset').split(':'), g=pr.groups[+q[0]], t=splitsOf(g)[+q[1]]; g.splice(0,4,t[0],t[1],t[2],t[3]); pairSel=null; afterTeamChange(pr,g,teamLabel(t)); return; }
+  var gb=e.target.closest('[data-gbal]');
+  if(gb){ var g2b=pr.groups[+gb.getAttribute('data-gbal')]; balanceFour(g2b); pairSel=null; afterTeamChange(pr,g2b,'Balanced: '+teamLabel(g2b)); return; }
+  var gg=e.target.closest('[data-ggame]');
+  if(gg){
+    var grp=pr.groups[+gg.getAttribute('data-ggame')];
+    if(state.game){ toast('A round is in progress — start a new round first'); go('games'); return; }
+    var su=state.gameSetup; su.mode=grp.length===4?'teams':'singles';
+    su.keys=[0,1,2,3].map(function(j){ return grp[j]?'F:'+grp[j]:null; });
+    pairSel=null; save(); go('games'); toast(grp.length===4?'Teams set: '+teamLabel(grp):'Players set for 1 v 1');
+  }
+});
+$('#balance').addEventListener('change',function(e){ state.ui.balance=e.target.checked; save(); var cp=curPairing(), hm=!!(cp&&cp.manual); if(ttById(state.ui.pairTT)) generate(state.ui.pairTT, true); toast((state.ui.balance?'Balancing groups by course handicap':'Random groups (no balancing)')+(hm?' — your manual team changes were reset':'')); });
 $('#shuffleBtn').addEventListener('click',function(){ generate(state.ui.pairTT); });
 $('#copyBtn').addEventListener('click',function(){
   var t = ttById(state.ui.pairTT), pr=t&&state.pairings[t.id];
   if(!pr||!pr.groups.length){ toast('Nothing to copy yet'); return; }
-  var txt = course(t.course).name+' — '+fmtDate(t.date)+'\n'+pr.groups.map(function(g,i){ return 'Group '+(i+1)+' ('+fmtTime(t.time,i*10)+'): '+g.map(function(id){var p=player(id);return p.name+' (CH '+fmtCH(p.hcp)+')';}).join(', '); }).join('\n');
+  function nm(id){ var p=player(id); return p.name+' ('+fmtCH(p.hcp)+')'; }
+  var txt = course(t.course).name+' — '+fmtDate(t.date)+'\n'+pr.groups.map(function(g,i){ return 'Group '+(i+1)+' ('+fmtTime(t.time,i*10)+'): '+(g.length===4 ? nm(g[0])+' & '+nm(g[1])+' vs '+nm(g[2])+' & '+nm(g[3]) : g.map(nm).join(', ')); }).join('\n');
   copyText(txt,'Pairings copied to clipboard');
 });
 
@@ -1777,13 +1875,13 @@ gameRoot.addEventListener('click',function(e){
   if(act==='mode'){ su.mode=b.getAttribute('data-mode'); save(); renderGames(); return; }
   if(act==='qaAdd'){ setupQuickAdd(); return; }
   if(act==='addkey'){ var nd=su.mode==='teams'?4:2, ki=su.keys.slice(0,nd).findIndex(function(x){ return !x || !keyInfo(x); }); if(ki>=0){ su.keys[ki]=b.getAttribute('data-key'); save(); renderGames(); } return; }
-  if(act==='balteams'){ var four=su.keys.slice(0,4).slice().sort(function(a,b2){ return keyInfo(a).hcp-keyInfo(b2).hcp; }); su.keys=[four[0],four[3],four[1],four[2]]; save(); renderGames(); toast('Teams balanced: low + high vs the middle two'); return; }
-  if(act==='swapteams'){ var t1=su.keys[1]; su.keys[1]=su.keys[2]; su.keys[2]=t1; save(); renderGames(); return; }
+  if(act==='balteams'){ var four=su.keys.slice(0,4).slice().sort(function(a,b2){ return keyInfo(a).hcp-keyInfo(b2).hcp; }); su.keys=[four[0],four[3],four[1],four[2]]; syncSetupToPairings(); save(); renderGames(); toast('Teams balanced: low + high vs the middle two'); return; }
+  if(act==='swapteams'){ var t1=su.keys[1]; su.keys[1]=su.keys[2]; su.keys[2]=t1; syncSetupToPairings(); save(); renderGames(); return; }
   if(act==='start'){
     var need=su.mode==='teams'?4:2, ks=su.keys.slice(0,need);
     if(ks.some(function(k){return !k||!keyInfo(k);})){ $('#suErr').textContent='Pick '+need+' players.'; return; }
     if(new Set(ks).size!==ks.length){ $('#suErr').textContent='Each player can only be in the round once.'; return; }
-    state.game=newGame(su); state.ui.gameView='score'; save(); renderGames(); toast('Round started — good luck!'); return;
+    syncSetupToPairings(); state.game=newGame(su); state.ui.gameView='score'; save(); renderGames(); toast('Round started — good luck!'); return;
   }
   if(!g) return;
   var h=g.hole, k=b.getAttribute('data-k'), par=gcourse(g.course).par[h];
@@ -1809,7 +1907,7 @@ gameRoot.addEventListener('change',function(e){
   if(t.hasAttribute('data-su')){
     var si=+t.getAttribute('data-su'), nv=t.value||null, oi=nv?su.keys.indexOf(nv):-1;
     if(oi>=0 && oi!==si) su.keys[oi]=su.keys[si];   // picking someone already in another slot swaps the two
-    su.keys[si]=nv; save(); renderGames(); return;
+    su.keys[si]=nv; syncSetupToPairings(); save(); renderGames(); return;
   }
   if(t.hasAttribute('data-ch')){
     var ck=su.keys[+t.getAttribute('data-ch')], cf=ck&&friend(ck.slice(2)), cr=parseCH(t.value);
