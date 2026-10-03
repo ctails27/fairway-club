@@ -6,7 +6,7 @@
   "display": "standalone",
   "background_color": "#f3faf6",
   "theme_color": "#0f3d2e",
-  "description": "Golf league prototype (sample data): tee times, pairings, standings, Nassau + junk scoring.",
+  "description": "Golf games & scoring: Nassau + junk, best ball, tee times, pairings, standings.",
   "icons": [
     {
       "src": "icon-192.png",

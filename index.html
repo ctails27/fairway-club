@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fairway">
 <meta name="application-name" content="Fairway Club">
-<meta name="description" content="Fairway Club — golf league prototype: tee times, pairings, standings, Nassau + junk scoring. Sample data.">
+<meta name="description" content="Fairway Club — golf games &amp; scoring: Nassau + junk, 2v2 best ball, tee times, pairings, standings. Quidnessett CC scorecard.">
 <meta name="format-detection" content="telephone=no">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -43,8 +43,6 @@
   .me select{background:transparent;border:0;color:#fff;font-size:13px;font-weight:600;max-width:86px;outline:none;appearance:none;-webkit-appearance:none;padding-right:14px;
     background-image:linear-gradient(45deg,transparent 50%,#fff 50%),linear-gradient(135deg,#fff 50%,transparent 50%);background-position:calc(100% - 6px) 55%,calc(100% - 2px) 55%;background-size:4px 4px;background-repeat:no-repeat}
   .me select option{color:#000}
-  .sample{display:flex;align-items:center;justify-content:center;gap:6px;background:#fff6d6;color:#6b5300;font-size:12px;font-weight:600;padding:6px 10px;border-bottom:1px solid #f0e2a8}
-  .sample b{background:#f2d36b;color:#4d3b00;border-radius:6px;padding:1px 6px;font-size:10.5px;letter-spacing:.6px;text-transform:uppercase}
   main{padding:14px 14px 8px}
   .page-title{display:flex;align-items:flex-end;justify-content:space-between;margin:2px 2px 12px}
   .page-title h2{margin:0;font-size:22px;letter-spacing:-.2px}
@@ -410,6 +408,24 @@
   .scard small{display:block;font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
   nav.tabs button{font-size:10.5px}
   nav.tabs .ic{width:46px}
+  /* ---- v8: player entry ---- */
+  .qa{background:var(--g50);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+  .welcome{text-align:center;padding:4px 6px 12px}
+  .welcome .big{font-size:30px}
+  .welcome b{display:block;font-size:16px;margin:2px 0}
+  .welcome span{font-size:13px;color:var(--muted)}
+  .saved{margin-top:10px}
+  .saved .lab{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:0 2px 6px}
+  .pickchip{border:0;cursor:pointer;font-size:13px;padding:6px 11px}
+  .suslot{margin-bottom:8px}
+  .slotrow{display:flex;gap:8px;align-items:center}
+  .slotrow select.in{flex:1 1 auto;width:auto;min-width:0}
+  .slotrow input.in.chin,.chin{width:64px;flex:0 0 64px;text-align:center;font-weight:800;padding:10px 4px}
+  .chin.ph{display:grid;place-items:center;height:44px;color:#b5c2bb;font-size:12px;border:1px dashed var(--line);border-radius:12px}
+  .pick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .pickbtn{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px;text-align:left;font:inherit;cursor:pointer}
+  .pickbtn span{flex:1;min-width:0;font-weight:700;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pickbtn small{color:var(--muted);font-size:11.5px}
 </style>
 </head>
 <body>
@@ -421,24 +437,20 @@
       </div>
       <div>
         <h1>Fairway Club</h1>
-        <small>Saturday League</small>
+        <small>Golf games &amp; scoring</small>
       </div>
       <button class="iconbtn" id="shareBtn" aria-label="Share" title="Share">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7.5 7.5L12 3l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
       </button>
-      <label class="me" title="Choose which player you are (prototype)">
-        <span class="av" id="meAv"></span>
-        <select id="meSel" aria-label="Playing as"></select>
-      </label>
     </div>
   </header>
-  <div class="sample" role="note"><b>Sample data</b> Players, friends, courses &amp; scores are made up</div>
 
   <main>
     <!-- TEE TIMES -->
     <section class="view" id="view-tee-times">
       <div class="page-title">
-        <div><h2>Tee Times</h2><p id="ttSub">Tap an open slot to join, tap yours to leave</p></div>
+        <div><h2>Tee Times</h2><p id="ttSub">Plan your next round</p></div>
+        <button class="btn sm" id="addTTBtn">+ Add tee time</button>
       </div>
       <div id="ttList"></div>
     </section>
@@ -446,15 +458,15 @@
     <!-- PAIRINGS -->
     <section class="view" id="view-pairings">
       <div class="page-title">
-        <div><h2>Pairings</h2><p>Foursomes from players signed up</p></div>
+        <div><h2>Pairings</h2><p>Groups from the players in a tee time</p></div>
       </div>
-      <div class="card controls">
+      <div class="card controls" id="pairCtl">
         <div>
           <label class="fl" for="pairTT">Tee time</label>
           <select class="in" id="pairTT"></select>
         </div>
         <div class="toggle">
-          <div><b>Balance by handicap</b><small>Even out average handicap across groups</small></div>
+          <div><b>Balance by handicap</b><small>Even out average course handicap across groups</small></div>
           <label class="switch"><input type="checkbox" id="balance"><span></span></label>
         </div>
         <div class="row">
@@ -482,6 +494,7 @@
 
       <div class="card" id="scoreCard">
         <h3 class="sec">Post a score <span class="chip">Updates standings</span></h3>
+        <div id="sfEmpty" class="muted" style="font-size:13px;display:none">Add players first (Games or Friends tab) — then post their scores here.</div>
         <form id="scoreForm" class="form-grid" novalidate>
           <div class="full">
             <label class="fl" for="sfPlayer">Player</label>
@@ -526,19 +539,19 @@
     <!-- FRIENDS -->
     <section class="view" id="view-friends">
       <div class="page-title">
-        <div><h2>Friends</h2><p id="friendSub">Your golf contacts · pick them as players</p></div>
-        <button class="btn sm" id="addFriendBtn">+ Add friend</button>
+        <div><h2>Friends</h2><p id="friendSub">Your saved players</p></div>
+        <button class="btn sm" id="addFriendBtn">+ Add player</button>
       </div>
       <div class="search">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-        <input class="in" id="friendSearch" type="search" placeholder="Search name, GHIN #, phone or email" aria-label="Search friends">
+        <input class="in" id="friendSearch" type="search" placeholder="Search players" aria-label="Search players">
       </div>
       <div id="friendList"></div>
     </section>
   </main>
   <footer class="foot">
-    Sample data · Clickable prototype · Changes are saved in this browser only<br>
-    <button id="resetBtn">Reset sample data</button>
+    Saved on this phone only · not shared or synced with other players<br>
+    <button id="resetBtn">Clear all data</button>
   </footer>
 
   <nav class="tabs" aria-label="Main">
@@ -572,182 +585,227 @@
 'use strict';
 var KEY = 'fairwayClub.prototype.v1';
 
-/* ---------- Sample data (all made up) ---------- */
-var PLAYERS = [
-  {id:'p1',  name:'Jake Morrison',  hcp:2.8},
-  {id:'p2',  name:'Mike Alvarez',   hcp:4.2},
-  {id:'p3',  name:'Sarah Kim',      hcp:6.1},
-  {id:'p4',  name:'Dana Brooks',    hcp:8.7},
-  {id:'p5',  name:'Grace Chen',     hcp:10.5},
-  {id:'p6',  name:'Raj Patel',      hcp:12.4},
-  {id:'p7',  name:'Priya Nair',     hcp:13.8},
-  {id:'p8',  name:"Tom O'Neill",    hcp:15.9},
-  {id:'p9',  name:'Hannah Lee',     hcp:16.6},
-  {id:'p10', name:'Luis Ortega',    hcp:18.3},
-  {id:'p11', name:'Ben Walker',     hcp:21.0},
-  {id:'p12', name:'Owen Fitzgerald',hcp:24.2}
-];
-var COURSES = [
-  {id:'c1', name:'Willow Creek GC',     par:72},
-  {id:'c2', name:'Pine Hollow Links',   par:71},
-  {id:'c3', name:'Cedar Ridge CC',      par:72},
-  {id:'c4', name:'Heron Bay Golf Club', par:70}
-];
+/* ---------- Data (no sample data: everything is entered by the user) ---------- */
+var DATA_VER = 2; // v2: sample data removed; player handicaps are COURSE handicaps (whole numbers, from GHIN)
+var COURSES = [ {id:'qcc', name:'Quidnessett CC', par:72} ];   // for tee times + posted scores (par 72 from every tee)
 var AV_COLORS = ['#1d6b4a','#2f7d8c','#7a5c2e','#4b6b2a','#8a3f3f','#3e5a8a','#6b4a86','#2a6b62','#9a6a12','#556270','#a0522d','#3b7a57'];
 
-function rng(seed){ return function(){ seed = (seed*1664525 + 1013904223) % 4294967296; return seed/4294967296; }; }
 function pad(n){ return (n<10?'0':'')+n; }
 function iso(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
 function addDays(d,n){ var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); x.setDate(x.getDate()+n); return x; }
 function parseISO(s){ var a=s.split('-'); return new Date(+a[0],+a[1]-1,+a[2]); }
 function uid(){ return Math.random().toString(36).slice(2,9); }
 
-function seed(){
-  var today = new Date();
-  var r = rng(20260404);
-  var tee = [
-    {id:'t1', date:iso(addDays(today,1)),  time:'07:30', course:'c1', cap:12},
-    {id:'t2', date:iso(addDays(today,4)),  time:'16:10', course:'c4', cap:4},
-    {id:'t3', date:iso(addDays(today,7)),  time:'08:00', course:'c2', cap:8},
-    {id:'t4', date:iso(addDays(today,11)), time:'17:20', course:'c3', cap:4},
-    {id:'t5', date:iso(addDays(today,14)), time:'07:45', course:'c1', cap:12}
-  ];
-  function slots(cap, ids){ var a=new Array(cap).fill(null); ids.forEach(function(id,i){ a[i]=id; }); return a; }
-  var signups = {
-    t1: slots(12,['p2','p6','p1','p9','p4','p11','p3','p8','p12','p5']),
-    t2: slots(4, ['p7','p10']),
-    t3: slots(8, ['p1','p3','p5','p10','p11']),
-    t4: slots(4, ['p2','p4','p6','p8']),
-    t5: slots(12,['p9','p12'])
-  };
-  // Past season rounds: ~2-6 per player, realistic scores around par + handicap
-  var rounds = [];
-  PLAYERS.forEach(function(p,i){
-    var n = 2 + Math.floor(r()*5);
-    for(var k=0;k<n;k++){
-      var c = COURSES[Math.floor(r()*COURSES.length)];
-      var noise = Math.round((r()+r()+r()-1.5)*5);
-      var gross = c.par + Math.round(p.hcp) + noise;
-      var d = addDays(today, -(3 + Math.floor(r()*150)));
-      rounds.push({id:uid(), pid:p.id, course:c.id, date:iso(d), gross:gross});
-    }
-  });
-  return {
-    v:1, me:'p6', teeTimes:tee, signups:signups, pairings:{}, rounds:rounds,
-    ui:{tab:'tee-times', pairTT:'t1', balance:true, lbMode:'net'}
-  };
+function emptyState(){
+  return { v:1, dv:DATA_VER, teeTimes:[], signups:{}, pairings:{}, rounds:[], friends:[], game:null,
+    ui:{tab:'games', pairTT:null, balance:true, lbMode:'net', gameView:'score'} };
+}
+/* One-time cleanup for phones that loaded the earlier prototype: remove ONLY the built-in sample data. */
+var SAMPLE_FRIEND_IDS = {f1:1, f2:1, f3:1, f4:1};              // Marcus Bell, Elena Ruiz, Pete Daniels, Kofi Mensah
+function isSamplePlayerId(id){ return /^p([1-9]|1[0-2])$/.test(String(id)); }  // league players p1–p12
+function isSampleCourseId(id){ return /^c[1-4]$/.test(String(id)); }           // made-up courses c1–c4
+function isSampleKey(k){ return !k || k.indexOf('L:')===0 || (k.indexOf('F:')===0 && SAMPLE_FRIEND_IDS[k.slice(2)]); }
+function migrate(s){
+  if(!s || s.v!==1) return emptyState();
+  if(s.dv===DATA_VER) return s;
+  var gone={};
+  s.teeTimes=(s.teeTimes||[]).filter(function(t){ if(isSampleCourseId(t.course)){ gone[t.id]=1; return false; } return true; });
+  s.signups=s.signups||{}; s.pairings=s.pairings||{};
+  Object.keys(s.signups).forEach(function(id){ if(gone[id]) delete s.signups[id]; else s.signups[id]=s.signups[id].map(function(p){ return p && !isSamplePlayerId(p) && !SAMPLE_FRIEND_IDS[p] ? p : null; }); });
+  Object.keys(s.pairings).forEach(function(id){ if(gone[id]) delete s.pairings[id]; });
+  s.rounds=(s.rounds||[]).filter(function(r){ return !isSamplePlayerId(r.pid) && !isSampleCourseId(r.course); });
+  s.friends=(s.friends||[]).filter(function(f){ return !SAMPLE_FRIEND_IDS[f.id]; });
+  // friends the user added themselves are kept; their old "handicap index" becomes a course-handicap placeholder to re-check
+  s.friends.forEach(function(f){ if(f.hcp!=='' && f.hcp!=null && !isNaN(+f.hcp)){ f.hcp=Math.round(+f.hcp); f.chCheck=true; } else f.hcp=''; });
+  if(s.game && (s.game.players||[]).some(function(p){ return isSampleKey(p.key); }) || (s.game && /^gc\d/.test(s.game.course))) s.game=null;
+  if(s.gameSetup){ s.gameSetup.keys=(s.gameSetup.keys||[]).map(function(k){ return isSampleKey(k)?null:k; }); while(s.gameSetup.keys.length<4) s.gameSetup.keys.push(null); }
+  delete s.me;
+  s.ui=s.ui||{}; if(s.ui.pairTT && gone[s.ui.pairTT]) s.ui.pairTT=null;
+  s.dv=DATA_VER;
+  return s;
 }
 
 var state;
 try { state = JSON.parse(localStorage.getItem(KEY)); } catch(e){ state = null; }
-if(!state || state.v!==1) state = seed();
+state = migrate(state);
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
 
 /* ---------- Helpers ---------- */
 var $ = function(s){ return document.querySelector(s); };
 function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
-function player(id){ for(var i=0;i<PLAYERS.length;i++) if(PLAYERS[i].id===id) return PLAYERS[i]; return null; }
-function course(id){ for(var i=0;i<COURSES.length;i++) if(COURSES[i].id===id) return COURSES[i]; return null; }
-function initials(n){ return n.split(/\s+/).map(function(w){return w[0];}).join('').slice(0,2).toUpperCase(); }
-function avColor(id){ return AV_COLORS[(parseInt(id.slice(1),10)-1) % AV_COLORS.length]; }
-function avatar(id,cls){ var p=player(id); return '<span class="av '+(cls||'')+'" style="background:'+avColor(id)+'">'+esc(initials(p.name))+'</span>'; }
+function player(id){ var fs=state.friends||[]; for(var i=0;i<fs.length;i++) if(fs[i].id===id) return fs[i]; return null; }
+function course(id){ for(var i=0;i<COURSES.length;i++) if(COURSES[i].id===id) return COURSES[i]; return COURSES[0]; }
+function initials(n){ return String(n).trim().split(/\s+/).map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase(); }
+function avColor(id){ return colorForKey('F:'+id); }
+function avatar(id,cls){ var p=player(id)||{name:'?'}; return '<span class="av '+(cls||'')+'" style="background:'+avColor(id)+'">'+esc(initials(p.name))+'</span>'; }
+/* Course handicap: whole number from GHIN; plus handicaps stored as negatives (+2 -> -2). */
+function chNum(p){ return (!p || p.hcp==='' || p.hcp==null || isNaN(+p.hcp)) ? 0 : +p.hcp; }
+function fmtCH(v){ if(v==='' || v==null || isNaN(+v)) return '—'; v=+v; return v<0 ? '+'+(-v) : String(v); }
+function parseCH(s){
+  s=String(s==null?'':s).replace(/\s+/g,'');
+  if(s==='') return {err:'Enter a course handicap (from GHIN).'};
+  var m=/^([+\-])?(\d{1,2})$/.exec(s);
+  if(!m) return {err: /[.,]/.test(s) ? 'Use the whole-number course handicap from GHIN (not the decimal index).' : 'Course handicap must be a whole number, e.g. 12 (or +2 for a plus handicap).'};
+  var n=+m[2];
+  if(m[1]){ if(n>10) return {err:'Plus handicaps go up to +10.'}; return {v: n===0?0:-n}; }
+  if(n>72) return {err:'Course handicap must be 72 or less.'};
+  return {v:n};
+}
+function findPlayerByName(name){ var n=String(name).trim().toLowerCase(); return (state.friends||[]).filter(function(f){ return f.name.trim().toLowerCase()===n; })[0]||null; }
+function addOrUpdatePlayer(name, ch){
+  var f=findPlayerByName(name);
+  if(f){ f.hcp=ch; delete f.chCheck; return {f:f, existed:true}; }
+  f={id:'f'+uid(), name:String(name).trim(), hcp:ch, ghin:'', phone:'', email:''};
+  state.friends.push(f); return {f:f, existed:false};
+}
+function sortedPlayers(){ return (state.friends||[]).slice().sort(function(a,b){ return a.name.localeCompare(b.name); }); }
 function first(n){ return n.split(' ')[0]; }
 function fmtTime(t,addMin){ var a=t.split(':'), m=(+a[0])*60+(+a[1])+(addMin||0); var h=Math.floor(m/60)%24, mm=m%60; var ap=h>=12?'PM':'AM'; var hh=h%12||12; return hh+':'+pad(mm)+' '+ap; }
 function fmtDate(s,opts){ return parseISO(s).toLocaleDateString('en-US',opts||{weekday:'short',month:'short',day:'numeric'}); }
 function fmtPar(n){ if(Math.abs(n)<0.05) return 'E'; return (n>0?'+':'')+(Math.round(n*10)/10).toFixed(1).replace('.0',''); }
 function fmtParDec(n){ if(Math.abs(n)<0.05) return 'E'; return (n>0?'+':'−')+Math.abs(n).toFixed(1); }
-function signed(tt){ return (state.signups[tt.id]||[]).filter(Boolean); }
+function signed(tt){ return tt ? (state.signups[tt.id]||[]).filter(function(id){ return id && player(id); }) : []; }
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 function mean(a){ return a.length? a.reduce(function(s,x){return s+x;},0)/a.length : 0; }
 var toastTimer;
 function toast(msg){ var t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('show');},2200); }
 
-/* ---------- Me selector ---------- */
-function renderMe(){
-  var sel=$('#meSel');
-  sel.innerHTML = PLAYERS.map(function(p){ return '<option value="'+p.id+'">'+esc(p.name)+'</option>'; }).join('');
-  sel.value = state.me;
-  var p=player(state.me);
-  var av=$('#meAv'); av.textContent=initials(p.name); av.style.background=avColor(p.id);
+/* ---------- Shared: quick "add player" (name + course handicap) ---------- */
+function quickAddHtml(px, btnLabel){
+  return '<div class="qa" id="'+px+'Box">'+
+    '<div class="fgrid">'+
+      '<div class="full"><label class="fl" for="'+px+'Name">Name</label><input class="in" id="'+px+'Name" placeholder="e.g. Chris Taylor" autocomplete="off" autocapitalize="words" enterkeyhint="next"></div>'+
+      '<div><label class="fl" for="'+px+'Ch">Course handicap (from GHIN)</label><input class="in" id="'+px+'Ch" inputmode="tel" autocomplete="off" placeholder="e.g. 12 or +2" enterkeyhint="done"></div>'+
+      '<div style="display:flex;align-items:flex-end"><button type="button" class="btn block" id="'+px+'Add" data-act="'+px+'Add">'+(btnLabel||'+ Add player')+'</button></div>'+
+    '</div>'+
+    '<div class="err" id="'+px+'Err" style="margin-top:6px"></div>'+
+  '</div>';
 }
-$('#meSel').addEventListener('change',function(e){ state.me=e.target.value; save(); renderAll(); toast('Now playing as '+player(state.me).name); });
+/* returns the saved player record, or null (and shows the error) */
+function readQuickAdd(px){
+  var name=($('#'+px+'Name').value||'').trim(), r=parseCH($('#'+px+'Ch').value), err=$('#'+px+'Err');
+  if(!name){ err.textContent='Enter a name.'; $('#'+px+'Name').focus(); return null; }
+  if(r.err){ err.textContent=r.err; $('#'+px+'Ch').focus(); return null; }
+  err.textContent='';
+  var res=addOrUpdatePlayer(name, r.v); save();
+  toast(res.existed ? 'Updated '+res.f.name+' · CH '+fmtCH(r.v) : 'Saved '+res.f.name+' · CH '+fmtCH(r.v));
+  return res.f;
+}
+function bindQuickAddEnter(px, fn){
+  var n=$('#'+px+'Name'), c=$('#'+px+'Ch'); if(!n||!c) return;
+  n.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); c.focus(); } });
+  c.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); fn(); } });
+}
 
 /* ---------- Tee Times ---------- */
+function ttSorted(){ return state.teeTimes.slice().sort(function(a,b){ return (a.date+a.time).localeCompare(b.date+b.time); }); }
+function ttById(id){ return state.teeTimes.filter(function(x){return x.id===id;})[0]||null; }
 function renderTeeTimes(){
-  var list = state.teeTimes.slice().sort(function(a,b){ return (a.date+a.time).localeCompare(b.date+b.time); });
-  var mine = list.filter(function(t){ return signed(t).indexOf(state.me)>=0; }).length;
-  $('#ttSub').innerHTML = 'Tap an open slot to join, tap yours to leave · <b style="color:var(--g700)">You\'re in '+mine+' of '+list.length+'</b>';
+  var list = ttSorted();
+  $('#ttSub').textContent = list.length ? 'Tap an open slot to add a player · tap a name to remove' : 'Plan your next round';
+  if(!list.length){
+    $('#ttList').innerHTML = '<div class="card empty"><div class="big">📅</div><b>No tee times yet</b><br>Add your next tee time, then fill the slots with your players.<br><br><button class="btn" data-act="addtt">+ Add tee time</button></div>';
+    return;
+  }
   $('#ttList').innerHTML = list.map(function(t){
-    var s = state.signups[t.id], n = signed(t).length, c = course(t.course), d = parseISO(t.date);
-    var inIt = s.indexOf(state.me)>=0, full = n>=t.cap;
-    var chip = inIt ? '<span class="chip mine">✓ You\'re in</span>' : full ? '<span class="chip full">Full</span>' : '<span class="chip">'+(t.cap-n)+' open</span>';
+    var s = state.signups[t.id] || (state.signups[t.id]=new Array(t.cap).fill(null)), n = signed(t).length, c = course(t.course), d = parseISO(t.date);
+    var full = n>=t.cap;
+    var chip = full ? '<span class="chip full">Full</span>' : '<span class="chip">'+(t.cap-n)+' open</span>';
     var slotsHtml = '';
     s.forEach(function(pid,i){
       if(t.cap>4 && i%4===0) slotsHtml += '<div class="groupsep">Group '+(i/4+1)+' · '+fmtTime(t.time,(i/4)*10)+'</div>';
-      if(pid){
-        var p=player(pid), me = pid===state.me;
-        slotsHtml += '<button class="slot taken'+(me?' me':'')+'" data-tt="'+t.id+'" data-i="'+i+'" title="'+esc(p.name)+' ('+p.hcp.toFixed(1)+')'+(me?' — tap to leave':'')+'">'+avatar(pid)+'<span class="nm">'+(me?'You':esc(first(p.name)))+'</span></button>';
-      } else {
-        slotsHtml += '<button class="slot" data-tt="'+t.id+'" data-i="'+i+'" title="Join this slot"'+(inIt?' aria-label="Open slot"':'')+'><span class="plus">+</span>'+(inIt?'Open':'Join')+'</button>';
-      }
+      var p = pid && player(pid);
+      if(p) slotsHtml += '<button class="slot taken" data-tt="'+t.id+'" data-i="'+i+'" title="'+esc(p.name)+' (CH '+fmtCH(p.hcp)+') — tap to remove">'+avatar(pid)+'<span class="nm">'+esc(first(p.name))+'</span></button>';
+      else slotsHtml += '<button class="slot" data-tt="'+t.id+'" data-i="'+i+'" title="Add a player to this slot"><span class="plus">+</span>Add</button>';
     });
     return '<div class="card tt">'+
       '<div class="tt-head">'+
         '<div class="datebadge"><div class="dow">'+d.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase()+'</div><div class="day">'+d.getDate()+'</div><div class="mon">'+d.toLocaleDateString('en-US',{month:'short'})+'</div></div>'+
         '<div class="tt-info"><h3>'+esc(c.name)+'</h3>'+
-          '<div class="tt-meta"><span>🕒 '+fmtTime(t.time)+(t.cap>4?' · groups every 10 min':'')+'</span><span>⛳ Par '+c.par+'</span><span>👥 '+n+'/'+t.cap+' slots</span></div></div>'+
+          '<div class="tt-meta"><span>🕒 '+fmtTime(t.time)+(t.cap>4?' · groups every 10 min':'')+'</span><span>⛳ Par '+c.par+'</span><span>👥 '+n+'/'+t.cap+' players</span></div></div>'+
         chip+
       '</div>'+
       '<div class="bar"><i style="width:'+(n/t.cap*100)+'%"></i></div>'+
       '<div class="slots">'+slotsHtml+'</div>'+
       '<div class="tt-actions">'+
-        (inIt ? '<button class="btn danger" data-act="leave" data-tt="'+t.id+'">Leave tee time</button>'
-              : '<button class="btn" data-act="join" data-tt="'+t.id+'"'+(full?' disabled':'')+'>'+(full?'Tee time full':'Join tee time')+'</button>')+
-        '<button class="btn ghost" data-act="pair" data-tt="'+t.id+'" style="flex:0 0 auto">Pairings →</button>'+
+        '<button class="btn" data-act="togame" data-tt="'+t.id+'"'+(n<2?' disabled':'')+'>Set up game →</button>'+
+        '<button class="btn ghost" data-act="pair" data-tt="'+t.id+'" style="flex:0 0 auto">Pairings</button>'+
+        '<button class="btn ghost" data-act="deltt" data-tt="'+t.id+'" style="flex:0 0 auto" aria-label="Delete tee time">🗑</button>'+
       '</div>'+
     '</div>';
   }).join('');
 }
-function joinTT(ttId, idx){
-  var t = state.teeTimes.filter(function(x){return x.id===ttId;})[0], s = state.signups[ttId];
-  var cur = s.indexOf(state.me);
-  if(idx==null){ idx = s.indexOf(null); if(idx<0){ toast('Sorry, that tee time is full'); return; } }
-  if(s[idx]) return;
-  if(cur>=0){ s[cur]=null; s[idx]=state.me; save(); renderAll(); toast('Moved to slot '+(idx+1)); return; }
-  s[idx]=state.me; save(); renderAll();
-  toast('You\'re in! '+fmtDate(t.date)+' · '+fmtTime(t.time));
+function ttForm(){
+  openSheet('<h3>Add tee time</h3>'+
+    '<form id="ttForm" class="fgrid" novalidate>'+
+      '<div><label class="fl" for="ttDate">Date</label><input class="in" type="date" id="ttDate" value="'+iso(addDays(new Date(),1))+'"></div>'+
+      '<div><label class="fl" for="ttTime">Time</label><input class="in" type="time" id="ttTime" value="08:00"></div>'+
+      '<div class="full"><label class="fl" for="ttCourse">Course</label><select class="in" id="ttCourse">'+COURSES.map(function(c){ return '<option value="'+c.id+'">'+esc(c.name)+' · Par '+c.par+'</option>'; }).join('')+'</select></div>'+
+      '<div class="full"><label class="fl" for="ttCap">Players</label><select class="in" id="ttCap"><option value="4">4 · one group</option><option value="8">8 · two groups</option><option value="12">12 · three groups</option></select></div>'+
+      '<div class="full err" id="ttErr"></div>'+
+      '<div class="sheet-actions full"><button type="button" class="btn ghost" data-close>Cancel</button><button type="submit" class="btn" id="ttSave">Add tee time</button></div>'+
+    '</form>');
+  $('#ttForm').onsubmit=function(e){
+    e.preventDefault();
+    var date=$('#ttDate').value, time=$('#ttTime').value, cap=+$('#ttCap').value;
+    if(!date){ $('#ttErr').textContent='Choose a date.'; return; }
+    if(!/^\d{2}:\d{2}$/.test(time)){ $('#ttErr').textContent='Choose a time.'; return; }
+    var t={id:'t'+uid(), date:date, time:time, course:$('#ttCourse').value, cap:cap};
+    state.teeTimes.push(t); state.signups[t.id]=new Array(cap).fill(null); state.ui.pairTT=t.id;
+    save(); closeSheet(); renderTeeTimes(); toast('Tee time added · '+fmtDate(date)+' '+fmtTime(time));
+  };
 }
-function leaveTT(ttId){
-  var s = state.signups[ttId], i = s.indexOf(state.me);
-  if(i>=0){ s[i]=null; save(); renderAll(); toast('You left this tee time'); }
+function slotPicker(ttId, idx){
+  var s=state.signups[ttId], avail=sortedPlayers().filter(function(f){ return s.indexOf(f.id)<0; });
+  openSheet('<h3>Add a player</h3><p>Slot '+(idx+1)+' · tap a saved player or add someone new.</p>'+
+    (avail.length ? '<div class="pick">'+avail.map(function(f){ return '<button class="pickbtn" data-pick="'+f.id+'">'+avatar(f.id)+'<span>'+esc(f.name)+'</span><small>CH '+fmtCH(f.hcp)+'</small></button>'; }).join('')+'</div>'
+                  : '<div class="info">'+(state.friends.length?'Everyone you’ve saved is already in this tee time.':'No saved players yet — add your first one below.')+'</div>')+
+    '<div class="sec-t" style="margin-top:12px">New player</div>'+quickAddHtml('qt','Add to slot')+
+    '<div class="sheet-actions"><button class="btn ghost full" data-close>Close</button></div>');
+  function put(id){ s[idx]=id; save(); closeSheet(); renderTeeTimes(); var p=player(id); toast(p.name+' added to slot '+(idx+1)); }
+  [].forEach.call(document.querySelectorAll('#sheet [data-pick]'),function(b){ b.onclick=function(){ put(b.getAttribute('data-pick')); }; });
+  function add(){ var f=readQuickAdd('qt'); if(!f) return; if(s.indexOf(f.id)>=0){ $('#qtErr').textContent=f.name+' is already in this tee time.'; return; } put(f.id); renderFriends(); }
+  $('#qtAdd').onclick=add; bindQuickAddEnter('qt', add);
 }
 $('#ttList').addEventListener('click',function(e){
   var b = e.target.closest('button'); if(!b) return;
   var tt = b.getAttribute('data-tt');
   if(b.classList.contains('slot')){
-    var i = +b.getAttribute('data-i'), pid = state.signups[tt][i];
-    if(!pid) joinTT(tt,i);
-    else if(pid===state.me) leaveTT(tt);
-    else { var p=player(pid); toast(p.name+' (hcp '+p.hcp.toFixed(1)+') has this slot'); }
+    var i = +b.getAttribute('data-i'), pid = state.signups[tt][i], p = pid && player(pid);
+    if(!p){ slotPicker(tt,i); return; }
+    openSheet('<h3>Remove '+esc(p.name)+'?</h3><p>They’ll be taken out of this tee time (they stay in your saved players).</p><div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn danger" id="slotRm">Remove</button></div>');
+    $('#slotRm').onclick=function(){ state.signups[tt][i]=null; save(); closeSheet(); renderTeeTimes(); toast(p.name+' removed'); };
     return;
   }
   var act = b.getAttribute('data-act');
-  if(act==='join') joinTT(tt);
-  else if(act==='leave') leaveTT(tt);
+  if(act==='addtt') ttForm();
   else if(act==='pair'){ state.ui.pairTT=tt; save(); go('pairings'); }
+  else if(act==='togame'){
+    var ids=signed(ttById(tt));
+    if(state.game){ toast('A round is in progress — finish or start a new round first'); go('games'); return; }
+    var su=state.gameSetup; su.mode=ids.length>=4?'teams':'singles';
+    su.keys=[0,1,2,3].map(function(j){ return ids[j]?'F:'+ids[j]:null; });
+    save(); go('games'); toast(ids.length>4?'First 4 players added — adjust teams below':'Players added — check teams below');
+  }
+  else if(act==='deltt'){
+    var t=ttById(tt);
+    openSheet('<h3>Delete this tee time?</h3><p>'+fmtDate(t.date)+' · '+fmtTime(t.time)+' · '+esc(course(t.course).name)+'. Players stay saved.</p><div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn danger" id="ttDelYes">Delete</button></div>');
+    $('#ttDelYes').onclick=function(){ state.teeTimes=state.teeTimes.filter(function(x){return x.id!==tt;}); delete state.signups[tt]; delete state.pairings[tt]; save(); closeSheet(); renderTeeTimes(); toast('Tee time deleted'); };
+  }
 });
+$('#addTTBtn').addEventListener('click',ttForm);
 
 /* ---------- Pairings ---------- */
 function groupSizes(n){ if(!n) return []; var g=Math.ceil(n/4), base=Math.floor(n/g), extra=n%g, a=[]; for(var i=0;i<g;i++) a.push(base+(i<extra?1:0)); return a; }
-function spreadOf(groups){ var avgs=groups.map(function(g){ return mean(g.map(function(id){return player(id).hcp;})); }); return Math.max.apply(null,avgs)-Math.min.apply(null,avgs); }
+function hc(id){ return chNum(player(id)); }
+function spreadOf(groups){ var avgs=groups.map(function(g){ return mean(g.map(hc)); }); return Math.max.apply(null,avgs)-Math.min.apply(null,avgs); }
 function makeGroups(ids, balance){
   var sizes = groupSizes(ids.length), groups = sizes.map(function(){return [];});
   if(!balance){
     var sh = shuffle(ids.slice()), k=0;
     sizes.forEach(function(sz,gi){ groups[gi]=sh.slice(k,k+sz); k+=sz; });
   } else {
-    // 1) snake draft by handicap, with randomized order inside each tier
-    var sorted = ids.slice().sort(function(a,b){ return player(a).hcp-player(b).hcp; });
+    var sorted = ids.slice().sort(function(a,b){ return hc(a)-hc(b); });
     var g = sizes.length, order = [], tiers=[];
     for(var i=0;i<sorted.length;i+=g) tiers.push(shuffle(sorted.slice(i,i+g)));
     tiers.forEach(function(t){ order = order.concat(t); });
@@ -758,8 +816,7 @@ function makeGroups(ids, balance){
       groups[groupOrder[gi]].push(id);
       gi+=dir; if(gi>=g){gi=g-1;dir=-1;} if(gi<0){gi=0;dir=1;}
     });
-    // 2) random-swap hill climb to minimise variance of group average handicap
-    function cost(gs){ var avgs=gs.map(function(x){return mean(x.map(function(id){return player(id).hcp;}));}), m=mean(avgs); return avgs.reduce(function(s,a){return s+(a-m)*(a-m);},0); }
+    function cost(gs){ var avgs=gs.map(function(x){return mean(x.map(hc));}), m=mean(avgs); return avgs.reduce(function(s,a){return s+(a-m)*(a-m);},0); }
     if(g>1){
       var best=cost(groups);
       for(var it=0; it<1500; it++){
@@ -771,65 +828,71 @@ function makeGroups(ids, balance){
       }
     }
   }
-  groups.forEach(function(gr){ gr.sort(function(a,b){ return player(a).hcp-player(b).hcp; }); });
+  groups.forEach(function(gr){ gr.sort(function(a,b){ return hc(a)-hc(b); }); });
   return groups;
 }
 function sameSet(a,b){ if(a.length!==b.length) return false; var s={}; a.forEach(function(x){s[x]=1;}); return b.every(function(x){return s[x];}); }
 function generate(ttId, silent){
-  var t = state.teeTimes.filter(function(x){return x.id===ttId;})[0];
+  var t = ttById(ttId); if(!t){ if(!silent) toast('Add a tee time first'); return; }
   var ids = signed(t);
   state.pairings[ttId] = {groups:makeGroups(ids, state.ui.balance), balanced:state.ui.balance, at:Date.now()};
   save(); renderPairings();
-  if(!silent) toast(ids.length ? 'Shuffled '+ids.length+' players into '+state.pairings[ttId].groups.length+' group'+(state.pairings[ttId].groups.length>1?'s':'')+(state.ui.balance?' (balanced)':'') : 'No one has signed up yet');
+  if(!silent) toast(ids.length ? 'Shuffled '+ids.length+' players into '+state.pairings[ttId].groups.length+' group'+(state.pairings[ttId].groups.length>1?'s':'')+(state.ui.balance?' (balanced)':'') : 'No players in this tee time yet');
 }
 function renderPairings(){
-  var sel=$('#pairTT');
-  var list = state.teeTimes.slice().sort(function(a,b){ return (a.date+a.time).localeCompare(b.date+b.time); });
-  sel.innerHTML = list.map(function(t){ return '<option value="'+t.id+'">'+fmtDate(t.date)+' · '+fmtTime(t.time)+' · '+esc(course(t.course).name)+' ('+signed(t).length+')</option>'; }).join('');
-  if(!state.teeTimes.some(function(t){return t.id===state.ui.pairTT;})) state.ui.pairTT=list[0].id;
-  sel.value = state.ui.pairTT;
+  var sel=$('#pairTT'), out=$('#pairOut'), list=ttSorted();
   $('#balance').checked = !!state.ui.balance;
-  var t = list.filter(function(x){return x.id===state.ui.pairTT;})[0], ids = signed(t), pr = state.pairings[t.id];
-  if(!pr && ids.length){ state.pairings[t.id] = pr = {groups:makeGroups(ids,state.ui.balance), balanced:state.ui.balance, at:Date.now()}; save(); }
-  var out = $('#pairOut');
-  if(!ids.length){ out.innerHTML = '<div class="card empty"><div class="big">🏌️</div>No players signed up for this tee time yet.<br><br><button class="btn" id="goTT">Go to Tee Times</button></div>'; $('#goTT').onclick=function(){go('tee-times');}; return; }
-  var flat = pr ? [].concat.apply([],pr.groups) : [];
-  var stale = !pr || !sameSet(flat, ids);
+  if(!list.length){
+    $('#pairCtl').style.display='none'; sel.innerHTML='';
+    out.innerHTML='<div class="card empty"><div class="big">🏌️</div><b>No tee times yet</b><br>Create a tee time and add players — then come back here to split them into balanced groups.<br><br><button class="btn" id="goTT">Go to Tee Times</button></div>';
+    $('#goTT').onclick=function(){ go('tee-times'); }; return;
+  }
+  $('#pairCtl').style.display='';
+  sel.innerHTML = list.map(function(t){ return '<option value="'+t.id+'">'+fmtDate(t.date)+' · '+fmtTime(t.time)+' · '+esc(course(t.course).name)+' ('+signed(t).length+')</option>'; }).join('');
+  if(!ttById(state.ui.pairTT)) state.ui.pairTT=list[0].id;
+  sel.value = state.ui.pairTT;
+  var t = ttById(state.ui.pairTT), ids = signed(t), pr = state.pairings[t.id];
+  if(!ids.length){ out.innerHTML = '<div class="card empty"><div class="big">🏌️</div>No players in this tee time yet.<br>Add players to its slots on the Tee Times tab.<br><br><button class="btn" id="goTT">Go to Tee Times</button></div>'; $('#goTT').onclick=function(){go('tee-times');}; return; }
+  if(!pr){ state.pairings[t.id] = pr = {groups:makeGroups(ids,state.ui.balance), balanced:state.ui.balance, at:Date.now()}; save(); }
+  pr.groups = pr.groups.map(function(g){ return g.filter(function(id){ return player(id); }); }).filter(function(g){ return g.length; });
+  var flat = [].concat.apply([],pr.groups);
+  var stale = !sameSet(flat, ids);
   var c = course(t.course);
   var html = '<div class="summary">'+
     '<div class="stat"><div class="k">Players</div><div class="v">'+ids.length+'</div></div>'+
-    '<div class="stat"><div class="k">Groups</div><div class="v">'+(pr?pr.groups.length:0)+'</div></div>'+
-    '<div class="stat"><div class="k">Hcp spread</div><div class="v">'+(pr&&pr.groups.length>1?spreadOf(pr.groups).toFixed(1):'—')+'</div></div>'+
+    '<div class="stat"><div class="k">Groups</div><div class="v">'+pr.groups.length+'</div></div>'+
+    '<div class="stat"><div class="k">CH spread</div><div class="v">'+(pr.groups.length>1?spreadOf(pr.groups).toFixed(1):'—')+'</div></div>'+
   '</div>';
-  if(stale) html += '<div class="card" style="display:flex;align-items:center;gap:10px;background:#fffaf0;border-color:#f3e2b3"><span class="chip warn">Out of date</span><span style="flex:1;font-size:13px">Sign-ups changed since these pairings were made.</span><button class="btn" id="regen" style="padding:8px 12px">Regenerate</button></div>';
+  if(stale) html += '<div class="card" style="display:flex;align-items:center;gap:10px;background:#fffaf0;border-color:#f3e2b3"><span class="chip warn">Out of date</span><span style="flex:1;font-size:13px">Players changed since these pairings were made.</span><button class="btn" id="regen" style="padding:8px 12px">Regenerate</button></div>';
   html += '<div class="muted" style="font-size:12.5px;margin:0 2px 8px;display:flex;justify-content:space-between"><span>'+esc(c.name)+' · '+fmtDate(t.date,{weekday:'long',month:'short',day:'numeric'})+'</span><span>'+(pr.balanced?'⚖️ Balanced':'🎲 Random')+'</span></div>';
   pr.groups.forEach(function(g,i){
-    var avg = mean(g.map(function(id){return player(id).hcp;}));
+    var avg = mean(g.map(hc));
     html += '<div class="card group">'+
       '<div class="group-h"><h4><span class="num">'+(i+1)+'</span>'+(g.length===4?'Foursome':g.length===3?'Threesome':g.length===2?'Twosome':'Single')+'</h4><span class="gt">🕒 '+fmtTime(t.time,i*10)+'</span></div>'+
-      '<ul class="plist">'+g.map(function(id){ var p=player(id); return '<li>'+avatar(id)+'<span class="pn">'+esc(p.name)+(id===state.me?'<span class="you">YOU</span>':'')+'</span><span class="hcp">'+p.hcp.toFixed(1)+'</span></li>'; }).join('')+'</ul>'+
-      '<div class="group-f"><span>Avg hcp <b>'+avg.toFixed(1)+'</b></span><span>Team total <b>'+g.reduce(function(s,id){return s+player(id).hcp;},0).toFixed(1)+'</b></span></div>'+
+      '<ul class="plist">'+g.map(function(id){ var p=player(id); return '<li>'+avatar(id)+'<span class="pn">'+esc(p.name)+'</span><span class="hcp">'+fmtCH(p.hcp)+'</span></li>'; }).join('')+'</ul>'+
+      '<div class="group-f"><span>Avg CH <b>'+avg.toFixed(1)+'</b></span><span>Total <b>'+g.reduce(function(s,id){return s+hc(id);},0)+'</b></span></div>'+
     '</div>';
   });
   out.innerHTML = html;
   var rg=$('#regen'); if(rg) rg.onclick=function(){ generate(t.id); };
 }
 $('#pairTT').addEventListener('change',function(e){ state.ui.pairTT=e.target.value; save(); renderPairings(); });
-$('#balance').addEventListener('change',function(e){ state.ui.balance=e.target.checked; save(); generate(state.ui.pairTT, true); toast(state.ui.balance?'Balancing groups by handicap':'Random groups (no balancing)'); });
+$('#balance').addEventListener('change',function(e){ state.ui.balance=e.target.checked; save(); if(ttById(state.ui.pairTT)) generate(state.ui.pairTT, true); toast(state.ui.balance?'Balancing groups by course handicap':'Random groups (no balancing)'); });
 $('#shuffleBtn').addEventListener('click',function(){ generate(state.ui.pairTT); });
 $('#copyBtn').addEventListener('click',function(){
-  var t = state.teeTimes.filter(function(x){return x.id===state.ui.pairTT;})[0], pr=state.pairings[t.id];
+  var t = ttById(state.ui.pairTT), pr=t&&state.pairings[t.id];
   if(!pr||!pr.groups.length){ toast('Nothing to copy yet'); return; }
-  var txt = course(t.course).name+' — '+fmtDate(t.date)+'\n'+pr.groups.map(function(g,i){ return 'Group '+(i+1)+' ('+fmtTime(t.time,i*10)+'): '+g.map(function(id){var p=player(id);return p.name+' ('+p.hcp.toFixed(1)+')';}).join(', '); }).join('\n');
-  function fallback(){ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); toast('Pairings copied to clipboard');}catch(e){ toast('Copy not supported here'); } ta.remove(); }
-  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(function(){toast('Pairings copied to clipboard');},fallback); } else fallback();
+  var txt = course(t.course).name+' — '+fmtDate(t.date)+'\n'+pr.groups.map(function(g,i){ return 'Group '+(i+1)+' ('+fmtTime(t.time,i*10)+'): '+g.map(function(id){var p=player(id);return p.name+' (CH '+fmtCH(p.hcp)+')';}).join(', '); }).join('\n');
+  copyText(txt,'Pairings copied to clipboard');
 });
 
 /* ---------- Leaderboard ---------- */
+function liveRounds(){ return state.rounds.filter(function(r){ return player(r.pid); }); }
 function standings(mode){
-  return PLAYERS.map(function(p){
-    var rs = state.rounds.filter(function(r){return r.pid===p.id;});
-    var scores = rs.map(function(r){ return mode==='net' ? r.gross - Math.round(p.hcp) : r.gross; });
+  var rounds=liveRounds();
+  return sortedPlayers().map(function(p){
+    var rs = rounds.filter(function(r){return r.pid===p.id;});
+    var scores = rs.map(function(r){ return mode==='net' ? r.gross - chNum(p) : r.gross; });
     var toPar = rs.map(function(r,i){ return scores[i] - course(r.course).par; });
     return {p:p, n:rs.length, avg: rs.length?mean(scores):null, toPar: rs.length?mean(toPar):null, best: rs.length?Math.min.apply(null,scores):null};
   }).sort(function(a,b){
@@ -842,32 +905,37 @@ var flashPid = null;
 function renderLeaderboard(){
   var mode = state.ui.lbMode;
   [].forEach.call(document.querySelectorAll('#lbSeg button'),function(b){ b.classList.toggle('on', b.getAttribute('data-mode')===mode); b.setAttribute('aria-selected', b.getAttribute('data-mode')===mode); });
-  var st = standings(mode);
-  var low = null; state.rounds.forEach(function(r){ var s = mode==='net'? r.gross-Math.round(player(r.pid).hcp) : r.gross; var tp = s-course(r.course).par; if(!low||tp<low.tp) low={tp:tp,s:s,r:r}; });
+  var st = standings(mode), rounds=liveRounds();
+  var low = null; rounds.forEach(function(r){ var s = mode==='net'? r.gross-chNum(player(r.pid)) : r.gross; var tp = s-course(r.course).par; if(!low||tp<low.tp) low={tp:tp,s:s,r:r}; });
   $('#lbSummary').innerHTML =
-    '<div class="stat"><div class="k">Rounds</div><div class="v">'+state.rounds.length+'</div></div>'+
+    '<div class="stat"><div class="k">Rounds</div><div class="v">'+rounds.length+'</div></div>'+
     '<div class="stat"><div class="k">Leader</div><div class="v" style="font-size:15px;padding-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(st[0]&&st[0].n?esc(first(st[0].p.name))+' '+fmtParDec(st[0].toPar):'—')+'</div></div>'+
     '<div class="stat"><div class="k">Low '+(mode==='net'?'net':'gross')+'</div><div class="v" style="font-size:15px;padding-top:3px">'+(low?fmtParDec(low.tp).replace('.0','')+' <span class="muted" style="font-size:12px">'+esc(first(player(low.r.pid).name))+'</span>':'—')+'</div></div>';
-  var rank=0, prev=null, shown=0;
-  var rows = st.map(function(s,i){
-    var rk='';
-    if(s.n){ shown++; if(prev===null || Math.abs(s.toPar-prev)>1e-9) rank=shown; prev=s.toPar; rk = rank<=3 ? '<span class="rk m'+rank+'">'+rank+'</span>' : '<span class="rk">'+rank+'</span>'; }
-    else rk='<span class="rk muted">–</span>';
-    var cls = 'lb-row'+(s.p.id===state.me?' me':'')+(s.p.id===flashPid?' flash':'')+(s.n?'':' dim');
-    return '<div class="'+cls+'" data-pid="'+s.p.id+'">'+ rk +
-      '<div class="lb-p">'+avatar(s.p.id)+'<div class="t"><b>'+esc(s.p.name)+(s.p.id===state.me?' <span class="you" style="font-size:10px;color:var(--g700)">(you)</span>':'')+'</b><small>Hcp '+s.p.hcp.toFixed(1)+(s.n?' · Best '+s.best:' · No rounds yet')+'</small></div></div>'+
-      '<div class="num">'+s.n+'</div>'+
-      '<div class="num">'+(s.n?s.avg.toFixed(1):'—')+'</div>'+
-      '<div class="num topar'+(s.n&&s.toPar<0?' under':'')+'">'+(s.n?fmtParDec(s.toPar):'—')+'</div>'+
-    '</div>';
-  }).join('');
-  $('#lbTable').innerHTML = '<div class="lb-row head"><span style="text-align:center">#</span><span>Player</span><span class="num">Rds</span><span class="num">Avg</span><span class="num">Par</span></div>'+rows;
+  if(!st.length){
+    $('#lbTable').innerHTML='<div class="empty"><div class="big">🏆</div><b>No players yet</b><br>Add your players (Games or Friends tab), then post scores below to build the standings.</div>';
+  } else {
+    var rank=0, prev=null, shown=0;
+    var rows = st.map(function(s){
+      var rk='';
+      if(s.n){ shown++; if(prev===null || Math.abs(s.toPar-prev)>1e-9) rank=shown; prev=s.toPar; rk = rank<=3 ? '<span class="rk m'+rank+'">'+rank+'</span>' : '<span class="rk">'+rank+'</span>'; }
+      else rk='<span class="rk muted">–</span>';
+      var cls = 'lb-row'+(s.p.id===flashPid?' flash':'')+(s.n?'':' dim');
+      return '<div class="'+cls+'" data-pid="'+s.p.id+'">'+ rk +
+        '<div class="lb-p">'+avatar(s.p.id)+'<div class="t"><b>'+esc(s.p.name)+'</b><small>CH '+fmtCH(s.p.hcp)+(s.n?' · Best '+s.best:' · No rounds yet')+'</small></div></div>'+
+        '<div class="num">'+s.n+'</div>'+
+        '<div class="num">'+(s.n?s.avg.toFixed(1):'—')+'</div>'+
+        '<div class="num topar'+(s.n&&s.toPar<0?' under':'')+'">'+(s.n?fmtParDec(s.toPar):'—')+'</div>'+
+      '</div>';
+    }).join('');
+    $('#lbTable').innerHTML = '<div class="lb-row head"><span style="text-align:center">#</span><span>Player</span><span class="num">Rds</span><span class="num">Avg</span><span class="num">Par</span></div>'+rows;
+  }
   if(flashPid){ var pid=flashPid; flashPid=null; setTimeout(function(){ var el=document.querySelector('.lb-row[data-pid="'+pid+'"]'); if(el){ el.classList.remove('flash'); } },1400); }
+  refreshScoreForm();
   renderRecent();
 }
 function renderRecent(){
-  var rs = state.rounds.slice().sort(function(a,b){ return b.date.localeCompare(a.date) || (b.ts||0)-(a.ts||0); }).slice(0,6);
-  $('#recent').innerHTML = rs.length ? rs.map(function(r){ var p=player(r.pid), c=course(r.course), net=r.gross-Math.round(p.hcp);
+  var rs = liveRounds().sort(function(a,b){ return b.date.localeCompare(a.date) || (b.ts||0)-(a.ts||0); }).slice(0,6);
+  $('#recent').innerHTML = rs.length ? rs.map(function(r){ var p=player(r.pid), c=course(r.course), net=r.gross-chNum(p);
     return '<li>'+avatar(r.pid)+'<div style="flex:1;min-width:0"><b style="font-size:14px">'+esc(p.name)+'</b><div class="muted" style="font-size:12px">'+fmtDate(r.date)+' · '+esc(c.name)+'</div></div>'+
       '<div style="text-align:right"><span class="sc">'+r.gross+'</span><div class="muted" style="font-size:11.5px">net '+net+'</div></div><button class="x" data-rid="'+r.id+'" aria-label="Remove round">×</button></li>'; }).join('')
     : '<li class="muted">No rounds posted yet.</li>';
@@ -881,21 +949,27 @@ $('#recent').addEventListener('click',function(e){
 $('#lbSeg').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; state.ui.lbMode=b.getAttribute('data-mode'); save(); renderLeaderboard(); });
 
 /* Score form */
+function refreshScoreForm(){
+  var has=state.friends.length>0, sel=$('#sfPlayer'), cur=sel.value;
+  $('#scoreForm').style.display=has?'':'none'; $('#sfEmpty').style.display=has?'none':'';
+  sel.innerHTML = sortedPlayers().map(function(p){ return '<option value="'+p.id+'">'+esc(p.name)+' (CH '+fmtCH(p.hcp)+')</option>'; }).join('');
+  if(cur && player(cur)) sel.value=cur;
+  if(has && (!cur || !player(cur))){ defaultGross(); }
+  if(has) updatePreview();
+}
 function initForm(){
-  $('#sfPlayer').innerHTML = PLAYERS.map(function(p){ return '<option value="'+p.id+'">'+esc(p.name)+' ('+p.hcp.toFixed(1)+')</option>'; }).join('');
   $('#sfCourse').innerHTML = COURSES.map(function(c){ return '<option value="'+c.id+'">'+esc(c.name)+' · Par '+c.par+'</option>'; }).join('');
-  $('#sfPlayer').value = state.me;
   $('#sfDate').value = iso(new Date());
   $('#sfDate').max = iso(new Date());
-  defaultGross();
-  updatePreview();
+  refreshScoreForm();
 }
-function defaultGross(){ var p=player($('#sfPlayer').value), c=course($('#sfCourse').value); $('#sfGross').value = c.par + Math.round(p.hcp); }
+function defaultGross(){ var p=player($('#sfPlayer').value), c=course($('#sfCourse').value); $('#sfGross').value = c.par + chNum(p); }
 function updatePreview(){
   var p=player($('#sfPlayer').value), c=course($('#sfCourse').value), g=parseInt($('#sfGross').value,10);
+  if(!p){ $('#sfPreview').innerHTML=''; return; }
   if(isNaN(g)){ $('#sfPreview').innerHTML='<div>Enter a gross score</div>'; return; }
-  var net = g-Math.round(p.hcp);
-  $('#sfPreview').innerHTML = '<div>Gross<b>'+g+' <small class="muted">('+fmtPar(g-c.par)+')</small></b></div><div>Course hcp<b>'+Math.round(p.hcp)+'</b></div><div>Net<b>'+net+' <small class="muted">('+fmtPar(net-c.par)+')</small></b></div>';
+  var net = g-chNum(p);
+  $('#sfPreview').innerHTML = '<div>Gross<b>'+g+' <small class="muted">('+fmtPar(g-c.par)+')</small></b></div><div>Course hcp<b>'+fmtCH(p.hcp)+'</b></div><div>Net<b>'+net+' <small class="muted">('+fmtPar(net-c.par)+')</small></b></div>';
 }
 $('#sfPlayer').addEventListener('change',function(){ defaultGross(); updatePreview(); $('#sfErr').textContent=''; });
 $('#sfCourse').addEventListener('change',function(){ defaultGross(); updatePreview(); });
@@ -904,6 +978,7 @@ $('#sfGross').addEventListener('input',function(){ updatePreview(); $('#sfErr').
 $('#scoreForm').addEventListener('submit',function(e){
   e.preventDefault();
   var pid=$('#sfPlayer').value, cid=$('#sfCourse').value, date=$('#sfDate').value, g=parseInt($('#sfGross').value,10);
+  if(!player(pid)){ $('#sfErr').textContent='Add a player first.'; return; }
   if(isNaN(g)||g<50||g>150){ $('#sfErr').textContent='Please enter a gross score between 50 and 150.'; return; }
   if(!date){ $('#sfErr').textContent='Please choose a date.'; return; }
   if(date>iso(new Date())){ $('#sfErr').textContent='Rounds can\'t be posted for future dates.'; return; }
@@ -915,14 +990,14 @@ $('#scoreForm').addEventListener('submit',function(e){
   var after = standings(mode).filter(function(s){return s.n;}).map(function(s){return s.p.id;}).indexOf(pid);
   flashPid = pid; renderLeaderboard();
   var p=player(pid), move = before<0 ? 'enters at #'+(after+1) : after<before ? 'up to #'+(after+1)+' ▲' : after>before ? 'down to #'+(after+1)+' ▼' : 'holds #'+(after+1);
-  toast('Posted '+g+' (net '+(g-Math.round(p.hcp))+') for '+first(p.name)+' — '+move+' ('+mode+')');
+  toast('Posted '+g+' (net '+(g-chNum(p))+') for '+first(p.name)+' — '+move+' ('+mode+')');
   var row=document.querySelector('.lb-row[data-pid="'+pid+'"]'); if(row) row.scrollIntoView({behavior:'smooth',block:'center'});
 });
 
 /* ---------- Nav ---------- */
 var TABS=['tee-times','pairings','games','leaderboard','friends'];
 function go(tab, noHash){
-  if(TABS.indexOf(tab)<0) tab='tee-times';
+  if(TABS.indexOf(tab)<0) tab='games';
   state.ui.tab=tab; save();
   TABS.forEach(function(t){ $('#view-'+t).classList.toggle('on', t===tab); });
   [].forEach.call(document.querySelectorAll('nav.tabs button'),function(b){ var on=b.getAttribute('data-tab')===tab; b.classList.toggle('on',on); if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
@@ -936,7 +1011,11 @@ function go(tab, noHash){
 }
 document.querySelector('nav.tabs').addEventListener('click',function(e){ var b=e.target.closest('button'); if(b) go(b.getAttribute('data-tab')); });
 window.addEventListener('hashchange',function(){ go(location.hash.slice(1), true); });
-$('#resetBtn').addEventListener('click',function(){ if(confirm('Reset all sample data? Your sign-ups, pairings, posted scores, friends and current game will be cleared (game settings are kept).')){ state=seed(); ensureGameState(); save(); renderAll(); initForm(); go('tee-times'); toast('Sample data reset'); } });
+$('#resetBtn').addEventListener('click',function(){
+  openSheet('<h3>Clear all data?</h3><p>This deletes everything saved on this phone: players, tee times, pairings, posted scores and the current round. Your bet settings are kept. This can’t be undone.</p>'+
+    '<div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn danger" id="clrYes">Clear all data</button></div>');
+  $('#clrYes').onclick=function(){ state=emptyState(); ensureGameState(); save(); closeSheet(); renderAll(); initForm(); go('games'); toast('All data cleared'); };
+});
 
 /* =====================================================================
    v2: SHEET, SHARE, FRIENDS, GAMES (betting)
@@ -954,7 +1033,7 @@ function showShare(){
     '<div class="info" style="word-break:break-all"><b id="shUrl">'+esc(url)+'</b></div>'+
     '<div class="sheet-actions">'+(navigator.share?'<button class="btn" id="shNative">Share link…</button>':'')+'<button class="btn'+(navigator.share?' ghost':'')+'" id="shCopy">Copy link</button><button class="btn ghost full" data-close>Close</button></div>'+
     '<p style="font-size:12px">Tip: open the link in Safari or Chrome and choose “Add to Home Screen” to launch it like an app.</p>');
-  if(navigator.share) $('#shNative').onclick=function(){ navigator.share({title:'Fairway Club',text:'Golf league + Nassau scoring (prototype, sample data)',url:url}).catch(function(){}); };
+  if(navigator.share) $('#shNative').onclick=function(){ navigator.share({title:'Fairway Club',text:'Fairway Club — golf games & scoring',url:url}).catch(function(){}); };
   $('#shCopy').onclick=function(){ copyText(url,'Link copied'); };
 }
 $('#shareBtn').addEventListener('click',showShare);
@@ -963,33 +1042,26 @@ function money(x){ var r=Math.round(x*100)/100, a=Math.abs(r); var s = (Math.abs
 function smoney(x){ var r=Math.round(x*100)/100; return (r>0?'+':r<0?'−':'')+money(r); }
 function mcls(x){ return x>0.004?'pos':x<-0.004?'neg':''; }
 function colorForKey(k){ var h=0; for(var i=0;i<k.length;i++) h=(h*31+k.charCodeAt(i))>>>0; return AV_COLORS[h%AV_COLORS.length]; }
-function gAv(p,cls){ return '<span class="av '+(cls||'')+'" style="background:'+(p.key.indexOf('L:')===0?avColor(p.key.slice(2)):colorForKey(p.key))+'">'+esc(initials(p.name))+'</span>'; }
+function gAv(p,cls){ return '<span class="av '+(cls||'')+'" style="background:'+colorForKey(p.key)+'">'+esc(initials(p.name))+'</span>'; }
 
-/* ---------- Friends ---------- */
-function seedFriends(){ return [
-  {id:'f1', name:'Marcus Bell',  ghin:'0000101', hcp:9.4,  phone:'(555) 010-2231', email:'marcus.bell@example.com'},
-  {id:'f2', name:'Elena Ruiz',   ghin:'0000102', hcp:14.2, phone:'(555) 010-4410', email:'elena.ruiz@example.com'},
-  {id:'f3', name:'Pete Daniels', ghin:'',        hcp:7.0,  phone:'',               email:'pete.d@example.com'},
-  {id:'f4', name:'Kofi Mensah',  ghin:'0000104', hcp:19.6, phone:'(555) 010-7782', email:''}
-]; }
-function friend(id){ return state.friends.filter(function(f){return f.id===id;})[0]; }
+/* ---------- Friends (saved players) ---------- */
+function friend(id){ return player(id); }
 function keyInfo(k){
-  if(!k) return null;
-  var id=k.slice(2);
-  if(k.indexOf('L:')===0){ var p=player(id); return p?{key:k,name:p.name,hcp:p.hcp,src:'League'}:null; }
-  var f=friend(id); return f?{key:k,name:f.name,hcp:(f.hcp===''||f.hcp==null)?0:+f.hcp,src:'Friend'}:null;
+  if(!k || k.indexOf('F:')!==0) return null;
+  var f=friend(k.slice(2)); return f?{key:k,name:f.name,hcp:chNum(f),src:'Friend'}:null;
 }
 function renderFriends(){
   var q=($('#friendSearch').value||'').trim().toLowerCase();
-  var list=state.friends.slice().sort(function(a,b){return a.name.localeCompare(b.name);});
+  var list=sortedPlayers();
   var shown=list.filter(function(f){ return !q || [f.name,f.ghin,f.phone,f.email].join(' ').toLowerCase().indexOf(q)>=0 || (q.replace(/\D/g,'') && (f.phone||'').replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0); });
-  $('#friendSub').textContent = state.friends.length+' saved · pick them as players for a round';
-  if(!state.friends.length){ $('#friendList').innerHTML='<div class="card empty"><div class="big">👋</div>No friends saved yet.<br>Tap <b>+ Add friend</b> to add your first one.</div>'; return; }
-  if(!shown.length){ $('#friendList').innerHTML='<div class="card empty"><div class="big">🔍</div>No friends match “'+esc(q)+'”.</div>'; return; }
+  $('#friendSub').textContent = state.friends.length ? state.friends.length+' saved · course handicaps from GHIN' : 'Save your group once, reuse every round';
+  $('#friendSearch').parentNode.style.display = state.friends.length>3 ? '' : 'none';
+  if(!state.friends.length){ $('#friendList').innerHTML='<div class="card empty"><div class="big">👋</div><b>Add your players to start</b><br>Just a name and their course handicap from GHIN. Players you add in Games are saved here automatically.<br><br><button class="btn" data-fact="new">+ Add player</button></div>'; return; }
+  if(!shown.length){ $('#friendList').innerHTML='<div class="card empty"><div class="big">🔍</div>No players match “'+esc(q)+'”.</div>'; return; }
   $('#friendList').innerHTML = shown.map(function(f){
-    var contact=[f.phone,f.email].filter(Boolean).map(esc).join(' · ') || '<i>No contact info</i>';
+    var contact=[f.phone,f.email].filter(Boolean).map(esc).join(' · ');
     return '<div class="card friend" data-fid="'+f.id+'">'+gAv({key:'F:'+f.id,name:f.name})+
-      '<div class="ft"><b>'+esc(f.name)+'</b><small>Hcp index '+(f.hcp===''||f.hcp==null?'—':(+f.hcp).toFixed(1))+(f.ghin?'<span class="ghin">GHIN '+esc(f.ghin)+'</span>':' · <i>no GHIN #</i>')+'</small><small>'+contact+'</small></div>'+
+      '<div class="ft"><b>'+esc(f.name)+'</b><small>Course hcp <b class="chv">'+fmtCH(f.hcp)+'</b>'+(f.chCheck?' <span class="chip warn" title="Saved before course handicaps — update from GHIN">check</span>':'')+(f.ghin?'<span class="ghin">GHIN '+esc(f.ghin)+'</span>':'')+'</small>'+(contact?'<small>'+contact+'</small>':'')+'</div>'+
       '<div class="fa"><button class="btn ghost sm" data-fact="edit" data-fid="'+f.id+'">Edit</button><button class="btn sm" data-fact="use" data-fid="'+f.id+'">+ Round</button></div></div>';
   }).join('');
 }
@@ -997,6 +1069,7 @@ $('#friendSearch').addEventListener('input',renderFriends);
 $('#addFriendBtn').addEventListener('click',function(){ friendForm(null); });
 $('#friendList').addEventListener('click',function(e){
   var b=e.target.closest('[data-fact]'); if(!b) return;
+  if(b.getAttribute('data-fact')==='new'){ friendForm(null); return; }
   var f=friend(b.getAttribute('data-fid'));
   if(b.getAttribute('data-fact')==='edit') friendForm(f);
   else addToRound('F:'+f.id);
@@ -1005,53 +1078,54 @@ function addToRound(key){
   var su=state.gameSetup, need=su.mode==='teams'?4:2;
   if(state.game){ toast('A round is in progress — start a new round to change players'); go('games'); return; }
   if(su.keys.slice(0,need).indexOf(key)>=0){ toast('Already in the round setup'); go('games'); return; }
-  var i=su.keys.slice(0,need).findIndex(function(k){return !k;});
-  if(i<0) i=need-1;
+  var i=su.keys.slice(0,need).findIndex(function(k){return !k || !keyInfo(k);});
+  if(i<0){ toast('All '+need+' spots are taken — change a player in Games'); go('games'); return; }
   su.keys[i]=key; save(); go('games');
   toast(keyInfo(key).name+' added to round setup');
 }
+function removePlayerEverywhere(id){
+  state.friends=state.friends.filter(function(x){return x.id!==id;});
+  state.gameSetup.keys=state.gameSetup.keys.map(function(k){return k==='F:'+id?null:k;});
+  Object.keys(state.signups).forEach(function(t){ state.signups[t]=state.signups[t].map(function(p){ return p===id?null:p; }); });
+  Object.keys(state.pairings).forEach(function(t){ var pr=state.pairings[t]; pr.groups=pr.groups.map(function(g){ return g.filter(function(p){return p!==id;}); }).filter(function(g){return g.length;}); });
+}
 function friendForm(f){
   var isNew=!f; f=f||{name:'',ghin:'',hcp:'',phone:'',email:''};
-  openSheet('<h3>'+(isNew?'Add friend':'Edit friend')+'</h3>'+
+  openSheet('<h3>'+(isNew?'Add player':'Edit player')+'</h3>'+
     '<form id="fForm" class="fgrid" novalidate>'+
-      '<div class="full"><label class="fl" for="fName">Name *</label><input class="in" id="fName" value="'+esc(f.name)+'" placeholder="e.g. Sam Rivera" autocomplete="off"></div>'+
-      '<div><label class="fl" for="fHcp">Handicap index</label><input class="in" id="fHcp" inputmode="decimal" value="'+esc(f.hcp)+'" placeholder="e.g. 12.4"></div>'+
-      '<div><label class="fl" for="fGhin">GHIN number</label><input class="in" id="fGhin" inputmode="numeric" value="'+esc(f.ghin||'')+'" placeholder="7–8 digits"></div>'+
-      '<div class="full"><button type="button" class="btn ghost block" id="ghinBtn">🔎 Look up on GHIN</button><div id="ghinMsg"></div></div>'+
-      '<div><label class="fl" for="fPhone">Phone</label><input class="in" id="fPhone" type="tel" value="'+esc(f.phone||'')+'" placeholder="(555) 010-0000"></div>'+
-      '<div><label class="fl" for="fEmail">Email</label><input class="in" id="fEmail" type="email" value="'+esc(f.email||'')+'" placeholder="name@example.com"></div>'+
+      '<div class="full"><label class="fl" for="fName">Name *</label><input class="in" id="fName" value="'+esc(f.name)+'" placeholder="e.g. Sam Rivera" autocomplete="off" autocapitalize="words"></div>'+
+      '<div class="full"><label class="fl" for="fHcp">Course handicap (from GHIN)</label><input class="in" id="fHcp" inputmode="tel" autocomplete="off" value="'+esc(fmtCH(f.hcp)==='—'?'':fmtCH(f.hcp))+'" placeholder="Whole number, e.g. 12 · plus hcp: +2"><small class="muted" style="display:block;margin-top:4px;font-size:11.5px">Use the course handicap GHIN shows for the tees you’re playing — it’s used as-is for strokes.</small></div>'+
+      '<div class="full sec-t" style="margin-top:2px">Optional</div>'+
+      '<div><label class="fl" for="fGhin">GHIN number</label><input class="in" id="fGhin" inputmode="numeric" value="'+esc(f.ghin||'')+'" placeholder="optional"></div>'+
+      '<div><label class="fl" for="fPhone">Phone</label><input class="in" id="fPhone" type="tel" value="'+esc(f.phone||'')+'" placeholder="optional"></div>'+
+      '<div class="full"><label class="fl" for="fEmail">Email</label><input class="in" id="fEmail" type="email" value="'+esc(f.email||'')+'" placeholder="optional"></div>'+
       '<div class="full err" id="fErr"></div>'+
-      '<div class="sheet-actions full" style="margin-top:4px"><button type="button" class="btn ghost" data-close>Cancel</button><button type="submit" class="btn">'+(isNew?'Add friend':'Save changes')+'</button>'+
-      (isNew?'':'<button type="button" class="btn danger full" id="fDel">Delete friend</button>')+'</div>'+
+      '<div class="sheet-actions full" style="margin-top:4px"><button type="button" class="btn ghost" data-close>Cancel</button><button type="submit" class="btn">'+(isNew?'Add player':'Save changes')+'</button>'+
+      (isNew?'':'<button type="button" class="btn danger full" id="fDel">Delete player</button>')+'</div>'+
+      '<p class="full muted" style="font-size:11.5px;margin:0">GHIN lookup isn’t connected (it needs USGA partner access) — copy the course handicap from the GHIN app.</p>'+
     '</form>');
-  $('#ghinBtn').onclick=function(){
-    $('#ghinMsg').innerHTML='<div class="info warn" style="margin-top:8px"><b>GHIN lookup isn’t connected yet.</b> Pulling handicap data from GHIN requires a licensing agreement with the USGA (GHIN partner/API access). Until that’s in place, enter the GHIN number and handicap index manually — no data was looked up.</div>';
-  };
   if(!isNew) $('#fDel').onclick=function(){
-    openSheet('<h3>Delete '+esc(f.name)+'?</h3><p>This removes them from your saved friends. Rounds already in progress keep their name and handicap.</p>'+
+    openSheet('<h3>Delete '+esc(f.name)+'?</h3><p>This removes them from your saved players and any tee times. A round already in progress keeps their name and handicap.</p>'+
       '<div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn danger" id="fDelYes" style="background:#c0392b;color:#fff">Delete</button></div>');
-    $('#fDelYes').onclick=function(){
-      state.friends=state.friends.filter(function(x){return x.id!==f.id;});
-      state.gameSetup.keys=state.gameSetup.keys.map(function(k){return k==='F:'+f.id?null:k;});
-      save(); closeSheet(); renderFriends(); renderGames(); toast(f.name+' deleted');
-    };
+    $('#fDelYes').onclick=function(){ removePlayerEverywhere(f.id); save(); closeSheet(); renderAll(); toast(f.name+' deleted'); };
   };
   $('#fForm').onsubmit=function(e){
     e.preventDefault();
     var name=$('#fName').value.trim(), hcpS=$('#fHcp').value.trim(), ghin=$('#fGhin').value.replace(/\s|-/g,''), phone=$('#fPhone').value.trim(), email=$('#fEmail').value.trim();
-    var err='';
+    var err='', ch='';
     if(!name) err='Name is required.';
-    else if(hcpS!=='' && (isNaN(+hcpS) || +hcpS< -10 || +hcpS>54)) err='Handicap index must be a number between -10 and 54 (use a minus sign for plus handicaps).';
-    else if(ghin && !/^\d{6,10}$/.test(ghin)) err='GHIN number should be 6–10 digits.';
-    else if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) err='Please enter a valid email address.';
+    else if(hcpS!==''){ var r=parseCH(hcpS); if(r.err) err=r.err; else ch=r.v; }
+    if(!err && ghin && !/^\d{6,10}$/.test(ghin)) err='GHIN number should be 6–10 digits.';
+    if(!err && email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) err='Please enter a valid email address.';
+    if(!err && isNew && findPlayerByName(name)) err=name+' is already saved — edit them instead.';
+    if(!err && !isNew){ var dup=findPlayerByName(name); if(dup && dup.id!==f.id) err='Another player is already called '+name+'.'; }
     if(err){ $('#fErr').textContent=err; return; }
-    var rec={name:name,hcp:hcpS===''?'':Math.round(+hcpS*10)/10,ghin:ghin,phone:phone,email:email};
-    if(isNew){ rec.id='f'+uid(); state.friends.push(rec); } else Object.assign(friend(f.id),rec);
-    save(); closeSheet(); renderFriends(); renderGames(); toast(isNew?name+' added to friends':'Saved '+name);
+    var rec={name:name,hcp:ch,ghin:ghin,phone:phone,email:email};
+    if(isNew){ rec.id='f'+uid(); state.friends.push(rec); } else { Object.assign(friend(f.id),rec); delete friend(f.id).chCheck; }
+    save(); closeSheet(); renderAll(); toast(isNew?name+' saved':'Saved '+name);
   };
   setTimeout(function(){ var n=$('#fName'); if(n&&isNew) n.focus(); },50);
 }
-
 /* ---------- Games: settings ---------- */
 var GKEY='fairwayClub.gameDefaults.v1';
 var STANDARD={front:80, back:80, overall:80, matchUnits:'perPlayer', autoPress:true, pressAmount:40, pressTrigger:2, pressOverall:true,
@@ -1071,28 +1145,25 @@ function loadDefaults(){
 function saveDefaults(s){ try{ localStorage.setItem(GKEY, JSON.stringify(s)); localStorage.setItem(GVER_KEY, String(GVER)); }catch(e){} }
 var QCC_SRC='Club scorecard (quidnessett.com, posted May 2026)';
 var QCC=[ // Quidnessett Country Club, North Kingstown RI. Par + per-tee handicaps + yards from the club's 2026 scorecard.
-  // Rating/slope: third-party listings (GolfPass/GolfNow/18Birdies), NOT verified against GHIN/USGA.
-  {id:'qcc-blue',   tee:'Blue',   yds:[379,176,543,465,214,405,422,416,516, 412,592,185,362,526,331,181,410,400], hcp:[13,15,11,1,5,9,3,7,17, 10,4,16,8,12,18,14,2,6],   rs:'73.6 / 133'},
-  {id:'qcc-white',  tee:'White',  yds:[365,160,505,450,168,386,413,400,496, 392,524,169,342,506,311,166,380,367], hcp:[7,15,13,1,11,9,3,5,17, 2,10,16,8,12,18,14,6,4],   rs:'71.6 / 128'},
-  {id:'qcc-senior', tee:'Senior', yds:[365,160,505,400,125,386,375,335,496, 372,524,169,342,466,311,109,340,355], hcp:[3,15,9,7,17,1,5,11,13, 2,6,14,10,12,16,18,8,4],   rs:''},
-  {id:'qcc-gold',   tee:'Gold',   yds:[349,152,460,400,125,379,375,335,480, 372,440,140,330,466,300,109,340,355], hcp:[1,15,3,9,13,11,5,17,7, 4,6,14,12,10,16,18,8,2],   rs:'68.5 / 123'},
-  {id:'qcc-red',    tee:'Red',    yds:[349,152,447,365,125,379,375,335,480, 372,440,130,322,420,292,109,268,313], hcp:[9,17,5,1,11,7,13,15,3, 8,2,18,10,6,16,14,12,4],  rs:''}
+  {id:'qcc-blue',   tee:'Blue',   yds:[379,176,543,465,214,405,422,416,516, 412,592,185,362,526,331,181,410,400], hcp:[13,15,11,1,5,9,3,7,17, 10,4,16,8,12,18,14,2,6]},
+  {id:'qcc-white',  tee:'White',  yds:[365,160,505,450,168,386,413,400,496, 392,524,169,342,506,311,166,380,367], hcp:[7,15,13,1,11,9,3,5,17, 2,10,16,8,12,18,14,6,4]},
+  {id:'qcc-senior', tee:'Senior', yds:[365,160,505,400,125,386,375,335,496, 372,524,169,342,466,311,109,340,355], hcp:[3,15,9,7,17,1,5,11,13, 2,6,14,10,12,16,18,8,4]},
+  {id:'qcc-gold',   tee:'Gold',   yds:[349,152,460,400,125,379,375,335,480, 372,440,140,330,466,300,109,340,355], hcp:[1,15,3,9,13,11,5,17,7, 4,6,14,12,10,16,18,8,2]},
+  {id:'qcc-red',    tee:'Red',    yds:[349,152,447,365,125,379,375,335,480, 372,440,130,322,420,292,109,268,313], hcp:[9,17,5,1,11,7,13,15,3, 8,2,18,10,6,16,14,12,4]}
 ].map(function(t){ var y=t.yds.reduce(function(a,b){return a+b;},0); return {id:t.id, real:true, group:'Quidnessett CC · North Kingstown, RI', name:'Quidnessett CC', tees:t.tee+' tees · '+y.toLocaleString('en-US')+' yds', tee:t.tee,
-  par:[4,3,5,4,3,4,4,4,5, 4,5,3,4,5,4,3,4,4], hcp:t.hcp, yds:t.yds, rs:t.rs, src:QCC_SRC}; });
+  par:[4,3,5,4,3,4,4,4,5, 4,5,3,4,5,4,3,4,4], hcp:t.hcp, yds:t.yds, src:QCC_SRC}; });
 var DEFAULT_GCOURSE='qcc-white';
-var GCOURSES=QCC.concat([
-  {id:'gc1', name:'Willow Creek GC', tees:'White tees · sample card',
-   par:[4,5,3,4,4,3,4,5,4, 4,3,5,4,4,3,4,4,5], hcp:[7,3,15,1,11,17,9,5,13, 10,16,4,2,12,18,8,14,6]},
-  {id:'gc2', name:'Heron Bay Golf Club', tees:'Blue tees · sample card',
-   par:[4,4,3,5,4,4,3,4,4, 4,3,4,4,5,3,4,4,4], hcp:[5,9,17,1,11,3,15,7,13, 8,18,2,12,4,16,10,6,14]}
-]);
-GCOURSES.forEach(function(c){ if(!c.group) c.group='Sample courses'; });
-function gcourse(id){ return GCOURSES.filter(function(c){return c.id===id;})[0]||GCOURSES[0]; }
+var GCOURSES=QCC;
+function gcourse(id){ return GCOURSES.filter(function(c){return c.id===id;})[0]||gcourse(DEFAULT_GCOURSE); }
 function ensureGameState(){
-  if(!state.friends) state.friends=seedFriends();
+  if(!state.friends) state.friends=[];
   if(state.game===undefined) state.game=null;
-  if(!state.gameSetup) state.gameSetup={mode:'teams', keys:['L:p2','L:p4','L:p6','L:p8'], useHandicap:true, course:DEFAULT_GCOURSE, qccDefault:1};
+  if(!state.teeTimes) state.teeTimes=[]; if(!state.signups) state.signups={}; if(!state.pairings) state.pairings={}; if(!state.rounds) state.rounds=[];
+  if(!state.ui) state.ui={tab:'games', balance:true, lbMode:'net'};
+  if(!state.gameSetup) state.gameSetup={mode:'teams', keys:[null,null,null,null], useHandicap:true, course:DEFAULT_GCOURSE, qccDefault:1};
   if(!state.gameSetup.qccDefault){ state.gameSetup.course=DEFAULT_GCOURSE; state.gameSetup.qccDefault=1; }
+  if(!GCOURSES.some(function(c){return c.id===state.gameSetup.course;})) state.gameSetup.course=DEFAULT_GCOURSE;
+  while(state.gameSetup.keys.length<4) state.gameSetup.keys.push(null);
   if(!state.ui.gameView) state.ui.gameView='score';
 }
 ensureGameState();
@@ -1231,26 +1302,11 @@ function newGame(su){
   return {id:uid(), date:iso(new Date()), course:su.course, mode:su.mode, useHandicap:!!su.useHandicap, players:players,
     settings:loadDefaults(), scores:scores, greenies:new Array(18).fill(null), sandies:Array.apply(null,Array(18)).map(function(){return [];}), hole:0};
 }
-function sampleRound(){
-  var su={mode:'teams', keys:['L:p2','L:p4','L:p6','L:p8'], useHandicap:true, course:'gc1'};
-  var g=newGame(su);
-  var demo={ // gross scores holes 1-13 (sample)
-    'L:p2':[4,4,3,5,4,3,4,6,4, 5,3,4,4],
-    'L:p4':[5,6,4,4,5,3,5,5,5, 4,4,6,5],
-    'L:p6':[5,6,3,5,3,4,5,6,5, 4,2,6,5],
-    'L:p8':[5,7,4,6,6,3,6,5,5, 4,4,5,6]
-  };
-  Object.keys(demo).forEach(function(k){ demo[k].forEach(function(v,h){ g.scores[k][h]=v; }); });
-  g.greenies[2]='L:p2'; g.greenies[5]='L:p8'; g.greenies[10]='L:p6'; g.greenies[0]='L:p8'; g.greenies[6]='L:p2';
-  g.sandies[3]=['L:p4']; g.sandies[8]=['L:p2'];
-  g.hole=13; return g;
-}
 
 /* ---------- Games: rendering ---------- */
-function playerOptions(sel){
-  var lg=PLAYERS.map(function(p){ var k='L:'+p.id; return '<option value="'+k+'"'+(k===sel?' selected':'')+'>'+esc(p.name)+' ('+p.hcp.toFixed(1)+')</option>'; }).join('');
-  var fr=state.friends.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).map(function(f){ var k='F:'+f.id; return '<option value="'+k+'"'+(k===sel?' selected':'')+'>'+esc(f.name)+' ('+(f.hcp===''?'—':(+f.hcp).toFixed(1))+')</option>'; }).join('');
-  return '<option value=""'+(sel?'':' selected')+'>Choose player…</option><optgroup label="League players">'+lg+'</optgroup>'+(fr?'<optgroup label="Friends">'+fr+'</optgroup>':'');
+function playerOptions(sel, taken){
+  var fr=sortedPlayers().map(function(f){ var k='F:'+f.id; return '<option value="'+k+'"'+(k===sel?' selected':'')+'>'+esc(f.name)+' ('+fmtCH(f.hcp)+')'+(k!==sel&&taken.indexOf(k)>=0?' · picked':'')+'</option>'; }).join('');
+  return '<option value=""'+(sel?'':' selected')+'>'+(state.friends.length?'Choose player…':'Add players above ↑')+'</option>'+fr;
 }
 function settingsChips(S){
   return '<div class="tagchips">'+
@@ -1261,42 +1317,59 @@ function settingsChips(S){
     '<span class="chip">'+(S.matchUnits==='perTeam'?'Match: per team':'Match: per player')+' · '+(S.junkUnits==='perTeam'?'Junk: per team':'Junk: per player')+'</span></div>';
 }
 function courseOptions(cur){
-  var groups=[], out='';
-  GCOURSES.forEach(function(c){ if(groups.indexOf(c.group)<0) groups.push(c.group); });
-  groups.forEach(function(gname){
-    out+='<optgroup label="'+esc(gname)+'">'+GCOURSES.filter(function(c){return c.group===gname;}).map(function(c){
-      var lab=c.real? 'Quidnessett · '+c.tee+' · '+c.tees.split(' · ')[1] : c.name+' · '+c.tees.split(' · ')[0];
-      return '<option value="'+c.id+'"'+(c.id===cur?' selected':'')+'>'+esc(lab)+' · Par '+c.par.reduce(function(a,b){return a+b;},0)+'</option>'; }).join('')+'</optgroup>';
-  });
-  return out;
+  return '<optgroup label="Quidnessett CC · North Kingstown, RI">'+GCOURSES.map(function(c){
+    return '<option value="'+c.id+'"'+(c.id===cur?' selected':'')+'>Quidnessett · '+esc(c.tee)+' · '+esc(c.tees.split(' · ')[1])+' · Par '+c.par.reduce(function(a,b){return a+b;},0)+'</option>'; }).join('')+'</optgroup>';
 }
 function courseInfo(id){
   var c=gcourse(id);
-  if(!c.real) return 'Made-up sample card.';
-  return esc(c.tee)+' tees use their own hole handicaps. Source: '+esc(c.src)+'.'+(c.rs?' Rating/slope '+esc(c.rs)+' (unverified — check GHIN).':' Rating/slope not verified.');
+  return 'Strokes fall on the '+esc(c.tee)+' tees’ hardest holes first (hole handicaps from the club’s 2026 scorecard).';
 }
 function setupHtml(){
-  var su=state.gameSetup, teams=su.mode==='teams', S=loadDefaults();
-  function sel(i,lab){ return '<div><label class="fl" for="su'+i+'">'+lab+'</label><select class="in" id="su'+i+'" data-su="'+i+'">'+playerOptions(su.keys[i])+'</select></div>'; }
-  return '<div class="card">'+
-    '<h3 class="sec">Set up a round <span class="chip">Standard game</span></h3>'+
+  var su=state.gameSetup, teams=su.mode==='teams', S=loadDefaults(), need=teams?4:2;
+  var keys=su.keys.slice(0,need).map(function(k){ return keyInfo(k)?k:null; });
+  var filled=keys.filter(Boolean).length, has=state.friends.length>0;
+  function slot(i,lab){
+    var k=keys[i], p=k&&keyInfo(k);
+    return '<div class="suslot"><label class="fl" for="su'+i+'">'+lab+'</label><div class="slotrow">'+
+      '<select class="in" id="su'+i+'" data-su="'+i+'">'+playerOptions(k, keys)+'</select>'+
+      (p?'<input class="in chin" data-ch="'+i+'" inputmode="tel" autocomplete="off" value="'+fmtCH(p.hcp)+'" aria-label="Course handicap for '+esc(p.name)+'" title="Course handicap (from GHIN)">':'<span class="chin ph">CH</span>')+
+    '</div></div>';
+  }
+  var notIn=sortedPlayers().filter(function(f){ return keys.indexOf('F:'+f.id)<0; });
+  var html='<div class="card">'+
+    '<h3 class="sec">Set up a round <span class="chip">'+filled+'/'+need+' players</span></h3>'+
     '<div class="seg" style="margin-bottom:12px"><button data-act="mode" data-mode="singles" class="'+(teams?'':'on')+'">1 v 1 match</button><button data-act="mode" data-mode="teams" class="'+(teams?'on':'')+'">2 v 2 best ball</button></div>'+
-    (teams? '<div class="tlabel A">Team A</div><div class="fgrid">'+sel(0,'Player 1')+sel(1,'Player 2')+'</div><div class="tlabel B">Team B</div><div class="fgrid">'+sel(2,'Player 3')+sel(3,'Player 4')+'</div>'
-           : '<div class="fgrid">'+sel(0,'Side A')+sel(1,'Side B')+'</div>')+
-    '<div style="margin-top:12px"><label class="fl" for="suCourse">Course</label><select class="in" id="suCourse">'+courseOptions(su.course)+'</select><div class="muted" id="suCourseInfo" style="font-size:12px;margin:6px 2px 0">'+courseInfo(su.course)+'</div></div>'+
-    '<div class="toggle" style="margin-top:12px"><div><b>Handicap strokes</b><small>Net match play: strokes off the low player, allocated by hole handicap</small></div><label class="switch"><input type="checkbox" id="suHcp" '+(su.useHandicap?'checked':'')+'><span></span></label></div>'+
+    (has?'':'<div class="welcome"><div class="big">👋</div><b>Add your players to start</b><span>Name + course handicap from GHIN. They’re saved for next time.</span></div>')+
+    quickAddHtml('qa', filled<need?'+ Add player':'+ Save player')+
+    (notIn.length&&filled<need?'<div class="saved"><span class="lab">Saved players — tap to add</span><div class="tagchips">'+notIn.map(function(f){ return '<button class="chip pickchip" data-act="addkey" data-key="F:'+f.id+'">'+esc(f.name)+' · '+fmtCH(f.hcp)+'</button>'; }).join('')+'</div></div>':'')+
+    (teams? '<div class="tlabel A" style="margin-top:14px">Team A</div>'+slot(0,'Player 1')+slot(1,'Player 2')+'<div class="tlabel B">Team B</div>'+slot(2,'Player 3')+slot(3,'Player 4')+
+            (filled===4?'<div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost sm" style="flex:1" data-act="balteams">⚖️ Balance teams</button><button class="btn ghost sm" style="flex:1" data-act="swapteams">⇄ Swap 2 ↔ 3</button></div>':'')
+           : '<div style="margin-top:14px">'+slot(0,'Side A')+slot(1,'Side B')+'</div>')+
+    '<p class="muted" style="font-size:11.5px;margin:6px 2px 0">CH = course handicap from GHIN, used as entered (plus handicap: +2). Strokes are given off the lowest CH.</p>'+
+    '<div style="margin-top:12px"><label class="fl" for="suCourse">Course · tees</label><select class="in" id="suCourse">'+courseOptions(su.course)+'</select><div class="muted" id="suCourseInfo" style="font-size:12px;margin:6px 2px 0">'+courseInfo(su.course)+'</div></div>'+
+    '<div class="toggle" style="margin-top:12px"><div><b>Handicap strokes</b><small>Net match play: '+(+S.allowance===100?'full':S.allowance+'% of')+' course handicap, strokes off the lowest player</small></div><label class="switch"><input type="checkbox" id="suHcp" '+(su.useHandicap?'checked':'')+'><span></span></label></div>'+
     '<div style="margin-top:12px"><label class="fl">Bets (from Game settings)</label>'+settingsChips(S)+'</div>'+
     '<div class="err" id="suErr" style="margin-top:8px"></div>'+
-    '<div class="row" style="margin-top:10px"><button class="btn block" data-act="start">Start round</button></div>'+
-    '<button class="btn ghost block" data-act="sample" style="margin-top:8px">Load sample round (demo scores)</button>'+
-    '<p class="muted" style="font-size:12px;margin:10px 2px 0">Friends you save on the Friends tab appear in the player lists.</p>'+
+    '<div class="row" style="margin-top:10px"><button class="btn block" data-act="start"'+(filled<need?' disabled':'')+'>'+(filled<need?'Add '+(need-filled)+' more player'+(need-filled>1?'s':'')+' to start':'Start round')+'</button></div>'+
   '</div>';
+  return html;
+}
+function setupQuickAdd(){
+  var f=readQuickAdd('qa'); if(!f) return;
+  var su=state.gameSetup, need=su.mode==='teams'?4:2, k='F:'+f.id, ks=su.keys;
+  if(ks.slice(0,need).indexOf(k)<0){
+    var i=ks.slice(0,need).findIndex(function(x){ return !x || !keyInfo(x); });
+    if(i>=0) ks[i]=k; else toast('Saved '+f.name+' — all '+need+' spots are full; pick them in a slot');
+  }
+  save(); renderGames(); renderFriends();
+  var left=ks.slice(0,need).filter(function(x){return x&&keyInfo(x);}).length<need;
+  if(left) setTimeout(function(){ var n=$('#qaName'); if(n) n.focus(); },30);
 }
 function renderGames(){
   var root=$('#gameRoot'), g=state.game;
   if(!root) return;
   if(state.ui.ideas){ root.innerHTML=ideasHtml(); return; }
-  if(!g){ root.innerHTML=setupHtml()+tryStripHtml(); return; }
+  if(!g){ root.innerHTML=setupHtml()+tryStripHtml(); bindQuickAddEnter('qa', setupQuickAdd); return; }
   var R=computeGame(g), v=state.ui.gameView;
   var head='<div class="ghead"><div class="row" style="align-items:flex-start"><div style="flex:1;min-width:0">'+
     '<div class="gh-t">'+esc(R.C.name)+'</div>'+
@@ -1319,7 +1392,7 @@ function scoringHtml(g,R){
     var isG=g.greenies[h]===k, isS=(g.sandies[h]||[]).indexOf(k)>=0, sandyBad=isS&&gv!=null&&gv>par;
     var best=hd.complete&&(g.useHandicap?nv:gv)===(side==='A'?hd.bestA:hd.bestB);
     return '<div class="prow '+side+(best?' best':'')+'" data-k="'+k+'">'+gAv(p)+
-      '<div class="pinfo"><b>'+esc(p.name)+'</b><small>'+(g.useHandicap?'CH '+R.ch[k]+' · '+(st?'<span class="dots">'+'●'.repeat(st)+'</span> '+st+' stroke'+(st>1?'s':''):'no stroke'):'Hcp '+p.hcp.toFixed(1)+' · gross')+'</small>'+
+      '<div class="pinfo"><b>'+esc(p.name)+'</b><small>'+(g.useHandicap?'CH '+fmtCH(R.ch[k])+' · '+(st?'<span class="dots">'+'●'.repeat(st)+'</span> '+st+' stroke'+(st>1?'s':''):'no stroke'):'CH '+fmtCH(p.hcp)+' · gross')+'</small>'+
       '<div class="jrow"><button class="jb'+(isG?' on':'')+'" data-act="greenie" data-k="'+k+'"'+(elig?'':' disabled title="Greenies are par 3s only (Game settings)"')+'>⛳ Greenie</button>'+
       '<button class="jb'+(isS?' on':'')+(sandyBad?' warn':'')+'" data-act="sandy" data-k="'+k+'" title="'+(sandyBad?'Not counted: needs par or better':'Up & down from a bunker for par or better')+'">🏖 Sandy</button></div></div>'+
       '<div class="sbox"><div class="stp"><button data-act="dec" data-k="'+k+'" aria-label="Decrease '+esc(p.name)+'">−</button><span class="sv'+(gv==null?' empty':'')+'" data-sv="'+k+'">'+(gv==null?'–':gv)+'</span><button data-act="inc" data-k="'+k+'" aria-label="Increase '+esc(p.name)+'">+</button></div>'+
@@ -1370,7 +1443,7 @@ function betsHtml(g,R){
 var CATS=['Nassau','Presses','Greenies','Sandies','Birdies','Eagles'];
 function settlementText(g,R){
   var S=g.settings, L=[];
-  L.push('Fairway Club — round settlement (SAMPLE DATA prototype)');
+  L.push('Fairway Club — round settlement');
   L.push(R.C.name+' · '+fmtDate(g.date)+' · '+(R.teams?'2v2 best ball':'1v1 match')+' · '+(g.useHandicap?'Net':'Gross'));
   L.push(sideLabel(g,R,'A')+' vs '+sideLabel(g,R,'B'));
   L.push(R.final?'FINAL (18/18 holes)':'LIVE — as if the round ended after '+R.doneCount+' of 18 holes');
@@ -1426,7 +1499,7 @@ function cardHtml(g,R){
   var yds=C.yds?row('hcp yds',esc(C.tee||'')+' yds',function(h){return '<td>'+C.yds[h]+'</td>';},function(c){return sumOver(c,function(h){return C.yds[h];});}):'';
   function playerRow(k,side){
     var p=gp(g,k);
-    var label=esc(first(p.name))+'<small>'+(g.useHandicap?'CH '+R.ch[k]+' · '+R.rec[k]+' str':'Hcp '+p.hcp.toFixed(1))+'</small>';
+    var label=esc(first(p.name))+'<small>'+(g.useHandicap?'CH '+fmtCH(R.ch[k])+' · '+R.rec[k]+' str':'CH '+fmtCH(p.hcp))+'</small>';
     return row('pl '+side,label,function(h){
       var hd=R.holes[h], gv=hd.gross[k], parh=C.par[h], st=R.strokes(k,h), cls='';
       if(gv!=null){ var d=gv-parh; cls=d<=-2?'eagle':d===-1?'bird':d===1?'bog':d>=2?'dbl':''; }
@@ -1702,8 +1775,11 @@ gameRoot.addEventListener('click',function(e){
   var b=e.target.closest('[data-act]'); if(!b || b.tagName==='INPUT') return;
   var act=b.getAttribute('data-act'), g=state.game, su=state.gameSetup;
   if(act==='mode'){ su.mode=b.getAttribute('data-mode'); save(); renderGames(); return; }
-  if(act==='start'||act==='sample'){
-    if(act==='sample'){ state.game=sampleRound(); state.ui.gameView='score'; save(); renderGames(); toast('Sample round loaded — thru 13 holes'); return; }
+  if(act==='qaAdd'){ setupQuickAdd(); return; }
+  if(act==='addkey'){ var nd=su.mode==='teams'?4:2, ki=su.keys.slice(0,nd).findIndex(function(x){ return !x || !keyInfo(x); }); if(ki>=0){ su.keys[ki]=b.getAttribute('data-key'); save(); renderGames(); } return; }
+  if(act==='balteams'){ var four=su.keys.slice(0,4).slice().sort(function(a,b2){ return keyInfo(a).hcp-keyInfo(b2).hcp; }); su.keys=[four[0],four[3],four[1],four[2]]; save(); renderGames(); toast('Teams balanced: low + high vs the middle two'); return; }
+  if(act==='swapteams'){ var t1=su.keys[1]; su.keys[1]=su.keys[2]; su.keys[2]=t1; save(); renderGames(); return; }
+  if(act==='start'){
     var need=su.mode==='teams'?4:2, ks=su.keys.slice(0,need);
     if(ks.some(function(k){return !k||!keyInfo(k);})){ $('#suErr').textContent='Pick '+need+' players.'; return; }
     if(new Set(ks).size!==ks.length){ $('#suErr').textContent='Each player can only be in the round once.'; return; }
@@ -1730,7 +1806,17 @@ gameRoot.addEventListener('click',function(e){
 });
 gameRoot.addEventListener('change',function(e){
   var t=e.target, su=state.gameSetup;
-  if(t.hasAttribute('data-su')){ su.keys[+t.getAttribute('data-su')]=t.value||null; save(); return; }
+  if(t.hasAttribute('data-su')){
+    var si=+t.getAttribute('data-su'), nv=t.value||null, oi=nv?su.keys.indexOf(nv):-1;
+    if(oi>=0 && oi!==si) su.keys[oi]=su.keys[si];   // picking someone already in another slot swaps the two
+    su.keys[si]=nv; save(); renderGames(); return;
+  }
+  if(t.hasAttribute('data-ch')){
+    var ck=su.keys[+t.getAttribute('data-ch')], cf=ck&&friend(ck.slice(2)), cr=parseCH(t.value);
+    if(!cf) return;
+    if(cr.err){ $('#suErr').textContent=cr.err; t.value=fmtCH(cf.hcp); return; }
+    cf.hcp=cr.v; delete cf.chCheck; save(); renderGames(); renderFriends(); toast(cf.name+' · CH '+fmtCH(cr.v)); return;
+  }
   if(t.id==='suCourse'){ su.course=t.value; save(); var ci=$('#suCourseInfo'); if(ci) ci.innerHTML=courseInfo(su.course); return; }
   if(t.id==='suHcp'){ su.useHandicap=t.checked; save(); return; }
   if(t.getAttribute('data-act')==='hcp' && state.game){ state.game.useHandicap=t.checked; save(); renderGames(); toast(t.checked?'Handicap strokes on (net)':'Handicap strokes off (gross)'); }
@@ -1780,7 +1866,7 @@ $('#gIdeasBtn').addEventListener('click',function(){ openIdeas(); });
 gameRoot.addEventListener('toggle',function(e){ var d=e.target; if(d.tagName==='DETAILS'&&d.classList.contains('idea')){ if(d.open) state.ui.ideaOpen=d.getAttribute('data-id'); else if(state.ui.ideaOpen===d.getAttribute('data-id')) state.ui.ideaOpen=null; save(); } },true);
 
 
-function renderAll(){ renderMe(); renderTeeTimes(); renderPairings(); renderLeaderboard(); renderGames(); renderFriends(); }
+function renderAll(){ renderTeeTimes(); renderPairings(); renderLeaderboard(); renderGames(); renderFriends(); }
 renderAll(); initForm();
 go(location.hash ? location.hash.slice(1) : state.ui.tab, true);
 })();
