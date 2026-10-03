@@ -1069,17 +1069,30 @@ function loadDefaults(){
   return Object.assign({},STANDARD);
 }
 function saveDefaults(s){ try{ localStorage.setItem(GKEY, JSON.stringify(s)); localStorage.setItem(GVER_KEY, String(GVER)); }catch(e){} }
-var GCOURSES=[
+var QCC_SRC='Club scorecard (quidnessett.com, posted May 2026)';
+var QCC=[ // Quidnessett Country Club, North Kingstown RI. Par + per-tee handicaps + yards from the club's 2026 scorecard.
+  // Rating/slope: third-party listings (GolfPass/GolfNow/18Birdies), NOT verified against GHIN/USGA.
+  {id:'qcc-blue',   tee:'Blue',   yds:[379,176,543,465,214,405,422,416,516, 412,592,185,362,526,331,181,410,400], hcp:[13,15,11,1,5,9,3,7,17, 10,4,16,8,12,18,14,2,6],   rs:'73.6 / 133'},
+  {id:'qcc-white',  tee:'White',  yds:[365,160,505,450,168,386,413,400,496, 392,524,169,342,506,311,166,380,367], hcp:[7,15,13,1,11,9,3,5,17, 2,10,16,8,12,18,14,6,4],   rs:'71.6 / 128'},
+  {id:'qcc-senior', tee:'Senior', yds:[365,160,505,400,125,386,375,335,496, 372,524,169,342,466,311,109,340,355], hcp:[3,15,9,7,17,1,5,11,13, 2,6,14,10,12,16,18,8,4],   rs:''},
+  {id:'qcc-gold',   tee:'Gold',   yds:[349,152,460,400,125,379,375,335,480, 372,440,140,330,466,300,109,340,355], hcp:[1,15,3,9,13,11,5,17,7, 4,6,14,12,10,16,18,8,2],   rs:'68.5 / 123'},
+  {id:'qcc-red',    tee:'Red',    yds:[349,152,447,365,125,379,375,335,480, 372,440,130,322,420,292,109,268,313], hcp:[9,17,5,1,11,7,13,15,3, 8,2,18,10,6,16,14,12,4],  rs:''}
+].map(function(t){ var y=t.yds.reduce(function(a,b){return a+b;},0); return {id:t.id, real:true, group:'Quidnessett CC · North Kingstown, RI', name:'Quidnessett CC', tees:t.tee+' tees · '+y.toLocaleString('en-US')+' yds', tee:t.tee,
+  par:[4,3,5,4,3,4,4,4,5, 4,5,3,4,5,4,3,4,4], hcp:t.hcp, yds:t.yds, rs:t.rs, src:QCC_SRC}; });
+var DEFAULT_GCOURSE='qcc-white';
+var GCOURSES=QCC.concat([
   {id:'gc1', name:'Willow Creek GC', tees:'White tees · sample card',
    par:[4,5,3,4,4,3,4,5,4, 4,3,5,4,4,3,4,4,5], hcp:[7,3,15,1,11,17,9,5,13, 10,16,4,2,12,18,8,14,6]},
   {id:'gc2', name:'Heron Bay Golf Club', tees:'Blue tees · sample card',
    par:[4,4,3,5,4,4,3,4,4, 4,3,4,4,5,3,4,4,4], hcp:[5,9,17,1,11,3,15,7,13, 8,18,2,12,4,16,10,6,14]}
-];
+]);
+GCOURSES.forEach(function(c){ if(!c.group) c.group='Sample courses'; });
 function gcourse(id){ return GCOURSES.filter(function(c){return c.id===id;})[0]||GCOURSES[0]; }
 function ensureGameState(){
   if(!state.friends) state.friends=seedFriends();
   if(state.game===undefined) state.game=null;
-  if(!state.gameSetup) state.gameSetup={mode:'teams', keys:['L:p2','L:p4','L:p6','L:p8'], useHandicap:true, course:'gc1'};
+  if(!state.gameSetup) state.gameSetup={mode:'teams', keys:['L:p2','L:p4','L:p6','L:p8'], useHandicap:true, course:DEFAULT_GCOURSE, qccDefault:1};
+  if(!state.gameSetup.qccDefault){ state.gameSetup.course=DEFAULT_GCOURSE; state.gameSetup.qccDefault=1; }
   if(!state.ui.gameView) state.ui.gameView='score';
 }
 ensureGameState();
@@ -1247,6 +1260,21 @@ function settingsChips(S){
     '<span class="chip">Sandies '+money(S.sandyAmt)+'</span><span class="chip">Birdies '+money(S.birdieAmt)+'</span><span class="chip">Eagles '+money(S.eagleAmt)+'</span>'+
     '<span class="chip">'+(S.matchUnits==='perTeam'?'Match: per team':'Match: per player')+' · '+(S.junkUnits==='perTeam'?'Junk: per team':'Junk: per player')+'</span></div>';
 }
+function courseOptions(cur){
+  var groups=[], out='';
+  GCOURSES.forEach(function(c){ if(groups.indexOf(c.group)<0) groups.push(c.group); });
+  groups.forEach(function(gname){
+    out+='<optgroup label="'+esc(gname)+'">'+GCOURSES.filter(function(c){return c.group===gname;}).map(function(c){
+      var lab=c.real? 'Quidnessett · '+c.tee+' · '+c.tees.split(' · ')[1] : c.name+' · '+c.tees.split(' · ')[0];
+      return '<option value="'+c.id+'"'+(c.id===cur?' selected':'')+'>'+esc(lab)+' · Par '+c.par.reduce(function(a,b){return a+b;},0)+'</option>'; }).join('')+'</optgroup>';
+  });
+  return out;
+}
+function courseInfo(id){
+  var c=gcourse(id);
+  if(!c.real) return 'Made-up sample card.';
+  return esc(c.tee)+' tees use their own hole handicaps. Source: '+esc(c.src)+'.'+(c.rs?' Rating/slope '+esc(c.rs)+' (unverified — check GHIN).':' Rating/slope not verified.');
+}
 function setupHtml(){
   var su=state.gameSetup, teams=su.mode==='teams', S=loadDefaults();
   function sel(i,lab){ return '<div><label class="fl" for="su'+i+'">'+lab+'</label><select class="in" id="su'+i+'" data-su="'+i+'">'+playerOptions(su.keys[i])+'</select></div>'; }
@@ -1255,7 +1283,7 @@ function setupHtml(){
     '<div class="seg" style="margin-bottom:12px"><button data-act="mode" data-mode="singles" class="'+(teams?'':'on')+'">1 v 1 match</button><button data-act="mode" data-mode="teams" class="'+(teams?'on':'')+'">2 v 2 best ball</button></div>'+
     (teams? '<div class="tlabel A">Team A</div><div class="fgrid">'+sel(0,'Player 1')+sel(1,'Player 2')+'</div><div class="tlabel B">Team B</div><div class="fgrid">'+sel(2,'Player 3')+sel(3,'Player 4')+'</div>'
            : '<div class="fgrid">'+sel(0,'Side A')+sel(1,'Side B')+'</div>')+
-    '<div style="margin-top:12px"><label class="fl" for="suCourse">Course</label><select class="in" id="suCourse">'+GCOURSES.map(function(c){ return '<option value="'+c.id+'"'+(c.id===su.course?' selected':'')+'>'+esc(c.name)+' · Par '+c.par.reduce(function(a,b){return a+b;},0)+' ('+esc(c.tees)+')</option>'; }).join('')+'</select></div>'+
+    '<div style="margin-top:12px"><label class="fl" for="suCourse">Course</label><select class="in" id="suCourse">'+courseOptions(su.course)+'</select><div class="muted" id="suCourseInfo" style="font-size:12px;margin:6px 2px 0">'+courseInfo(su.course)+'</div></div>'+
     '<div class="toggle" style="margin-top:12px"><div><b>Handicap strokes</b><small>Net match play: strokes off the low player, allocated by hole handicap</small></div><label class="switch"><input type="checkbox" id="suHcp" '+(su.useHandicap?'checked':'')+'><span></span></label></div>'+
     '<div style="margin-top:12px"><label class="fl">Bets (from Game settings)</label>'+settingsChips(S)+'</div>'+
     '<div class="err" id="suErr" style="margin-top:8px"></div>'+
@@ -1306,7 +1334,7 @@ function scoringHtml(g,R){
     var w=hd.res>0?'A':hd.res<0?'B':null;
     res='<div class="hres '+(w||'')+'">'+(w?esc(sideLabel(g,R,w))+(R.teams?' win':' wins')+' the hole':'Hole halved')+' · best '+(g.useHandicap?'net':'gross')+' '+hd.bestA+' vs '+hd.bestB+'</div>';
   } else res='<div class="hres">Enter every player’s score to decide this hole</div>';
-  var card='<div class="card"><div class="holehead"><div><div class="hn">Hole '+(h+1)+'</div><div class="hm">Par '+par+' · Hcp '+hd.hcp+(elig?' · greenie hole':'')+'</div></div>'+
+  var card='<div class="card"><div class="holehead"><div><div class="hn">Hole '+(h+1)+'</div><div class="hm">Par '+par+(R.C.yds?' · '+R.C.yds[h]+' yds':'')+' · Hcp '+hd.hcp+(elig?' · greenie hole':'')+'</div></div>'+
     '<div class="nav"><button data-act="prev" aria-label="Previous hole"'+(h===0?' disabled':'')+'>‹</button><button data-act="next1" aria-label="Next hole"'+(h===17?' disabled':'')+'>›</button></div></div>'+
     rows+res+'</div>';
   var pills='<div class="pills">'+['F','B','O'].map(function(s){
@@ -1395,6 +1423,7 @@ function cardHtml(g,R){
   var head='<tr class="hrow"><th class="nm">Hole</th>'+cols.map(function(c){ return '<th class="'+(c.t==='h'?'':'sum')+'">'+(c.t==='h'?c.h+1:c.t.toUpperCase())+'</th>'; }).join('')+'</tr>';
   var par=row('par','Par',function(h){return '<td>'+C.par[h]+'</td>';},function(c){return sumOver(c,function(h){return C.par[h];});});
   var hcp=row('hcp','Handicap',function(h){return '<td>'+C.hcp[h]+'</td>';},null);
+  var yds=C.yds?row('hcp yds',esc(C.tee||'')+' yds',function(h){return '<td>'+C.yds[h]+'</td>';},function(c){return sumOver(c,function(h){return C.yds[h];});}):'';
   function playerRow(k,side){
     var p=gp(g,k);
     var label=esc(first(p.name))+'<small>'+(g.useHandicap?'CH '+R.ch[k]+' · '+R.rec[k]+' str':'Hcp '+p.hcp.toFixed(1))+'</small>';
@@ -1440,7 +1469,7 @@ function cardHtml(g,R){
       return '<td class="sum"></td>';
     }).join('')+'</tr>';
   }).join('');
-  var table='<div class="sc-wrap" id="scWrap"><table class="sc" id="scTable"><tbody>'+head+par+hcp+'<tr class="gap"><td class="nm"></td><td colspan="'+cols.length+'"></td></tr>'+body+
+  var table='<div class="sc-wrap" id="scWrap"><table class="sc" id="scTable"><tbody>'+head+yds+par+hcp+'<tr class="gap"><td class="nm"></td><td colspan="'+cols.length+'"></td></tr>'+body+
     (vis.length?'<tr class="gap"><td class="nm"></td><td colspan="'+cols.length+'"></td></tr>'+msec+mrows:'')+'</tbody></table></div>';
   var legend='<div class="sc-legend">'+
     '<span><span class="sn bird">3</span>Birdie</span><span><span class="sn eagle">2</span>Eagle+</span><span><span class="sn bog">5</span>Bogey</span><span><span class="sn dbl">6</span>Double+</span>'+
@@ -1702,7 +1731,7 @@ gameRoot.addEventListener('click',function(e){
 gameRoot.addEventListener('change',function(e){
   var t=e.target, su=state.gameSetup;
   if(t.hasAttribute('data-su')){ su.keys[+t.getAttribute('data-su')]=t.value||null; save(); return; }
-  if(t.id==='suCourse'){ su.course=t.value; save(); return; }
+  if(t.id==='suCourse'){ su.course=t.value; save(); var ci=$('#suCourseInfo'); if(ci) ci.innerHTML=courseInfo(su.course); return; }
   if(t.id==='suHcp'){ su.useHandicap=t.checked; save(); return; }
   if(t.getAttribute('data-act')==='hcp' && state.game){ state.game.useHandicap=t.checked; save(); renderGames(); toast(t.checked?'Handicap strokes on (net)':'Handicap strokes off (gross)'); }
 });
