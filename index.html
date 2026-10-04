@@ -412,6 +412,28 @@
   .scard small{display:block;font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
   nav.tabs button{font-size:10.5px}
   nav.tabs .ic{width:46px}
+  /* ---- v11: saved rounds / history ---- */
+  .savecard{text-align:center}
+  .savecard .btn.big{min-height:54px;font-size:16.5px}
+  .savecard small{display:block;color:var(--muted);font-size:12px;margin-top:6px}
+  .savecard .sv-t{font-weight:800;font-size:15px;margin-bottom:8px;color:var(--g800)}
+  .savecard.ok{background:var(--g50);border:1.5px solid var(--g200)}
+  .savecard.soft{padding:10px 12px}
+  .hist-h{display:flex;align-items:center;gap:8px;margin:0 2px 10px}
+  .hist-h h3{margin:0;font-size:18px}
+  .hround{display:block;width:100%;text-align:left;font:inherit;cursor:pointer;border:1px solid rgba(15,61,46,.06)}
+  .hround .hr-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px}
+  .hround .hr-c{font-size:13px;color:var(--muted);margin-top:3px}
+  .hround .hr-t{font-size:13.5px;font-weight:600;margin-top:4px}
+  .hround .hr-m{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .hround .mchip{display:inline-flex;gap:5px;align-items:center;font-size:12.5px;background:var(--g50);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+  .ro-note{font-size:12px;margin:8px 4px 0}
+  .danger-t{color:#b3261e!important}
+  .ss-row{display:grid;grid-template-columns:1fr 34px 70px 46px 42px;gap:6px;align-items:center;padding:8px 2px;border-bottom:1px solid #eef3f0;font-size:13.5px}
+  .ss-row.head{font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding-top:2px}
+  .ss-row .num{text-align:right}
+  .ss-row .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #seasonCard h3.sec{display:flex;align-items:center;gap:8px}
   /* ---- v10: game presets ---- */
   [hidden]{display:none!important}
   .ppicks{display:flex;flex-direction:column;gap:8px}
@@ -547,6 +569,7 @@
       <div class="page-title">
         <div><h2>Leaderboard</h2><p>Season standings · ranked by average to par</p></div>
       </div>
+      <div class="card" id="seasonCard"></div>
       <div class="summary" id="lbSummary"></div>
       <div class="seg" id="lbSeg" role="tablist" style="margin-bottom:12px">
         <button data-mode="gross" role="tab">Gross</button>
@@ -593,7 +616,7 @@
     <section class="view" id="view-games">
       <div class="page-title">
         <div><h2>Games</h2><p>Live hole-by-hole scoring &amp; bets</p></div>
-        <div class="pt-btns"><button class="btn ghost sm" id="gIdeasBtn" aria-label="Game ideas">💡 Ideas</button><button class="btn ghost sm" id="gSettingsBtn" aria-label="Game settings">⚙︎ Settings</button></div>
+        <div class="pt-btns"><button class="btn ghost sm" id="gHistBtn" aria-label="Saved rounds history">📒 History</button><button class="btn ghost sm" id="gIdeasBtn" aria-label="Game ideas">💡 Ideas</button><button class="btn ghost sm" id="gSettingsBtn" aria-label="Game settings">⚙︎</button></div>
       </div>
       <div id="gameRoot"></div>
     </section>
@@ -659,8 +682,8 @@ function parseISO(s){ var a=s.split('-'); return new Date(+a[0],+a[1]-1,+a[2]); 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 
 function emptyState(){
-  return { v:1, dv:DATA_VER, teeTimes:[], signups:{}, pairings:{}, rounds:[], friends:[], game:null,
-    ui:{tab:'games', pairTT:null, balance:true, lbMode:'net', gameView:'score'} };
+  return { v:1, dv:DATA_VER, teeTimes:[], signups:{}, pairings:{}, rounds:[], friends:[], game:null, saved:[],
+    ui:{tab:'games', pairTT:null, balance:true, lbMode:'net', gameView:'score', histMigrated:1} };
 }
 /* One-time cleanup for phones that loaded the earlier prototype: remove ONLY the built-in sample data. */
 var SAMPLE_FRIEND_IDS = {f1:1, f2:1, f3:1, f4:1};              // Marcus Bell, Elena Ruiz, Pete Daniels, Kofi Mensah
@@ -1071,6 +1094,28 @@ function renderLeaderboard(){
   if(flashPid){ var pid=flashPid; flashPid=null; setTimeout(function(){ var el=document.querySelector('.lb-row[data-pid="'+pid+'"]'); if(el){ el.classList.remove('flash'); } },1400); }
   refreshScoreForm();
   renderRecent();
+  renderSeason();
+}
+/* Season money + scoring averages from saved rounds (History) */
+function seasonStats(){
+  var by={};
+  (state.saved||[]).forEach(function(r){ (r.sum&&r.sum.players||[]).forEach(function(p){
+    var k=p.id||p.name, x=by[k]||(by[k]={id:p.id,name:p.name,rounds:0,money:0,gross:[],net:[]});
+    x.rounds++; x.money+=+p.money||0; if(p.gross!=null){ x.gross.push(p.gross); x.net.push(p.gross-Math.round(+p.hcp||0)); }
+    if(p.id && player(p.id)) x.name=player(p.id).name;
+  }); });
+  return Object.keys(by).map(function(k){ var x=by[k]; x.money=Math.round(x.money*100)/100; x.avgG=x.gross.length?mean(x.gross):null; x.avgN=x.net.length?mean(x.net):null; return x; })
+    .sort(function(a,b){ return b.money-a.money || a.name.localeCompare(b.name); });
+}
+function renderSeason(){
+  var el=$('#seasonCard'); if(!el) return;
+  var st=seasonStats(), n=(state.saved||[]).length;
+  el.innerHTML='<h3 class="sec">Season money <span class="chip">'+n+' saved round'+(n===1?'':'s')+'</span><button class="btn ghost sm" id="seasonHist" style="margin-left:auto">📒 History →</button></h3>'+
+    (st.length?'<div class="ss-row head"><span>Player</span><span class="num">Rds</span><span class="num">Money</span><span class="num">Gross</span><span class="num">Net</span></div>'+st.map(function(x){
+      return '<div class="ss-row" data-season="'+esc(x.id||x.name)+'"><span class="nm"><b>'+esc(x.name)+'</b></span><span class="num">'+x.rounds+'</span><span class="num '+mcls(x.money)+'"><b>'+smoney(x.money)+'</b></span><span class="num">'+(x.avgG==null?'—':x.avgG.toFixed(1))+'</span><span class="num">'+(x.avgN==null?'—':x.avgN.toFixed(1))+'</span></div>';
+    }).join('')+'<p class="muted" style="font-size:11.5px;margin:8px 2px 0">Money = sum of saved settlements. Gross/Net = 18-hole averages (net = gross − handicap).</p>'
+    :'<div class="muted" style="font-size:13px">Save your rounds (Games → Settle → 💾 Save round) to track season money and scoring averages here.</div>');
+  var hb=$('#seasonHist'); if(hb) hb.onclick=function(){ openHistory(); };
 }
 function renderRecent(){
   var rs = liveRounds().sort(function(a,b){ return b.date.localeCompare(a.date) || (b.ts||0)-(a.ts||0); }).slice(0,6);
@@ -1151,7 +1196,7 @@ function go(tab, noHash){
 document.querySelector('nav.tabs').addEventListener('click',function(e){ var b=e.target.closest('button'); if(b) go(b.getAttribute('data-tab')); });
 window.addEventListener('hashchange',function(){ go(location.hash.slice(1), true); });
 $('#resetBtn').addEventListener('click',function(){
-  openSheet('<h3>Clear all data?</h3><p>This deletes everything saved on this phone: players, tee times, pairings, posted scores and the current round. Your bet settings are kept. This can’t be undone.</p>'+
+  openSheet('<h3>Clear all data?</h3><p>This deletes everything saved on this phone: players, tee times, pairings, posted scores, the current round'+((state.saved||[]).length?' and <b>'+state.saved.length+' saved round'+(state.saved.length===1?'':'s')+'</b> (export a backup in History first)':'')+'. Your bet settings are kept. This can’t be undone.</p>'+
     '<div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn danger" id="clrYes">Clear all data</button></div>');
   $('#clrYes').onclick=function(){ state=emptyState(); ensureGameState(); save(); closeSheet(); renderAll(); initForm(); go('games'); toast('All data cleared'); };
 });
@@ -1349,6 +1394,7 @@ function gcourse(id){ return GCOURSES.filter(function(c){return c.id===id;})[0]|
 function ensureGameState(){
   if(!state.friends) state.friends=[];
   if(state.game===undefined) state.game=null;
+  if(!state.saved) state.saved=[];
   if(!state.teeTimes) state.teeTimes=[]; if(!state.signups) state.signups={}; if(!state.pairings) state.pairings={}; if(!state.rounds) state.rounds=[];
   if(!state.ui) state.ui={tab:'games', balance:true, lbMode:'net'};
   if(!state.gameSetup) state.gameSetup={mode:'teams', keys:[null,null,null,null], useHandicap:true, course:DEFAULT_GCOURSE, qccDefault:1};
@@ -1624,6 +1670,7 @@ function setupQuickAdd(){
 function renderGames(){
   var root=$('#gameRoot'), g=state.game;
   if(!root) return;
+  if(state.ui.history){ root.innerHTML=historyHtml(); var hf=$('#histFile'); if(hf) hf.onchange=function(){ var f=hf.files&&hf.files[0]; if(!f) return; var rd=new FileReader(); rd.onload=function(){ importRounds(String(rd.result)); }; rd.readAsText(f); }; return; }
   if(state.ui.ideas){ root.innerHTML=ideasHtml(); return; }
   if(!g){ root.innerHTML=setupHtml()+tryStripHtml(); bindQuickAddEnter('qa', setupQuickAdd); return; }
   var R=computeGame(g), v=state.ui.gameView;
@@ -1679,7 +1726,8 @@ function scoringHtml(g,R){
   var mrow='<div class="card" style="padding:10px 12px"><h3 class="sec" style="margin-bottom:8px">Running money <span class="muted" style="font-size:11.5px;font-weight:600">'+(R.final?'final':'if it ended now')+'</span></h3><div class="mrow">'+
     R.all.map(function(k){ var x=R.net[k]; return '<div class="mchip">'+esc(first(gp(g,k).name))+'<b class="'+mcls(x)+'">'+smoney(x)+'</b></div>'; }).join('')+'</div></div>';
   var navb='<div class="row" style="gap:8px;margin-bottom:12px"><button class="btn ghost" data-act="prev"'+(h===0?' disabled':'')+'>← '+(h===0?'Hole 1':'Hole '+h)+'</button><button class="btn" style="flex:1" data-act="next">'+(h===17?'Finish → Settle up':'Next: Hole '+(h+2)+' →')+'</button></div>';
-  return strip+card+navb+pills+pressHtml(g,R)+mrow;
+  var done=R.final&&!isSaved(g)?'<div class="card savecard"><div class="sv-t">🏁 Round complete</div><button class="btn block big" data-act="saveRound">💾 '+(g.savedId&&savedById(g.savedId)?'Update saved round':'Save round')+'</button></div>':'';
+  return done+strip+card+navb+pills+pressHtml(g,R)+mrow;
 }
 /* manual press (Nassau preset): the side that's down in a nine (or the overall) can start a new bet for the rest of it */
 function pressOptions(g,R){
@@ -1705,6 +1753,7 @@ function pressHtml(g,R){
       :'<button class="btn block pressbtn" data-act="press" data-seg="'+x.seg+'" data-after="'+x.after+'" data-side="'+x.side+'">🔥 '+esc(sideLabel(g,R,x.side))+' press the '+NMs[x.seg]+' · '+x.down+' down · holes '+(x.after+2)+'–'+(x.end+1)+'</button>';
   }).join('')+'</div>';
 }
+var RO=false;   // true while rendering a saved round (read-only)
 function betsHtml(g,R){
   var S=g.settings;
   var toggle='<div class="card"><div class="toggle"><div><b>Handicap strokes</b><small>'+(g.useHandicap?'Net: strokes off the low player ('+S.allowance+'% allowance)':'Gross: no strokes')+'</small></div><label class="switch"><input type="checkbox" data-act="hcp" '+(g.useHandicap?'checked':'')+'><span></span></label></div>'+
@@ -1720,13 +1769,14 @@ function betsHtml(g,R){
         '<div class="bs"><span class="st '+(b.winner||'')+'">'+esc(betStatus(g,R,b))+'</span><small>'+(b.winner?(b.final||b.closed?'':'live · ')+money(b.amount)+' → '+esc(sideLabel(g,R,b.winner)):b.played?'push so far':'')+'</small></div></div>';
     }).join('')+'</div>';
   }).join('');
-  if(!R.junkOn) return toggle+segsHtml+pressHtml(g,R)+'<div class="card"><h3 class="sec">Junk <span class="chip fin">Off</span></h3><div class="muted" style="font-size:13px">Junk is off for this round — turn it on in Game settings ⚙️.</div></div>';
+  if(RO) toggle=toggle.replace(/<label class="switch">[\s\S]*?<\/label>/,'');
+  if(!R.junkOn) return toggle+segsHtml+(RO?'':pressHtml(g,R))+'<div class="card"><h3 class="sec">Junk <span class="chip fin">Off</span></h3><div class="muted" style="font-size:13px">Junk is off for this round — turn it on in Game settings ⚙️.</div></div>';
   var unit=S.junkUnits==='perTeam'&&R.teams?'per team · each opponent pays, each partner collects':'from each other player';
   var junk=R.junk.slice().sort(function(a,b){return a.h-b.h;});
   var jh='<div class="card"><h3 class="sec">Junk <span class="muted" style="font-size:11.5px;font-weight:600">'+unit+'</span></h3>'+(junk.length?'<ul class="jlist">'+junk.map(function(j){
     return '<li><span class="hno">#'+(j.h+1)+'</span><span style="flex:1" class="'+(j.ok?'':'no')+'">'+({Greenie:'⛳',Sandy:'🏖',Pulley:'🎯',Birdie:'🐦',Eagle:'🦅'}[j.type])+' '+j.type+' · <b>'+esc(gp(g,j.k).name)+'</b></span><span class="'+(j.ok?'pos':'muted')+'" style="font-weight:700;font-size:12.5px">'+(j.ok?money(j.amt)+' '+(S.junkUnits==='perTeam'&&R.teams?'ea · team':'ea'):'not counted · '+esc(j.why||''))+'</span></li>';
   }).join('')+'</ul>':'<div class="muted" style="font-size:13px">No junk yet · playing for '+JUNK.filter(function(j){return R.jon[j.id];}).map(function(j){return j.name.toLowerCase()+' '+money(S[j.id+'Amt']);}).join(', ')+'.</div>')+'</div>';
-  return toggle+segsHtml+pressHtml(g,R)+jh;
+  return toggle+segsHtml+(RO?'':pressHtml(g,R))+jh;
 }
 var CATS=['Match','Close-outs','Nassau','Presses','Greenies','Sandies','Pulleys','Birdies','Eagles'];
 function settlementText(g,R){
@@ -1735,7 +1785,7 @@ function settlementText(g,R){
   L.push(R.C.name+' · '+fmtDate(g.date)+' · '+(R.teams?'2v2 best ball':'1v1 match')+' · '+(g.useHandicap?'Net':'Gross'));
   L.push('Game: '+presetTitle(S)+(R.junkOn?' · junk: '+JUNK.filter(function(j){return R.jon[j.id];}).map(function(j){return j.name.toLowerCase()+' '+money(S[j.id+'Amt']);}).join(', '):' · junk off'));
   L.push(sideLabel(g,R,'A')+' vs '+sideLabel(g,R,'B'));
-  L.push(R.final?'FINAL (18/18 holes)':'LIVE — as if the round ended after '+R.doneCount+' of 18 holes');
+  L.push(R.final?'FINAL (18/18 holes)':g.early?'FINISHED EARLY after '+R.doneCount+' of 18 holes (unfinished bets settled as they stood)':'LIVE — as if the round ended after '+R.doneCount+' of 18 holes');
   L.push(''); L.push('MATCH');
   R.bets.slice().sort(function(a,b){ return 'FBO'.indexOf(a.seg)-'FBO'.indexOf(b.seg) || a.start-b.start; }).forEach(function(b){ L.push('• '+b.label+' ('+money(b.amount)+(b.press||b.closeout||R.closeout?', '+holesTxt(b):'')+'): '+betStatus(g,R,b)); });
   var jk=R.junk.filter(function(j){return j.ok;}).sort(function(a,b){return a.h-b.h;});
@@ -1750,6 +1800,7 @@ function settlementText(g,R){
 }
 function settleHtml(g,R){
   var banner=R.final?'<div class="banner final">🏁<div>Final — round complete<small>All 18 holes scored · settle up below</small></div></div>'
+    :g.early?'<div class="banner final">🏁<div>Finished early<small>After '+R.doneCount+' of 18 holes · unfinished bets settled as they stood</small></div></div>'
     :'<div class="banner live">⏱<div>Live settlement<small>As if the round ended after '+R.doneCount+' of 18 holes · in-progress bets go to the current leader</small></div></div>';
   var sideOf=function(k){return R.A.indexOf(k)>=0?'A':'B';};
   var nets='<div class="netgrid">'+R.all.map(function(k){ var p=gp(g,k), x=R.net[k]; return '<div class="netcard '+sideOf(k)+'">'+gAv(p)+'<div class="t"><small>'+esc(p.name)+'</small><b class="'+mcls(x)+'">'+smoney(x)+'</b></div></div>'; }).join('')+'</div>';
@@ -1762,12 +1813,147 @@ function settleHtml(g,R){
     CATS.filter(function(c){ var rel=R.closeout?(c==='Match'||c==='Close-outs'):(c==='Nassau'||c==='Presses'); var ji=JUNK.filter(function(j){return j.cat===c;})[0]; if(ji) rel=R.jon[ji.id]; return rel || R.all.some(function(k){ return Math.abs(R.cats[k][c]||0)>0.004; }); }).map(function(c){ return '<tr><td>'+c+'</td>'+R.all.map(function(k){ var x=R.cats[k][c]||0; return '<td class="'+mcls(x)+'">'+(Math.abs(x)<0.004?'–':smoney(x))+'</td>'; }).join('')+'</tr>'; }).join('')+
     '<tr class="tot"><td>Net</td>'+R.all.map(function(k){ return '<td class="'+mcls(R.net[k])+'">'+smoney(R.net[k])+'</td>'; }).join('')+'</tr></tbody></table></div>';
   var txt='<div class="card"><h3 class="sec">'+(R.final?'End-of-round summary':'Summary so far')+'</h3><pre class="sumtext" id="sumText">'+esc(settlementText(g,R))+'</pre>'+
-    '<div class="row" style="margin-top:10px;gap:8px"><button class="btn" style="flex:1" data-act="copy">Copy settlement</button><button class="btn ghost" data-act="share">Share</button></div></div>';
-  return banner+nets+xf+bk+txt;
+    (RO?'':'<div class="row" style="margin-top:10px;gap:8px"><button class="btn" style="flex:1" data-act="copy">Copy settlement</button><button class="btn ghost" data-act="share">Share</button></div>')+'</div>';
+  return (RO?'':saveCardHtml(g,R))+banner+nets+xf+bk+txt;
 }
 function copyText(txt,okMsg){
   function fallback(){ var ta=document.createElement('textarea'); ta.value=txt; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); var ok=false; try{ ok=document.execCommand('copy'); }catch(e){} ta.remove(); toast(ok?okMsg:'Copy blocked by the browser — select the summary text to copy'); }
   if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(txt).then(function(){toast(okMsg);},fallback); else fallback();
+}
+
+/* ---------- Saved rounds (History) ---------- */
+function savedById(id){ return (state.saved||[]).filter(function(r){return r.id===id;})[0]||null; }
+function roundSig(g){ return JSON.stringify([g.scores,g.greenies,g.sandies,g.pulleys||null,g.presses||null,g.settings,g.useHandicap,g.players,g.course,g.mode]); }
+function hasScores(g){ return !!g && Object.keys(g.scores||{}).some(function(k){ return (g.scores[k]||[]).some(function(v){return v!=null;}); }); }
+function isSaved(g){ return !!(g && g.savedId && savedById(g.savedId) && g.savedSig===roundSig(g)); }
+function roundSummary(g){
+  var R=computeGame(g);
+  return {course:R.C.name, tee:R.C.tee||'', tees:R.C.tees||'', game:presetTitle(g.settings), teams:R.teams, final:R.final, holes:R.doneCount,
+    sides:[sideLabel(g,R,'A'), sideLabel(g,R,'B')],
+    players:g.players.map(function(p){ var sc=g.scores[p.key]||[], n=sc.filter(function(v){return v!=null;}).length;
+      return {key:p.key, id:p.key.indexOf('F:')===0?p.key.slice(2):null, name:p.name, hcp:p.hcp, side:R.A.indexOf(p.key)>=0?'A':'B', scored:n, gross:n===18?sc.reduce(function(a,b){return a+b;},0):null, money:R.net[p.key]||0}; }),
+    transfers:R.transfers.map(function(t){ return {from:gp(g,t.from).name, to:gp(g,t.to).name, amt:t.amt}; })};
+}
+function saveCurrentRound(){
+  var g=state.game, R=computeGame(g), id=g.savedId&&savedById(g.savedId)?g.savedId:'r'+uid();
+  g.early=!R.final;
+  var copy=JSON.parse(JSON.stringify(g)); delete copy.savedId; delete copy.savedSig;
+  var rec={id:id, savedAt:new Date().toISOString(), date:g.date, holes:R.doneCount, early:!R.final, game:copy, sum:roundSummary(copy)};
+  var i=state.saved.map(function(r){return r.id;}).indexOf(id); if(i>=0) state.saved[i]=rec; else state.saved.push(rec);
+  g.savedId=id; g.savedSig=roundSig(g); save(); renderLeaderboard(); return rec;
+}
+function saveCardHtml(g,R){
+  var rec=g.savedId&&savedById(g.savedId), sv=isSaved(g);
+  if(sv) return '<div class="card savecard ok" id="saveCard"><div class="sv-t">✓ Saved to History</div><small>'+esc(fmtDate(g.date))+' · '+esc(presetTitle(g.settings))+(g.early?' · finished early ('+R.doneCount+' holes)':'')+'</small>'+
+    '<div class="row" style="gap:8px;margin-top:10px"><button class="btn" style="flex:1" data-act="newAfterSave">Start new round</button><button class="btn ghost" data-act="histGo" data-hid="'+rec.id+'">View in History</button></div></div>';
+  if(R.final || rec) return '<div class="card savecard" id="saveCard"><button class="btn block big" data-act="saveRound">💾 '+(rec?'Update saved round':'Save round')+'</button><small>Keeps every score, junk tap, bet and the settlement in History'+(rec?' (you changed it after saving)':'')+'</small></div>';
+  if(R.doneCount>0) return '<div class="card savecard soft" id="saveCard"><button class="btn ghost block" data-act="finishEarly">🏁 Finish round early &amp; save ('+R.doneCount+' of 18 holes)</button></div>';
+  return '';
+}
+function afterSaveSheet(rec){
+  openSheet('<h3>Round saved ✓</h3><p>'+esc(fmtDate(rec.date))+' · '+esc(rec.sum.course)+' · '+esc(rec.sum.game)+'<br>'+esc(rec.sum.sides[0])+' vs '+esc(rec.sum.sides[1])+'</p>'+
+    '<div class="sheet-actions"><button class="btn full" id="asNew">Start new round</button><button class="btn ghost" id="asHist">View in History</button><button class="btn ghost" data-close>Keep viewing</button></div>');
+  $('#asNew').onclick=function(){ state.game=null; state.ui.gameView='score'; save(); closeSheet(); renderGames(); window.scrollTo(0,0); toast('Ready for a new round'); };
+  $('#asHist').onclick=function(){ closeSheet(); openHistory(rec.id); };
+}
+function doSave(){ var rec=saveCurrentRound(); renderGames(); afterSaveSheet(rec); }
+function openHistory(id){ state.ui.ideas=false; state.ui.history=true; state.ui.histOpen=id||null; state.ui.histView=state.ui.histView||'card'; save(); go('games'); window.scrollTo(0,0); }
+function savedSorted(){ return (state.saved||[]).slice().sort(function(a,b){ return (b.date||'').localeCompare(a.date||'') || (b.savedAt||'').localeCompare(a.savedAt||''); }); }
+function historyHtml(){
+  var id=state.ui.histOpen, rec=id&&savedById(id);
+  if(rec) return savedRoundHtml(rec);
+  var list=savedSorted();
+  var items=list.length?list.map(function(r){ var m=r.sum;
+    return '<button class="card hround" data-hid="'+r.id+'"><div class="hr-top"><b>'+esc(fmtDate(r.date))+'</b><span class="chip">'+(r.early?'Finished early · '+r.holes+' holes':'18 holes')+'</span></div>'+
+      '<div class="hr-c">'+esc(m.course)+(m.tee?' · '+esc(m.tee):'')+' · <b>'+esc(m.game)+'</b></div>'+
+      '<div class="hr-t">'+esc(m.sides[0])+' <span class="muted">vs</span> '+esc(m.sides[1])+'</div>'+
+      '<div class="hr-m">'+m.players.map(function(p){ return '<span class="mchip"><span>'+esc(first(p.name))+'</span><b class="'+mcls(p.money)+'">'+smoney(p.money)+'</b></span>'; }).join('')+'</div></button>';
+  }).join(''):'<div class="card"><div class="empty"><div class="big">📒</div><b>No saved rounds yet</b><br>When a round is done, tap <b>💾 Save round</b> on Settle (or Card).</div></div>';
+  var backup='<div class="card"><h3 class="sec">Backup <span class="muted" style="font-size:11.5px;font-weight:600">rounds live only on this phone</span></h3>'+
+    '<p class="muted" style="font-size:12.5px;margin:0 0 10px">Export a backup file now and then (Safari private tabs and “Clear website data” erase it).</p>'+
+    '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" style="flex:1" data-act="hExport"'+(list.length?'':' disabled')+'>⬇︎ Export rounds</button><button class="btn ghost" style="flex:1" data-act="hCopyBackup"'+(list.length?'':' disabled')+'>Copy backup</button></div>'+
+    '<div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" data-act="hImport">⬆︎ Import file</button><button class="btn ghost" style="flex:1" data-act="hPaste">Paste backup</button></div>'+
+    '<input type="file" id="histFile" accept="application/json,.json,text/plain" hidden></div>';
+  return '<div class="row" style="margin:2px 0 10px"><button class="btn ghost sm" data-act="histBack">← Back to round</button></div>'+
+    '<div class="hist-h"><h3>Saved rounds</h3><span class="chip">'+list.length+'</span></div>'+items+backup;
+}
+function savedRoundHtml(rec){
+  var g=rec.game, R=computeGame(g), v=state.ui.histView||'card', m=rec.sum;
+  var head='<div class="row" style="margin:2px 0 10px"><button class="btn ghost sm" data-act="histList">← All saved rounds</button></div>'+
+    '<div class="ghead"><div class="gh-t">'+esc(fmtDate(rec.date))+' · '+esc(R.C.name)+'</div><div class="gh-s">'+esc(R.C.tees)+'<br><b class="gh-p">'+esc(presetTitle(g.settings))+'</b> · '+(R.teams?'2v2 best ball':'1v1 match play')+' · '+(g.useHandicap?'Net':'Gross')+' · '+(R.final?'Final':'Finished early · '+R.doneCount+' holes')+'</div>'+
+    '<div class="vs"><div class="side A"><b>'+(R.teams?'Team A':'Side A')+'</b>'+esc(sideLabel(g,R,'A'))+'</div><div class="vsx">VS</div><div class="side B"><b>'+(R.teams?'Team B':'Side B')+'</b>'+esc(sideLabel(g,R,'B'))+'</div></div></div>'+
+    '<div class="muted ro-note">🔒 Saved round · read-only · saved '+esc(new Date(rec.savedAt).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}))+'</div>';
+  var seg='<div class="seg" style="margin:10px 0 12px"><button data-hv="card" class="'+(v==='card'?'on':'')+'">Card</button><button data-hv="bets" class="'+(v==='bets'?'on':'')+'">Bets<span class="cnt">'+R.bets.length+'</span></button><button data-hv="settle" class="'+(v==='settle'?'on':'')+'">Settle</button></div>';
+  RO=true; var body; try{ body=v==='bets'?betsHtml(g,R):v==='settle'?settleHtml(g,R):cardHtml(g,R); } finally { RO=false; }
+  var acts='<div class="card"><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" style="flex:1" data-act="hCopy">Copy settlement</button><button class="btn ghost" style="flex:1" data-act="hReopen">✏️ Reopen to edit</button></div>'+
+    '<button class="btn ghost block danger-t" style="margin-top:8px" data-act="hDel">🗑 Delete saved round</button></div>';
+  return head+seg+'<div id="savedView">'+body+'</div>'+acts;
+}
+function backupObj(){ return {app:'Fairway Club', type:'fairway-club-rounds', version:1, exportedAt:new Date().toISOString(), rounds:state.saved||[], players:state.friends||[]}; }
+function exportRounds(){
+  var txt=JSON.stringify(backupObj(),null,1), name='fairway-club-rounds-'+iso(new Date())+'.json';
+  try{ var blob=new Blob([txt],{type:'application/json'}), url=URL.createObjectURL(blob), a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); },1500); toast('Backup downloaded · '+name); }
+  catch(e){ copyText(txt,'Backup copied — paste it into Notes or email it to yourself'); }
+}
+function importRounds(txt){
+  var o; try{ o=JSON.parse(txt); }catch(e){ toast('That isn’t a Fairway Club backup (not valid JSON)'); return false; }
+  if(!o || o.type!=='fairway-club-rounds' || !Array.isArray(o.rounds)){ toast('That isn’t a Fairway Club rounds backup'); return false; }
+  var added=0, skipped=0, np=0;
+  (o.players||[]).forEach(function(p){ if(p && p.id && p.name && !player(p.id) && !findPlayerByName(p.name)){ state.friends.push({id:p.id,name:p.name,hcp:p.hcp,ghin:p.ghin||'',phone:p.phone||'',email:p.email||''}); np++; } });
+  o.rounds.forEach(function(r){
+    if(!r || !r.id || !r.game || !Array.isArray(r.game.players) || !r.game.scores){ skipped++; return; }
+    if(savedById(r.id)){ skipped++; return; }
+    if(!r.sum) r.sum=roundSummary(r.game);
+    state.saved.push(r); added++;
+  });
+  save(); renderAll();
+  toast('Imported '+added+' round'+(added===1?'':'s')+(skipped?' · '+skipped+' already here/skipped':'')+(np?' · '+np+' player'+(np===1?'':'s')+' added':''));
+  return true;
+}
+function histClick(e){
+  var hv=e.target.closest('[data-hv]'); if(hv){ state.ui.histView=hv.getAttribute('data-hv'); save(); renderGames(); return true; }
+  var hr=e.target.closest('[data-hid]:not([data-act])'); if(hr){ state.ui.histOpen=hr.getAttribute('data-hid'); state.ui.histView='card'; save(); renderGames(); window.scrollTo(0,0); return true; }
+  var b=e.target.closest('[data-act]'); if(!b) return true;
+  var act=b.getAttribute('data-act'), rec=state.ui.histOpen&&savedById(state.ui.histOpen);
+  if(act==='histBack'){ state.ui.history=false; state.ui.histOpen=null; save(); renderGames(); window.scrollTo(0,0); return true; }
+  if(act==='histList'){ state.ui.histOpen=null; save(); renderGames(); window.scrollTo(0,0); return true; }
+  if(act==='hExport'){ exportRounds(); return true; }
+  if(act==='hCopyBackup'){ copyText(JSON.stringify(backupObj()),'Backup copied — paste it into Notes or email it to yourself'); return true; }
+  if(act==='hImport'){ var f=$('#histFile'); if(f){ f.value=''; f.click(); } return true; }
+  if(act==='hPaste'){
+    openSheet('<h3>Paste a backup</h3><p>Paste the text from a Fairway Club backup. Rounds already on this phone are skipped.</p><textarea class="in" id="impText" rows="6" style="width:100%;font-family:monospace;font-size:12px"></textarea>'+
+      '<div class="sheet-actions"><button class="btn full" id="impGo">Import</button><button class="btn ghost" data-close>Cancel</button></div>');
+    $('#impGo').onclick=function(){ if(importRounds($('#impText').value)) closeSheet(); }; return true;
+  }
+  if(!rec) return true;
+  if(act==='hCopy'){ copyText(settlementText(rec.game,computeGame(rec.game)),'Settlement copied to clipboard'); return true; }
+  if(act==='hDel'){
+    openSheet('<h3>Delete this saved round?</h3><p>'+esc(fmtDate(rec.date))+' · '+esc(rec.sum.game)+'<br>'+esc(rec.sum.sides[0])+' vs '+esc(rec.sum.sides[1])+'<br>It also comes off the season money totals. This can’t be undone.</p>'+
+      '<div class="sheet-actions"><button class="btn ghost" data-close>Keep it</button><button class="btn danger" id="hDelYes">Delete round</button></div>');
+    $('#hDelYes').onclick=function(){ state.saved=state.saved.filter(function(r){return r.id!==rec.id;}); if(state.game&&state.game.savedId===rec.id){ delete state.game.savedId; delete state.game.savedSig; } state.ui.histOpen=null; save(); closeSheet(); renderGames(); renderLeaderboard(); toast('Saved round deleted'); };
+    return true;
+  }
+  if(act==='hReopen'){
+    var go2=function(){ var g=JSON.parse(JSON.stringify(rec.game)); g.savedId=rec.id; delete g.early; g.savedSig=roundSig(g); state.game=g; state.ui.history=false; state.ui.histOpen=null; state.ui.gameView='card'; save(); closeSheet(); renderGames(); window.scrollTo(0,0); toast('Reopened — changes update the saved round when you tap Update'); };
+    if(state.game && hasScores(state.game) && !isSaved(state.game)){
+      openSheet('<h3>Replace the current round?</h3><p>Your current round isn’t saved. Reopening this one will replace it on the scoring screen.</p><div class="sheet-actions"><button class="btn full" id="roSave">Save current round first</button><button class="btn danger" id="roYes">Replace without saving</button><button class="btn ghost" data-close>Cancel</button></div>');
+      $('#roSave').onclick=function(){ saveCurrentRound(); go2(); }; $('#roYes').onclick=go2;
+    } else go2();
+    return true;
+  }
+  return true;
+}
+/* One-time on update: a round already on the phone (e.g. today's test round) is kept and offered for saving */
+function historyMigration(){
+  if(state.ui.histMigrated) return; state.ui.histMigrated=1; save();
+  var g=state.game; if(!g || !hasScores(g) || isSaved(g)) return;
+  var R=computeGame(g);
+  setTimeout(function(){
+    openSheet('<h3>Save this round?</h3><p>Your round from <b>'+esc(fmtDate(g.date))+'</b> at '+esc(R.C.name)+' is still here: '+esc(sideLabel(g,R,'A'))+' vs '+esc(sideLabel(g,R,'B'))+' · '+(R.final?'all 18 holes scored':R.doneCount+' of 18 holes scored')+'. Rounds can now be saved to History.</p>'+
+      '<div class="sheet-actions"><button class="btn full" id="mgSave">💾 Save this round</button><button class="btn ghost" id="mgLater">Not now (keep it open)</button></div>');
+    $('#mgSave').onclick=function(){ var rec=saveCurrentRound(); closeSheet(); renderGames(); afterSaveSheet(rec); };
+    $('#mgLater').onclick=function(){ closeSheet(); toast('Round kept — save it any time from Settle'); };
+  },250);
 }
 
 /* ---------- Games: scorecard ---------- */
@@ -1797,7 +1983,7 @@ function cardHtml(g,R){
       if(g.greenies[h]===k){ var ge=S.greenieHoles==='all'||parh===3; dots+='<i class="jd g'+(ge?'':' off')+'" data-j="greenie" title="Greenie'+(ge?'':' (not counted)')+'"></i>'; }
       if((g.sandies[h]||[]).indexOf(k)>=0){ var so=gv!=null&&gv<=parh; dots+='<i class="jd s'+(so?'':' off')+'" data-j="sandy" title="Sandy'+(so?'':' (not counted)')+'"></i>'; }
       if(((g.pulleys&&g.pulleys[h])||[]).indexOf(k)>=0){ var po=R.jon.pulley; dots+='<i class="jd p'+(po?'':' off')+'" data-j="pulley" title="Pulley'+(po?'':' (pulleys off)')+'"></i>'; }
-      return '<td data-k="'+k+'" data-h="'+h+'" class="'+(h===g.hole?'cur':'')+'" title="'+esc(p.name)+' · hole '+(h+1)+(st?' · '+st+' stroke'+(st>1?'s':''):'')+'">'+
+      return '<td data-k="'+k+'" data-h="'+h+'" class="'+(h===g.hole&&!RO?'cur':'')+'" title="'+esc(p.name)+' · hole '+(h+1)+(st?' · '+st+' stroke'+(st>1?'s':''):'')+'">'+
         (g.useHandicap&&st?'<i class="stk" data-stk="'+st+'">'+'/'.repeat(st)+'</i>':'')+
         '<span class="sn '+cls+'">'+(gv==null?'':gv)+'</span>'+(dots?'<span class="jdw">'+dots+'</span>':'')+'</td>';
     },function(c){ return sumOver(c,function(h){ return R.holes[h].gross[k]; }); });
@@ -1842,7 +2028,7 @@ function cardHtml(g,R){
     (g.useHandicap?'<span><b style="color:#9aa8a0;font-size:11px">/</b>Handicap stroke</span>':'')+'<span><b style="text-decoration:underline;color:var(--g800)">4</b>Best ball won hole</span>'+
     '<span><b style="color:#c9a227">▏</b>'+(R.closeout?'New bet starts (after a close-out)':'Press starts')+'</span></div>';
   var top='<div class="sc-top"><div class="seg" id="cardNine"><button data-nine="front" class="'+(nine==='front'?'on':'')+'">Front 9</button><button data-nine="back" class="'+(nine==='back'?'on':'')+'">Back 9</button><button data-nine="all" class="'+(nine==='all'?'on':'')+'">All 18</button></div></div>';
-  return '<div class="card scard">'+top+table+legend+'</div><p class="muted" style="font-size:12px;margin:-4px 4px 12px">Tap any score to edit that hole in Scoring.</p>';
+  return (RO?'':saveCardHtml(g,R))+'<div class="card scard">'+top+table+legend+'</div>'+(RO?'':'<p class="muted" style="font-size:12px;margin:-4px 4px 12px">Tap any score to edit that hole in Scoring.</p>');
 }
 
 /* ---------- Game ideas (researched; scoring coming soon except Nassau + junk) ---------- */
@@ -2046,13 +2232,14 @@ function ideasHtml(){
   return head+rec+filters+'<div id="ideaList">'+(cards||'<div class="card empty"><div class="big">🔍</div>No games match these filters.</div>')+'</div>'+
     '<p class="muted" style="font-size:11.5px;margin:4px 2px 12px">Summaries are paraphrased; rules vary by group — agree on details on the first tee. Links open the original articles in a new tab.</p>';
 }
-function openIdeas(id){ state.ui.ideas=true; state.ui.ideaOpen=id||null; save(); go('games'); if(id){ setTimeout(function(){ var el=document.getElementById('idea-'+id); if(el) el.scrollIntoView({block:'start'}); window.scrollBy(0,-84); },30); } }
+function openIdeas(id){ state.ui.history=false; state.ui.ideas=true; state.ui.ideaOpen=id||null; save(); go('games'); if(id){ setTimeout(function(){ var el=document.getElementById('idea-'+id); if(el) el.scrollIntoView({block:'start'}); window.scrollBy(0,-84); },30); } }
 
 /* ---------- Games: events ---------- */
 var gameRoot=$('#gameRoot');
 gameRoot.addEventListener('click',function(e){
   var nb=e.target.closest('[data-nine]');
   if(nb){ state.ui.cardNine=nb.getAttribute('data-nine'); save(); renderGames(); return; }
+  if(state.ui.history){ histClick(e); return; }
   var sc=e.target.closest('#scTable td[data-k][data-h]');
   if(sc && state.game){ state.game.hole=+sc.getAttribute('data-h'); state.ui.gameView='score'; save(); renderGames(); window.scrollTo(0,0); toast('Editing hole '+(state.game.hole+1)); return; }
   var ia=e.target.closest('[data-act="ideas"]'); if(ia){ openIdeas(); return; }
@@ -2106,8 +2293,23 @@ gameRoot.addEventListener('click',function(e){
   if(act==='next'){ if(h<17){ g.hole++; save(); renderGames(); } else { state.ui.gameView='settle'; save(); renderGames(); window.scrollTo(0,0); } return; }
   if(act==='copy'){ copyText(settlementText(g,computeGame(g)),'Settlement copied to clipboard'); return; }
   if(act==='share'){ showShare(); return; }
+  if(act==='saveRound'){ if(!computeGame(g).final && !g.savedId){ act='finishEarly'; } else { doSave(); return; } }
+  if(act==='finishEarly'){
+    var Rf=computeGame(g);
+    openSheet('<h3>Finish the round early?</h3><p>Save it after <b>'+Rf.doneCount+' of 18 holes</b>. Bets that aren’t finished settle as they stand now (the side ahead wins; all-square pushes). You can reopen it from History later.</p>'+
+      '<div class="sheet-actions"><button class="btn full" id="feYes">🏁 Finish &amp; save round</button><button class="btn ghost" data-close>Keep playing</button></div>');
+    $('#feYes').onclick=function(){ closeSheet(); doSave(); };
+    return;
+  }
+  if(act==='newAfterSave'){ if(isSaved(g)){ state.game=null; state.ui.gameView='score'; save(); renderGames(); window.scrollTo(0,0); toast('Ready for a new round'); } return; }
+  if(act==='histGo'){ openHistory(b.getAttribute('data-hid')); return; }
   if(act==='newround'){
-    openSheet('<h3>Start a new round?</h3><p>The current round’s scores and bets will be cleared. (Tip: copy the settlement first.)</p><div class="sheet-actions"><button class="btn ghost" data-close>Keep playing</button><button class="btn danger" id="nrYes">Discard round</button></div>');
+    if(!hasScores(g) || isSaved(g)){
+      openSheet('<h3>Start a new round?</h3><p>'+(isSaved(g)?'This round is saved in History.':'No scores have been entered yet.')+'</p><div class="sheet-actions"><button class="btn ghost" data-close>Keep playing</button><button class="btn danger" id="nrYes">Start new round</button></div>');
+    } else {
+      openSheet('<h3>This round isn’t saved</h3><p>Starting a new round clears this one’s scores and bets. Save it to History first?</p><div class="sheet-actions"><button class="btn full" id="nrSave">💾 Save &amp; start new</button><button class="btn danger" id="nrYes">Discard round</button><button class="btn ghost" data-close>Keep playing</button></div>');
+      $('#nrSave').onclick=function(){ saveCurrentRound(); state.game=null; state.ui.gameView='score'; save(); closeSheet(); renderGames(); toast('Saved to History · ready for a new round'); };
+    }
     $('#nrYes').onclick=function(){ state.game=null; save(); closeSheet(); renderGames(); toast('Round cleared'); };
   }
 });
@@ -2181,12 +2383,14 @@ function openSettings(){
 }
 $('#gSettingsBtn').addEventListener('click',openSettings);
 $('#gIdeasBtn').addEventListener('click',function(){ openIdeas(); });
+$('#gHistBtn').addEventListener('click',function(){ openHistory(); });
 gameRoot.addEventListener('toggle',function(e){ var d=e.target; if(d.tagName==='DETAILS'&&d.classList.contains('idea')){ if(d.open) state.ui.ideaOpen=d.getAttribute('data-id'); else if(state.ui.ideaOpen===d.getAttribute('data-id')) state.ui.ideaOpen=null; save(); } },true);
 
 
 function renderAll(){ renderTeeTimes(); renderPairings(); renderLeaderboard(); renderGames(); renderFriends(); }
 renderAll(); initForm();
 go(location.hash ? location.hash.slice(1) : state.ui.tab, true);
+historyMigration();
 })();
 </script>
 </body>
