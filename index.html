@@ -239,6 +239,9 @@
   .pinfo small{display:block;font-size:11.5px;color:var(--muted)}
   .dots{color:var(--g600);letter-spacing:1px}
   .jrow{display:flex;gap:5px;margin-top:5px}
+  .prow{flex-wrap:wrap}
+  .prow>.jrow{flex-basis:100%;flex-wrap:wrap;gap:6px;margin:0 0 0 47px}
+  .prow>.jrow .jb{font-size:12.5px;padding:6px 12px;min-height:34px}
   .jb{border:1px solid var(--line);background:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:3px 8px;color:var(--muted);white-space:nowrap}
   .jb.on{background:var(--g700);border-color:var(--g700);color:#fff}
   .jb.on.warn{background:#c58b00;border-color:#c58b00}
@@ -339,7 +342,8 @@
   .stk{position:absolute;top:1px;left:2px;font-size:9px;font-style:normal;font-weight:700;color:#9aa8a0;line-height:1;letter-spacing:-1px}
   .jdw{position:absolute;bottom:2px;right:2px;display:flex;gap:1.5px}
   .jd{width:5px;height:5px;border-radius:50%;display:block}
-  .jd.g{background:#18a058} .jd.s{background:#c79a52}
+  .jd.g{background:#18a058} .jd.s{background:#c79a52} .jd.p{background:#7b4bd6}
+  .jd.p.off{box-shadow:inset 0 0 0 1px #7b4bd6}
   .jd.off{background:transparent!important}
   .jd.g.off{box-shadow:inset 0 0 0 1px #18a058} .jd.s.off{box-shadow:inset 0 0 0 1px #c79a52}
   .sc tr.bb td{background:#f1f8f4;font-weight:800;color:var(--g800);height:26px;font-size:12px}
@@ -422,6 +426,22 @@
   .stakes{display:flex;flex-wrap:wrap;gap:6px}
   .stakeb{min-width:52px;min-height:44px;padding:0 12px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font:inherit;font-weight:800;font-size:14px;cursor:pointer;touch-action:manipulation}
   .stakeb.on{background:var(--g700);border-color:var(--g700);color:#fff}
+  .jsec-h{margin:16px 0 2px;font-weight:800;font-size:15px}
+  .jsec-h small{display:block;font-weight:600;font-size:12px;color:var(--muted)}
+  .jpick{display:flex;flex-direction:column}
+  .jitem{padding:12px 0;border-bottom:1px solid var(--line)}
+  .jitem:last-child{border-bottom:0}
+  .jtop{display:flex;align-items:center;gap:10px}
+  .jt{flex:1;min-width:0}
+  .jt label.fl.jh{margin:0}
+  .jitem.on .jt label.fl.jh{color:var(--g800)}
+  .jt label.fl em{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.4px;color:#fff;background:#7b4bd6;border-radius:6px;padding:2px 6px;margin-left:4px;vertical-align:1px}
+  .jt small{display:block;color:var(--muted);font-size:12px;line-height:1.3;margin-top:2px}
+  .yn{display:flex;flex:none;border:1.5px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+  .ynb{min-width:56px;min-height:44px;border:0;background:#fff;font:inherit;font-weight:800;font-size:14px;color:var(--muted);cursor:pointer;touch-action:manipulation}
+  .ynb.yes.on{background:var(--g700);color:#fff}
+  .ynb.no.on{background:#e9eeeb;color:#33413a}
+  .jamts{margin-top:10px}
   .pills.two{grid-template-columns:1fr 1fr}
   .presscard .pressbtn{margin-top:8px;min-height:46px;font-size:14px}
   .presscard .pressbtn:first-of-type{margin-top:0}
@@ -1248,7 +1268,8 @@ function friendForm(f){
 var GKEY='fairwayClub.gameDefaults.v1';
 var STANDARD={front:80, back:80, overall:80, matchUnits:'perPlayer', autoPress:true, pressAmount:40, pressTrigger:2, pressOverall:true,
   greenieAmt:10, greenieHoles:'all', sandyAmt:10, birdieAmt:20, eagleAmt:100, junkUnits:'perTeam', junkScoring:'gross', allowance:100,
-  preset:'egn', format:'nassau', junkOn:true, manualPress:false};   // = the "East Greenwich Nassau" preset
+  preset:'egn', format:'nassau', junkOn:true, manualPress:false,
+  pulleyAmt:10, greenieOn:true, sandyOn:true, pulleyOn:false, birdieOn:true, eagleOn:true};   // = the "East Greenwich Nassau" preset
 var GVER_KEY='fairwayClub.gameDefaults.ver', GVER=2; // v2: standard junk units changed per-player -> per-team
 function loadDefaults(){
   try{
@@ -1264,20 +1285,36 @@ function loadDefaults(){
 function saveDefaults(s){ try{ localStorage.setItem(GKEY, JSON.stringify(s)); localStorage.setItem(GVER_KEY, String(GVER)); }catch(e){} }
 /* ---- Game presets (Games setup picker, in this order). Saved settings from before presets existed = East Greenwich Nassau. ---- */
 var PRESETS=[
-  {id:'closeout', name:'Close Out', def:Object.assign({},STANDARD,{front:20,back:20,overall:0,autoPress:false,pressAmount:20,greenieAmt:5,sandyAmt:5,birdieAmt:10,eagleAmt:50,preset:'closeout',format:'closeout',junkOn:false,manualPress:false}),
+  {id:'closeout', name:'Close Out', def:Object.assign({},STANDARD,{front:20,back:20,overall:0,autoPress:false,pressAmount:20,greenieAmt:5,sandyAmt:5,pulleyAmt:5,birdieAmt:10,eagleAmt:50,greenieOn:false,sandyOn:false,pulleyOn:false,birdieOn:false,eagleOn:false,preset:'closeout',format:'closeout',junkOn:false,manualPress:false}),
    blurb:'Front & back 9 matches · a new bet starts whenever one is closed out · no overall, no presses'},
   {id:'egn', name:'East Greenwich Nassau', def:STANDARD,
    blurb:'auto press at 2 down · greenies, sandies, birdies & eagles'},
-  {id:'nassau', name:'Nassau', def:Object.assign({},STANDARD,{front:20,back:20,overall:20,autoPress:false,pressAmount:20,greenieAmt:5,sandyAmt:5,birdieAmt:10,eagleAmt:50,preset:'nassau',format:'nassau',junkOn:false,manualPress:true}),
+  {id:'nassau', name:'Nassau', def:Object.assign({},STANDARD,{front:20,back:20,overall:20,autoPress:false,pressAmount:20,greenieAmt:5,sandyAmt:5,pulleyAmt:5,birdieAmt:10,eagleAmt:50,greenieOn:false,sandyOn:false,pulleyOn:false,birdieOn:false,eagleOn:false,preset:'nassau',format:'nassau',junkOn:false,manualPress:true}),
    blurb:'no auto press (manual Press button) · junk off'}
 ];
-var PKEY='fairwayClub.presetDefaults.v1', AMT_KEYS=['front','back','overall','pressAmount','greenieAmt','sandyAmt','birdieAmt','eagleAmt'], STAKES=[10,20,40,50,80,100];
+var PKEY='fairwayClub.presetDefaults.v1', AMT_KEYS=['front','back','overall','pressAmount'], STAKES=[10,20,40,50,80,100];   // stakes scale the bets only; junk is set item by item
+var JUNK=[
+  {id:'greenie', name:'Greenies', one:'Greenie', ico:'⛳', cat:'Greenies', amts:[5,10,20,50,100]},
+  {id:'sandy',   name:'Sandies',  one:'Sandy',   ico:'🏖', cat:'Sandies',  amts:[5,10,20,50,100]},
+  {id:'pulley',  name:'Pulleys',  one:'Pulley',  ico:'🎯', cat:'Pulleys',  amts:[5,10,20,50,100], isNew:true},
+  {id:'birdie',  name:'Birdies',  one:'Birdie',  ico:'🐦', cat:'Birdies',  amts:[5,10,20,50,100]},
+  {id:'eagle',   name:'Eagles',   one:'Eagle',   ico:'🦅', cat:'Eagles',   amts:[20,50,100,200]}];
+/* is a junk item on? Settings saved before per-item toggles follow the old single junk switch (pulleys didn't exist: off) */
+function jOn(S,it){ var f=S[it+'On']; if(f===true||f===false) return f; return it==='pulley'?false:S.junkOn!==false; }
+function anyJunk(S){ return JUNK.some(function(j){ return jOn(S,j.id) && +S[j.id+'Amt']>0; }); }
+function normJunk(o,raw){   // raw = what was saved; carry an old "junk off" into the per-item toggles
+  if(raw && raw.greenieOn===undefined && raw.junkOn===false) JUNK.forEach(function(j){ o[j.id+'On']=false; });
+  o.junkOn=anyJunk(o); return o;
+}
+function junkHint(S,it){ return {greenie:S.greenieHoles==='all'?'Closest to the pin on the green · every hole':'Closest to the pin · par 3s only', sandy:'Up & down from a bunker for par or better',
+  pulley:'Made putt longer than the flagstick · any score', birdie:(S.junkScoring==='net'?'Net':'Natural (gross)')+' birdie', eagle:'Eagle or better'}[it]; }
 function presetById(id){ return PRESETS.filter(function(x){return x.id===id;})[0]||PRESETS[1]; }
 function readPresets(){ try{ return JSON.parse(localStorage.getItem(PKEY))||{}; }catch(e){ return {}; } }
 function loadPreset(id){
   var P=presetById(id);
-  if(P.id==='egn'){ var d=loadDefaults(); d.preset='egn'; d.format='nassau'; return d; }
-  return Object.assign({},P.def,readPresets()[P.id]||{},{preset:P.id,format:P.def.format});
+  if(P.id==='egn'){ var d=loadDefaults(), raw=null; try{ raw=JSON.parse(localStorage.getItem(GKEY)); }catch(e){} d.preset='egn'; d.format='nassau'; return normJunk(d,raw); }
+  var sv=readPresets()[P.id]||null;
+  return normJunk(Object.assign({},P.def,sv||{},{preset:P.id,format:P.def.format}),sv);
 }
 function savePreset(id,v){ if(presetById(id).id==='egn'){ saveDefaults(v); return; } var a=readPresets(); a[id]=v; try{ localStorage.setItem(PKEY,JSON.stringify(a)); }catch(e){} }
 function resetPreset(id){ if(presetById(id).id==='egn'){ saveDefaults(Object.assign({},STANDARD)); return; } var a=readPresets(); delete a[id]; try{ localStorage.setItem(PKEY,JSON.stringify(a)); }catch(e){} }
@@ -1286,7 +1323,9 @@ function scaleS(S,f){ var o=Object.assign({},S); if(f>0 && f!==1) AMT_KEYS.forEa
 /* settings for the round being set up: chosen preset (default Close Out) scaled by the stakes chooser */
 function setupSettings(){
   var su=state.gameSetup, S=loadPreset(su.preset||'closeout'), m=mainAmt(S), st=+su.stake>0?+su.stake:m;
-  var o=m>0?scaleS(S,st/m):S; if(su.junk===true||su.junk===false) o.junkOn=su.junk; return o;
+  var o=m>0?scaleS(S,st/m):Object.assign({},S), jx=su.jx||{};
+  JUNK.forEach(function(j){ var x=jx[j.id]; if(!x) return; if(x.on===true||x.on===false) o[j.id+'On']=x.on; if(+x.amt>0) o[j.id+'Amt']=+x.amt; });
+  o.junkOn=anyJunk(o); return o;
 }
 function presetTitle(S){
   var id=S.preset||'egn';
@@ -1411,26 +1450,32 @@ function computeGame(g){
       else opp.forEach(function(o){ mine.forEach(function(m){ ledger.push({from:o,to:m,amt:amt*Math.max(opp.length,mine.length)/(opp.length*mine.length),cat:cat,desc:desc}); }); });
     } else all.forEach(function(o){ if(o!==k) ledger.push({from:o,to:k,amt:amt,cat:cat,desc:desc}); });
   }
-  var junkOn=S.junkOn!==false;
+  var jon={}; JUNK.forEach(function(j){ jon[j.id]=jOn(S,j.id)&&+S[j.id+'Amt']>0; });
+  var junkOn=JUNK.some(function(j){ return jon[j.id]; });
   for(h=0;h<18 && junkOn;h++){
     var hd2=holes[h], par=C.par[h];
     all.forEach(function(k){
       var gv=hd2.gross[k]; if(gv==null) return;
       var d=(S.junkScoring==='net'?hd2.net[k]:gv)-par;
-      if(d<=-2 && +S.eagleAmt>0){ junk.push({h:h,k:k,type:'Eagle',amt:+S.eagleAmt,ok:true}); payJunk(k,+S.eagleAmt,'Eagles','Eagle #'+(h+1)); }
-      else if(d<=-1 && +S.birdieAmt>0){ junk.push({h:h,k:k,type:'Birdie',amt:+S.birdieAmt,ok:true}); payJunk(k,+S.birdieAmt,'Birdies','Birdie #'+(h+1)); }
+      if(d<=-2 && jon.eagle){ junk.push({h:h,k:k,type:'Eagle',amt:+S.eagleAmt,ok:true}); payJunk(k,+S.eagleAmt,'Eagles','Eagle #'+(h+1)); }
+      else if(d<=-1 && jon.birdie){ junk.push({h:h,k:k,type:'Birdie',amt:+S.birdieAmt,ok:true}); payJunk(k,+S.birdieAmt,'Birdies','Birdie #'+(h+1)); }
     });
     var gk=g.greenies[h];
-    if(gk && all.indexOf(gk)>=0){
+    if(jon.greenie && gk && all.indexOf(gk)>=0){
       var elig=S.greenieHoles==='all'||par===3;
-      junk.push({h:h,k:gk,type:'Greenie',amt:+S.greenieAmt,ok:elig&&+S.greenieAmt>0,why:elig?'':'par 3s only'});
+      junk.push({h:h,k:gk,type:'Greenie',amt:+S.greenieAmt,ok:elig,why:elig?'':'par 3s only'});
       if(elig) payJunk(gk,+S.greenieAmt,'Greenies','Greenie #'+(h+1));
     }
-    (g.sandies[h]||[]).forEach(function(k){
+    if(jon.sandy) (g.sandies[h]||[]).forEach(function(k){
       if(all.indexOf(k)<0) return;
       var gv=hd2.gross[k], ok=gv!=null&&gv<=par;
-      junk.push({h:h,k:k,type:'Sandy',amt:+S.sandyAmt,ok:ok&&+S.sandyAmt>0,why:gv==null?'no score yet':ok?'':'needs par or better'});
+      junk.push({h:h,k:k,type:'Sandy',amt:+S.sandyAmt,ok:ok,why:gv==null?'no score yet':ok?'':'needs par or better'});
       if(ok) payJunk(k,+S.sandyAmt,'Sandies','Sandy #'+(h+1));
+    });
+    if(jon.pulley) ((g.pulleys&&g.pulleys[h])||[]).forEach(function(k){   // made putt longer than the flagstick: no par requirement
+      if(all.indexOf(k)<0) return;
+      junk.push({h:h,k:k,type:'Pulley',amt:+S.pulleyAmt,ok:true});
+      payJunk(k,+S.pulleyAmt,'Pulleys','Pulley #'+(h+1));
     });
   }
   var net={}, cats={};
@@ -1445,7 +1490,7 @@ function computeGame(g){
     transfers.push({from:db[i].k,to:cr[j].k,amt:Math.round(m*100)/100});
     db[i].v-=m; cr[j].v-=m; if(db[i].v<0.004) i++; if(cr[j].v<0.004) j++;
   }
-  return {A:A,B:B,all:all,ch:ch,rec:rec,strokes:strokes,holes:holes,bets:bets,junk:junk,ledger:ledger,net:net,cats:cats,transfers:transfers,doneCount:doneCount,lastDone:lastDone,final:doneCount===18,C:C,teams:teams,closeout:CO,junkOn:junkOn};
+  return {A:A,B:B,all:all,ch:ch,rec:rec,strokes:strokes,holes:holes,bets:bets,junk:junk,ledger:ledger,net:net,cats:cats,transfers:transfers,doneCount:doneCount,lastDone:lastDone,final:doneCount===18,C:C,teams:teams,closeout:CO,junkOn:junkOn,jon:jon};
 }
 
 /* ---------- Games: helpers ---------- */
@@ -1474,7 +1519,7 @@ function newGame(su){
   var scores={}; players.forEach(function(p){ scores[p.key]=new Array(18).fill(null); });
   var S=su===state.gameSetup?setupSettings():su.preset?loadPreset(su.preset):loadDefaults();
   return {id:uid(), date:iso(new Date()), course:su.course, mode:su.mode, useHandicap:!!su.useHandicap, players:players,
-    settings:S, presses:[], scores:scores, greenies:new Array(18).fill(null), sandies:Array.apply(null,Array(18)).map(function(){return [];}), hole:0};
+    settings:S, presses:[], scores:scores, greenies:new Array(18).fill(null), sandies:Array.apply(null,Array(18)).map(function(){return [];}), pulleys:Array.apply(null,Array(18)).map(function(){return [];}), hole:0};
 }
 
 /* ---------- Games: rendering ---------- */
@@ -1483,24 +1528,35 @@ function playerOptions(sel, taken){
   return '<option value=""'+(sel?'':' selected')+'>'+(state.friends.length?'Choose player…':'Add players above ↑')+'</option>'+fr;
 }
 function settingsChips(S){
-  var CO=S.format==='closeout', jk=S.junkOn!==false, c=[];
+  var CO=S.format==='closeout', jk=anyJunk(S), c=[];
   if(CO){ c.push('Front '+money(S.front)+' · Back '+money(S.back)); c.push('New '+money(S.front)+(+S.back!==+S.front?'/'+money(S.back):'')+' bet after each close-out'); c.push('No overall · no presses'); }
   else {
     c.push('Nassau '+money(S.front)+'/'+money(S.back)+'/'+money(S.overall));
     c.push(S.autoPress?'Auto press '+money(S.pressAmount)+' @ '+S.pressTrigger+' down':'No auto press');
     if(S.manualPress) c.push('Manual press '+money(S.pressAmount));
   }
-  if(jk){ c.push('Greenies '+money(S.greenieAmt)+(S.greenieHoles==='all'?' · every hole':' · par 3s')); c.push('Sandies '+money(S.sandyAmt)); c.push('Birdies '+money(S.birdieAmt)); c.push('Eagles '+money(S.eagleAmt)); }
+  if(jk) JUNK.forEach(function(j){ if(jOn(S,j.id)&&+S[j.id+'Amt']>0) c.push(j.ico+' '+j.name+' '+money(S[j.id+'Amt'])+(j.id==='greenie'&&S.greenieHoles!=='all'?' · par 3s':'')); });
   else c.push('Junk off');
   c.push((S.matchUnits==='perTeam'?'Match: per team':'Match: per player')+(jk?' · '+(S.junkUnits==='perTeam'?'Junk: per team':'Junk: per player'):''));
   return '<div class="tagchips">'+c.map(function(x){ return '<span class="chip">'+esc(x)+'</span>'; }).join('')+'</div>';
+}
+function junkPickerHtml(S){
+  var su=state.gameSetup, jx=su.jx||{};
+  return '<div class="jsec-h">Junk <small>'+(S.junkUnits==='perTeam'?'each opposing player pays one winning partner':'paid by each other player')+'</small></div><div class="jpick" id="junkPick">'+JUNK.map(function(j){
+    var on=jOn(S,j.id), amt=+S[j.id+'Amt'], x=jx[j.id]||{}, custom=!!x.custom||j.amts.indexOf(amt)<0;
+    var amts=on?'<div class="stakes jamts">'+j.amts.map(function(v){ var a=!custom&&v===amt; return '<button class="stakeb'+(a?' on':'')+'" data-act="jamt" data-ji="'+j.id+'" data-v="'+v+'" aria-pressed="'+a+'">$'+v+'</button>'; }).join('')+
+      '<button class="stakeb'+(custom?' on':'')+'" data-act="jcustom" data-ji="'+j.id+'" aria-pressed="'+custom+'">'+(custom?money(amt):'Custom')+'</button></div>'+
+      (custom?'<div class="money-in" style="margin-top:8px;max-width:170px"><span>$</span><input class="in jcust" data-jc="'+j.id+'" type="number" min="1" step="1" inputmode="decimal" value="'+amt+'" aria-label="Custom '+j.one+' amount"></div>':''):'';
+    return '<div class="jitem'+(on?' on':'')+'" data-ji="'+j.id+'"><div class="jtop"><span class="jt"><label class="fl jh">'+j.name+(on?' · '+money(amt)+' each':'')+(j.isNew?' <em>New</em>':'')+'</label><small>'+j.ico+' '+esc(junkHint(S,j.id))+'</small></span>'+
+      '<span class="yn" role="group" aria-label="'+j.name+'"><button class="ynb yes'+(on?' on':'')+'" data-act="jyn" data-ji="'+j.id+'" data-v="1" aria-pressed="'+on+'">Yes</button><button class="ynb no'+(on?'':' on')+'" data-act="jyn" data-ji="'+j.id+'" data-v="0" aria-pressed="'+!on+'">No</button></span></div>'+amts+'</div>';
+  }).join('')+'</div>';
 }
 function presetPickerHtml(){
   var su=state.gameSetup, cur=su.preset||'closeout', S=setupSettings(), m=mainAmt(loadPreset(cur)), st=mainAmt(S);
   var cards=PRESETS.map(function(P,i){
     var on=P.id===cur, PS=on?S:loadPreset(P.id), title=P.id==='closeout'?money(mainAmt(PS))+' Close Out':P.name;
-    var jk=PS.junkOn!==false?'junk on':'junk off';
-    var sub=PS.format==='closeout'?P.blurb+(PS.junkOn!==false?' · junk on':''):(money(PS.front)+'/'+money(PS.back)+'/'+money(PS.overall)+' · '+(PS.autoPress?money(PS.pressAmount)+' auto press at '+PS.pressTrigger+' down':'no auto press'+(PS.manualPress?' (manual Press button)':''))+' · '+jk);
+    var jk=anyJunk(PS)?'junk on':'junk off';
+    var sub=PS.format==='closeout'?P.blurb+(anyJunk(PS)?' · junk on':''):(money(PS.front)+'/'+money(PS.back)+'/'+money(PS.overall)+' · '+(PS.autoPress?money(PS.pressAmount)+' auto press at '+PS.pressTrigger+' down':'no auto press'+(PS.manualPress?' (manual Press button)':''))+' · '+jk);
     return '<button class="ppick'+(on?' on':'')+'" data-act="preset" data-preset-pick="'+P.id+'" aria-pressed="'+on+'"><span class="ppn">'+(on?'✓':i+1)+'</span><span class="ppt"><b>'+esc(title)+(i===0?' <em>Default</em>':'')+'</b><small>'+esc(sub)+'</small></span></button>';
   }).join('');
   var custom=su.stakeCustom || STAKES.indexOf(st)<0, f=m>0?st/m:1;
@@ -1510,8 +1566,8 @@ function presetPickerHtml(){
   return '<div style="margin-top:14px"><label class="fl">Game</label><div class="ppicks" id="presetPick">'+cards+'</div>'+
     '<label class="fl" style="margin-top:10px">Stakes · '+(S.format==='closeout'?'each bet':'main bet (front/back/overall)')+'</label><div class="stakes" id="stakePick">'+chips+'</div>'+
     (custom?'<div class="money-in" style="margin-top:8px;max-width:170px"><span>$</span><input class="in" id="suStake" type="number" min="1" step="1" inputmode="decimal" value="'+st+'" aria-label="Custom stake"></div>':'')+
-    '<div class="muted" id="stakeNote" style="font-size:12px;margin:6px 2px 0">'+(fx===1?'Preset amounts':'×'+fx+' — every amount in this preset scaled')+' · fine-tune any amount in Game settings ⚙️</div>'+
-    '<div class="toggle" style="margin-top:10px"><div><b>Junk</b><small>Greenies '+money(S.greenieAmt)+', sandies '+money(S.sandyAmt)+', birdies '+money(S.birdieAmt)+', eagles '+money(S.eagleAmt)+'</small></div><label class="switch"><input type="checkbox" id="suJunk" '+(S.junkOn!==false?'checked':'')+'><span></span></label></div>'+
+    '<div class="muted" id="stakeNote" style="font-size:12px;margin:6px 2px 0">'+(fx===1?'Preset amounts':'×'+fx+' — bets'+(S.format==='closeout'?'':' & presses')+' scaled')+' · junk is set below, not by stakes</div>'+
+    junkPickerHtml(S)+
     '<div style="margin-top:10px"><label class="fl">Bets for this round</label>'+settingsChips(S)+'</div></div>';
 }
 function courseOptions(cur){
@@ -1587,14 +1643,16 @@ function scoringHtml(g,R){
   strip+='</div>';
   function prow(k,side){
     var p=gp(g,k), gv=hd.gross[k], st=R.strokes(k,h), nv=gv==null?null:gv-st;
-    var isG=g.greenies[h]===k, isS=(g.sandies[h]||[]).indexOf(k)>=0, sandyBad=isS&&gv!=null&&gv>par;
+    var isG=g.greenies[h]===k, isS=(g.sandies[h]||[]).indexOf(k)>=0, isP=((g.pulleys&&g.pulleys[h])||[]).indexOf(k)>=0, sandyBad=isS&&gv!=null&&gv>par;
     var best=hd.complete&&(g.useHandicap?nv:gv)===(side==='A'?hd.bestA:hd.bestB);
     return '<div class="prow '+side+(best?' best':'')+'" data-k="'+k+'">'+gAv(p)+
       '<div class="pinfo"><b>'+esc(p.name)+'</b><small>'+(g.useHandicap?'CH '+fmtCH(R.ch[k])+' · '+(st?'<span class="dots">'+'●'.repeat(st)+'</span> '+st+' stroke'+(st>1?'s':''):'no stroke'):'CH '+fmtCH(p.hcp)+' · gross')+'</small>'+
-      (R.junkOn?'<div class="jrow"><button class="jb'+(isG?' on':'')+'" data-act="greenie" data-k="'+k+'"'+(elig?'':' disabled title="Greenies are par 3s only (Game settings)"')+'>⛳ Greenie</button>'+
-      '<button class="jb'+(isS?' on':'')+(sandyBad?' warn':'')+'" data-act="sandy" data-k="'+k+'" title="'+(sandyBad?'Not counted: needs par or better':'Up & down from a bunker for par or better')+'">🏖 Sandy</button></div>':'')+'</div>'+
+      ''+'</div>'+
       '<div class="sbox"><div class="stp"><button data-act="dec" data-k="'+k+'" aria-label="Decrease '+esc(p.name)+'">−</button><span class="sv'+(gv==null?' empty':'')+'" data-sv="'+k+'">'+(gv==null?'–':gv)+'</span><button data-act="inc" data-k="'+k+'" aria-label="Increase '+esc(p.name)+'">+</button></div>'+
-      '<div class="rel '+(gv==null?'':relCls(gv,par))+'">'+(gv==null?'':relName(gv,par)+(g.useHandicap&&st?' · net '+nv:''))+'</div></div></div>';
+      '<div class="rel '+(gv==null?'':relCls(gv,par))+'">'+(gv==null?'':relName(gv,par)+(g.useHandicap&&st?' · net '+nv:''))+'</div></div>'+
+(R.jon.greenie||R.jon.sandy||R.jon.pulley?'<div class="jrow">'+(R.jon.greenie?'<button class="jb'+(isG?' on':'')+'" data-act="greenie" data-k="'+k+'"'+(elig?'':' disabled title="Greenies are par 3s only (Game settings)"')+'>⛳ Greenie</button>':'')+
+      (R.jon.sandy?'<button class="jb'+(isS?' on':'')+(sandyBad?' warn':'')+'" data-act="sandy" data-k="'+k+'" title="'+(sandyBad?'Not counted: needs par or better':'Up & down from a bunker for par or better')+'">🏖 Sandy</button>':'')+
+      (R.jon.pulley?'<button class="jb'+(isP?' on':'')+'" data-act="pulley" data-k="'+k+'" title="Made a putt longer than the flagstick">🎯 Pulley</button>':'')+'</div>':'')+'</div>';
   }
   var rows=['A','B'].map(function(side){
     var ks=side==='A'?R.A:R.B;
@@ -1664,16 +1722,16 @@ function betsHtml(g,R){
   var unit=S.junkUnits==='perTeam'&&R.teams?'per team · each opponent pays, each partner collects':'from each other player';
   var junk=R.junk.slice().sort(function(a,b){return a.h-b.h;});
   var jh='<div class="card"><h3 class="sec">Junk <span class="muted" style="font-size:11.5px;font-weight:600">'+unit+'</span></h3>'+(junk.length?'<ul class="jlist">'+junk.map(function(j){
-    return '<li><span class="hno">#'+(j.h+1)+'</span><span style="flex:1" class="'+(j.ok?'':'no')+'">'+({Greenie:'⛳',Sandy:'🏖',Birdie:'🐦',Eagle:'🦅'}[j.type])+' '+j.type+' · <b>'+esc(gp(g,j.k).name)+'</b></span><span class="'+(j.ok?'pos':'muted')+'" style="font-weight:700;font-size:12.5px">'+(j.ok?money(j.amt)+' '+(S.junkUnits==='perTeam'&&R.teams?'ea · team':'ea'):'not counted · '+esc(j.why||''))+'</span></li>';
-  }).join('')+'</ul>':'<div class="muted" style="font-size:13px">No greenies, sandies, birdies or eagles yet.</div>')+'</div>';
+    return '<li><span class="hno">#'+(j.h+1)+'</span><span style="flex:1" class="'+(j.ok?'':'no')+'">'+({Greenie:'⛳',Sandy:'🏖',Pulley:'🎯',Birdie:'🐦',Eagle:'🦅'}[j.type])+' '+j.type+' · <b>'+esc(gp(g,j.k).name)+'</b></span><span class="'+(j.ok?'pos':'muted')+'" style="font-weight:700;font-size:12.5px">'+(j.ok?money(j.amt)+' '+(S.junkUnits==='perTeam'&&R.teams?'ea · team':'ea'):'not counted · '+esc(j.why||''))+'</span></li>';
+  }).join('')+'</ul>':'<div class="muted" style="font-size:13px">No junk yet · playing for '+JUNK.filter(function(j){return R.jon[j.id];}).map(function(j){return j.name.toLowerCase()+' '+money(S[j.id+'Amt']);}).join(', ')+'.</div>')+'</div>';
   return toggle+segsHtml+pressHtml(g,R)+jh;
 }
-var CATS=['Match','Close-outs','Nassau','Presses','Greenies','Sandies','Birdies','Eagles'];
+var CATS=['Match','Close-outs','Nassau','Presses','Greenies','Sandies','Pulleys','Birdies','Eagles'];
 function settlementText(g,R){
   var S=g.settings, L=[];
   L.push('Fairway Club — round settlement');
   L.push(R.C.name+' · '+fmtDate(g.date)+' · '+(R.teams?'2v2 best ball':'1v1 match')+' · '+(g.useHandicap?'Net':'Gross'));
-  L.push('Game: '+presetTitle(S)+(R.junkOn?'':' · junk off'));
+  L.push('Game: '+presetTitle(S)+(R.junkOn?' · junk: '+JUNK.filter(function(j){return R.jon[j.id];}).map(function(j){return j.name.toLowerCase()+' '+money(S[j.id+'Amt']);}).join(', '):' · junk off'));
   L.push(sideLabel(g,R,'A')+' vs '+sideLabel(g,R,'B'));
   L.push(R.final?'FINAL (18/18 holes)':'LIVE — as if the round ended after '+R.doneCount+' of 18 holes');
   L.push(''); L.push('MATCH');
@@ -1699,7 +1757,7 @@ function settleHtml(g,R){
       :'<div class="muted" style="font-size:13px">All square — nobody owes anything.</div>')+
     '<div class="muted" style="font-size:11.5px;margin-top:6px" id="zeroCheck">Check: net totals sum to '+money(Math.abs(sum))+' '+(Math.abs(sum)<0.01?'✓':'⚠︎')+'</div></div>';
   var bk='<div class="card"><h3 class="sec">Breakdown</h3><table class="bk"><thead><tr><th></th>'+R.all.map(function(k){return '<th>'+esc(first(gp(g,k).name))+'</th>';}).join('')+'</tr></thead><tbody>'+
-    CATS.filter(function(c){ var rel=R.closeout?(c==='Match'||c==='Close-outs'):(c==='Nassau'||c==='Presses'); if(['Greenies','Sandies','Birdies','Eagles'].indexOf(c)>=0) rel=R.junkOn; return rel || R.all.some(function(k){ return Math.abs(R.cats[k][c]||0)>0.004; }); }).map(function(c){ return '<tr><td>'+c+'</td>'+R.all.map(function(k){ var x=R.cats[k][c]||0; return '<td class="'+mcls(x)+'">'+(Math.abs(x)<0.004?'–':smoney(x))+'</td>'; }).join('')+'</tr>'; }).join('')+
+    CATS.filter(function(c){ var rel=R.closeout?(c==='Match'||c==='Close-outs'):(c==='Nassau'||c==='Presses'); var ji=JUNK.filter(function(j){return j.cat===c;})[0]; if(ji) rel=R.jon[ji.id]; return rel || R.all.some(function(k){ return Math.abs(R.cats[k][c]||0)>0.004; }); }).map(function(c){ return '<tr><td>'+c+'</td>'+R.all.map(function(k){ var x=R.cats[k][c]||0; return '<td class="'+mcls(x)+'">'+(Math.abs(x)<0.004?'–':smoney(x))+'</td>'; }).join('')+'</tr>'; }).join('')+
     '<tr class="tot"><td>Net</td>'+R.all.map(function(k){ return '<td class="'+mcls(R.net[k])+'">'+smoney(R.net[k])+'</td>'; }).join('')+'</tr></tbody></table></div>';
   var txt='<div class="card"><h3 class="sec">'+(R.final?'End-of-round summary':'Summary so far')+'</h3><pre class="sumtext" id="sumText">'+esc(settlementText(g,R))+'</pre>'+
     '<div class="row" style="margin-top:10px;gap:8px"><button class="btn" style="flex:1" data-act="copy">Copy settlement</button><button class="btn ghost" data-act="share">Share</button></div></div>';
@@ -1736,6 +1794,7 @@ function cardHtml(g,R){
       var dots='';
       if(g.greenies[h]===k){ var ge=S.greenieHoles==='all'||parh===3; dots+='<i class="jd g'+(ge?'':' off')+'" data-j="greenie" title="Greenie'+(ge?'':' (not counted)')+'"></i>'; }
       if((g.sandies[h]||[]).indexOf(k)>=0){ var so=gv!=null&&gv<=parh; dots+='<i class="jd s'+(so?'':' off')+'" data-j="sandy" title="Sandy'+(so?'':' (not counted)')+'"></i>'; }
+      if(((g.pulleys&&g.pulleys[h])||[]).indexOf(k)>=0){ var po=R.jon.pulley; dots+='<i class="jd p'+(po?'':' off')+'" data-j="pulley" title="Pulley'+(po?'':' (pulleys off)')+'"></i>'; }
       return '<td data-k="'+k+'" data-h="'+h+'" class="'+(h===g.hole?'cur':'')+'" title="'+esc(p.name)+' · hole '+(h+1)+(st?' · '+st+' stroke'+(st>1?'s':''):'')+'">'+
         (g.useHandicap&&st?'<i class="stk" data-stk="'+st+'">'+'/'.repeat(st)+'</i>':'')+
         '<span class="sn '+cls+'">'+(gv==null?'':gv)+'</span>'+(dots?'<span class="jdw">'+dots+'</span>':'')+'</td>';
@@ -1777,7 +1836,7 @@ function cardHtml(g,R){
     (vis.length?'<tr class="gap"><td class="nm"></td><td colspan="'+cols.length+'"></td></tr>'+msec+mrows:'')+'</tbody></table></div>';
   var legend='<div class="sc-legend">'+
     '<span><span class="sn bird">3</span>Birdie</span><span><span class="sn eagle">2</span>Eagle+</span><span><span class="sn bog">5</span>Bogey</span><span><span class="sn dbl">6</span>Double+</span>'+
-    '<span><i class="jd g"></i>Greenie</span><span><i class="jd s"></i>Sandy</span><span><i class="jd s off"></i>not counted</span>'+
+    '<span><i class="jd g"></i>Greenie</span><span><i class="jd s"></i>Sandy</span><span><i class="jd p"></i>Pulley</span><span><i class="jd s off"></i>not counted</span>'+
     (g.useHandicap?'<span><b style="color:#9aa8a0;font-size:11px">/</b>Handicap stroke</span>':'')+'<span><b style="text-decoration:underline;color:var(--g800)">4</b>Best ball won hole</span>'+
     '<span><b style="color:#c9a227">▏</b>'+(R.closeout?'New bet starts (after a close-out)':'Press starts')+'</span></div>';
   var top='<div class="sc-top"><div class="seg" id="cardNine"><button data-nine="front" class="'+(nine==='front'?'on':'')+'">Front 9</button><button data-nine="back" class="'+(nine==='back'?'on':'')+'">Back 9</button><button data-nine="all" class="'+(nine==='all'?'on':'')+'">All 18</button></div></div>';
@@ -1789,7 +1848,7 @@ var GD='Golf Digest — Golf Games Explained';
 var IDEAS=[
  {id:'nassau', name:'Nassau · Close Out', aka:'Your presets: $20 Close Out · East Greenwich Nassau · Nassau', types:['team','individual'], min:2, max:4, counts:[2,4], ideal:[2,4], diff:'Easy', scoring:true,
   one:'Three matches in one: front 9, back 9 and overall, with presses and junk on the side.',
-  how:'Match play 1v1 or 2v2 best ball. The front nine, back nine and full 18 are three separate bets. A side that goes 2 down can press (a new bet for the rest of that nine). Junk such as greenies, sandies and birdies is tallied separately.',
+  how:'Match play 1v1 or 2v2 best ball. The front nine, back nine and full 18 are three separate bets. A side that goes 2 down can press (a new bet for the rest of that nine). Junk such as greenies, sandies, pulleys (a made putt longer than the flagstick) and birdies is tallied separately.',
   money:'Each of the three matches pays the agreed amount; each press pays its own amount. Junk is settled on top. Close Out drops the overall and presses: when a nine’s bet is closed out, a new bet of the same amount starts on the holes left.',
   stake:'$20 Close Out (default) · East Greenwich Nassau: $80-$80-$80, $40 auto press at 2 down, $10 greenies & sandies, $20 birdies, $100 eagles · Nassau: $20-$20-$20, manual press.',
   why:'Simple, fair with handicaps, and three bets mean a bad nine never knocks you out.',
@@ -1909,7 +1968,7 @@ var IDEAS=[
 ];
 function ideaCtx(){
   var g=state.game, su=state.gameSetup, mode=g?g.mode:su.mode, S=g?g.settings:setupSettings();
-  var junkAmts=S.junkOn===false?[]:[S.greenieAmt,S.sandyAmt,S.birdieAmt,S.eagleAmt].map(Number).filter(function(x){return x>0;});
+  var junkAmts=JUNK.filter(function(j){ return jOn(S,j.id); }).map(function(j){ return +S[j.id+'Amt']; }).filter(function(x){return x>0;});
   var amts=[S.front,S.back,S.overall,S.pressAmount].map(Number).filter(function(x){return x>0;}).concat(junkAmts);
   return {players:mode==='teams'?4:2, teams:mode==='teams', hasJunk:junkAmts.length>0, nassau:Math.max(+S.front,+S.back,+S.overall), game:presetTitle(S),
     lo:amts.length?Math.min.apply(null,amts):0, hi:amts.length?Math.max.apply(null,amts):0, inRound:!!g};
@@ -2006,8 +2065,14 @@ gameRoot.addEventListener('click',function(e){
   var b=e.target.closest('[data-act]'); if(!b || b.tagName==='INPUT') return;
   var act=b.getAttribute('data-act'), g=state.game, su=state.gameSetup;
   if(act==='mode'){ su.mode=b.getAttribute('data-mode'); save(); renderGames(); return; }
-  if(act==='preset'){ var pid=b.getAttribute('data-preset-pick'); if(su.preset!==pid){ su.preset=pid; su.stake=null; su.junk=null; su.stakeCustom=false; } save(); renderGames(); toast(presetTitle(setupSettings())+' selected'); return; }
+  if(act==='preset'){ var pid=b.getAttribute('data-preset-pick'); if(su.preset!==pid){ su.preset=pid; su.stake=null; su.jx=null; su.stakeCustom=false; } save(); renderGames(); toast(presetTitle(setupSettings())+' selected'); return; }
   if(act==='stake'){ su.stake=+b.getAttribute('data-v'); su.stakeCustom=false; save(); renderGames(); var S2=setupSettings(); toast(presetTitle(S2)+' · '+(S2.format==='closeout'?money(S2.front)+' per bet':'all amounts scaled')); return; }
+  if(act==='jyn'||act==='jamt'||act==='jcustom'){
+    var ji=b.getAttribute('data-ji'), jj=JUNK.filter(function(x){return x.id===ji;})[0]; su.jx=su.jx||{}; var jx=su.jx[ji]=su.jx[ji]||{};
+    if(act==='jyn'){ jx.on=b.getAttribute('data-v')==='1'; save(); renderGames(); var S3=setupSettings(); toast(jj.name+(jx.on?' on · '+money(S3[ji+'Amt'])+' each':' off')); return; }
+    if(act==='jamt'){ jx.amt=+b.getAttribute('data-v'); jx.custom=false; save(); renderGames(); toast(jj.name+' '+money(jx.amt)); return; }
+    jx.custom=true; save(); renderGames(); setTimeout(function(){ var x=document.querySelector('.jcust[data-jc="'+ji+'"]'); if(x){ x.focus(); x.select(); } },30); return;
+  }
   if(act==='stakeCustom'){ su.stakeCustom=true; save(); renderGames(); setTimeout(function(){ var x=$('#suStake'); if(x){ x.focus(); x.select(); } },30); return; }
   if(act==='qaAdd'){ setupQuickAdd(); return; }
   if(act==='addkey'){ var nd=su.mode==='teams'?4:2, ki=su.keys.slice(0,nd).findIndex(function(x){ return !x || !keyInfo(x); }); if(ki>=0){ su.keys[ki]=b.getAttribute('data-key'); save(); renderGames(); } return; }
@@ -2018,7 +2083,7 @@ gameRoot.addEventListener('click',function(e){
     if(ks.some(function(k){return !k||!keyInfo(k);})){ $('#suErr').textContent='Pick '+need+' players.'; return; }
     if(new Set(ks).size!==ks.length){ $('#suErr').textContent='Each player can only be in the round once.'; return; }
     syncSetupToPairings(); state.game=newGame(su); state.ui.gameView='score';
-    su.preset='closeout'; su.stake=null; su.junk=null; su.stakeCustom=false;   // next round starts from the $20 Close Out default again
+    su.preset='closeout'; su.stake=null; su.jx=null; su.stakeCustom=false;   // next round starts from the $20 Close Out default again
     save(); renderGames(); toast(presetTitle(state.game.settings)+' — good luck!'); return;
   }
   if(!g) return;
@@ -2031,6 +2096,7 @@ gameRoot.addEventListener('click',function(e){
   if(act==='press'){ g.presses=g.presses||[]; g.presses.push({seg:b.getAttribute('data-seg'),after:+b.getAttribute('data-after'),side:b.getAttribute('data-side')}); save(); renderGames(); toast('Press on — new '+money(g.settings.pressAmount)+' bet'); return; }
   if(act==='unpress'){ var sg=b.getAttribute('data-seg'), af=+b.getAttribute('data-after'); g.presses=(g.presses||[]).filter(function(p){ return !(p.seg===sg&&p.after===af); }); save(); renderGames(); toast('Press removed'); return; }
   if(act==='greenie'){ g.greenies[h]=g.greenies[h]===k?null:k; save(); renderGames(); return; }
+  if(act==='pulley'){ g.pulleys=g.pulleys||Array.apply(null,Array(18)).map(function(){return [];}); var pa=g.pulleys[h]||(g.pulleys[h]=[]), pi=pa.indexOf(k); if(pi>=0) pa.splice(pi,1); else pa.push(k); save(); renderGames(); return; }
   if(act==='sandy'){ var a=g.sandies[h]||(g.sandies[h]=[]), i=a.indexOf(k); if(i>=0) a.splice(i,1); else a.push(k); save(); renderGames(); return; }
   if(act==='prev'){ if(h>0){ g.hole--; save(); renderGames(); } return; }
   if(act==='next1'){ if(h<17){ g.hole++; save(); renderGames(); } return; }
@@ -2057,7 +2123,7 @@ gameRoot.addEventListener('change',function(e){
   }
   if(t.id==='suCourse'){ su.course=t.value; save(); var ci=$('#suCourseInfo'); if(ci) ci.innerHTML=courseInfo(su.course); return; }
   if(t.id==='suHcp'){ su.useHandicap=t.checked; save(); return; }
-  if(t.id==='suJunk'){ su.junk=t.checked; save(); renderGames(); toast(t.checked?'Junk on for this round':'Junk off for this round'); return; }
+  if(t.hasAttribute('data-jc')){ var jc=t.getAttribute('data-jc'), jv=+t.value; if(!(jv>0&&jv<=100000)){ toast('Enter an amount of $1 or more'); renderGames(); return; } su.jx=su.jx||{}; su.jx[jc]=Object.assign(su.jx[jc]||{},{amt:Math.round(jv*100)/100,custom:true}); save(); renderGames(); return; }
   if(t.id==='suStake'){ var sv=+t.value; if(!(sv>0&&sv<=100000)){ toast('Enter a stake of $1 or more'); renderGames(); return; } su.stake=Math.round(sv*100)/100; su.stakeCustom=true; save(); renderGames(); toast(presetTitle(setupSettings())); return; }
   if(t.getAttribute('data-act')==='hcp' && state.game){ state.game.useHandicap=t.checked; save(); renderGames(); toast(t.checked?'Handicap strokes on (net)':'Handicap strokes off (gross)'); }
 });
@@ -2080,8 +2146,7 @@ function openSettings(){
       mf('pressAmount','Press amount',S.pressAmount)+'<div><label class="fl" for="gs_pressTrigger">Trigger (holes down)</label><input class="in" id="gs_pressTrigger" type="number" min="1" max="9" step="1" value="'+S.pressTrigger+'"></div>'+
       sw('pressOverall','Press the overall too','Overall presses run to hole 18',S.pressOverall)+
       sw('manualPress','Manual press button','The side that’s down can press during play (new bet at the press amount for the rest of that nine)',S.manualPress)+'</div>'+
-    '<div class="sec-t">Junk</div><div class="fgrid">'+sw('junkOn','Junk on','Greenies, sandies, birdies & eagles',S.junkOn!==false)+mf('greenieAmt','Greenie',S.greenieAmt)+sl('greenieHoles','Greenies on',[['all','Every hole'],['par3','Par 3s only']],S.greenieHoles)+
-      mf('sandyAmt','Sandy',S.sandyAmt)+mf('birdieAmt','Birdie',S.birdieAmt)+mf('eagleAmt','Eagle (or better)',S.eagleAmt)+
+    '<div class="sec-t">Junk</div><div class="fgrid">'+JUNK.map(function(j){ return sw(j.id+'On',j.ico+' '+j.name,junkHint(S,j.id),jOn(S,j.id))+mf(j.id+'Amt',j.one+' amount',S[j.id+'Amt'])+(j.id==='greenie'?sl('greenieHoles','Greenies on',[['all','Every hole'],['par3','Par 3s only']],S.greenieHoles):'<div></div>'); }).join('')+
       sl('junkUnits','Junk units (2v2)',[['perTeam','Per team'],['perPlayer','Per player']],S.junkUnits)+
       sl('junkScoring','Birdies/eagles on',[['gross','Gross (natural)'],['net','Net scores']],S.junkScoring)+
       '<div><label class="fl" for="gs_allowance">Handicap allowance</label><div class="money-in"><input class="in" id="gs_allowance" type="number" min="0" max="100" step="5" value="'+S.allowance+'" style="padding-left:12px"></div></div></div>'+
@@ -2091,22 +2156,23 @@ function openSettings(){
     '</form>');
   $('#gsStd').onclick=function(){
     resetPreset(P.id);
-    if(g){ g.settings=loadPreset(P.id); } else { var su=state.gameSetup; su.stake=null; su.junk=null; su.stakeCustom=false; }
+    if(g){ g.settings=loadPreset(P.id); } else { var su=state.gameSetup; su.stake=null; su.jx=null; su.stakeCustom=false; }
     save(); closeSheet(); renderGames(); openSettings(); toast(P.name+' preset restored');
   };
   $('#gsForm').onsubmit=function(e){
     e.preventDefault();
     var s={}, err='';
-    ['front','back','overall','pressAmount','greenieAmt','sandyAmt','birdieAmt','eagleAmt'].forEach(function(id){ var v=$('#gs_'+id).value.trim(); var n=v===''?0:+v; if(isNaN(n)||n<0||n>100000) err='Amounts must be $0 or more.'; s[id]=Math.round(n*100)/100; });
+    ['front','back','overall','pressAmount','greenieAmt','sandyAmt','pulleyAmt','birdieAmt','eagleAmt'].forEach(function(id){ var v=$('#gs_'+id).value.trim(); var n=v===''?0:+v; if(isNaN(n)||n<0||n>100000) err='Amounts must be $0 or more.'; s[id]=Math.round(n*100)/100; });
     s.pressTrigger=parseInt($('#gs_pressTrigger').value,10); if(!(s.pressTrigger>=1&&s.pressTrigger<=9)) err=err||'Press trigger must be between 1 and 9 holes down.';
     s.allowance=+$('#gs_allowance').value; if(isNaN(s.allowance)||s.allowance<0||s.allowance>100) err=err||'Handicap allowance must be 0–100%.';
     ['matchUnits','greenieHoles','junkUnits','junkScoring'].forEach(function(id){ s[id]=$('#gs_'+id).value; });
     s.autoPress=$('#gs_autoPress').checked; s.pressOverall=$('#gs_pressOverall').checked;
-    s.preset=P.id; s.format=CO?'closeout':'nassau'; s.junkOn=$('#gs_junkOn').checked; s.manualPress=$('#gs_manualPress').checked;
+    s.preset=P.id; s.format=CO?'closeout':'nassau'; s.manualPress=$('#gs_manualPress').checked;
+    JUNK.forEach(function(j){ s[j.id+'On']=$('#gs_'+j.id+'On').checked; }); s.junkOn=anyJunk(s);
     if(CO){ s.overall=0; s.autoPress=false; s.manualPress=false; }
     if(err){ $('#gsErr').textContent=err; return; }
     savePreset(P.id,s);
-    if(g) g.settings=Object.assign({},s); else { var su=state.gameSetup; su.stake=null; su.junk=null; su.stakeCustom=false; }
+    if(g) g.settings=Object.assign({},s); else { var su=state.gameSetup; su.stake=null; su.jx=null; su.stakeCustom=false; }
     save(); closeSheet(); renderGames(); toast(g?'Applied to this round · saved as your '+P.name+' preset':'Saved as your '+P.name+' preset');
   };
 }
