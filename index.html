@@ -1619,7 +1619,7 @@ function setupQuickAdd(){
   }
   save(); renderGames(); renderFriends();
   var left=ks.slice(0,need).filter(function(x){return x&&keyInfo(x);}).length<need;
-  if(left) setTimeout(function(){ var n=$('#qaName'); if(n) n.focus(); },30);
+  if(left){ var n=$('#qaName'); if(n) n.focus(); }   // focus right away (iOS only opens the keyboard inside the tap; a delayed focus could also steal the next field)
 }
 function renderGames(){
   var root=$('#gameRoot'), g=state.game;
