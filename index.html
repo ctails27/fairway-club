@@ -442,6 +442,7 @@
   .ynb.yes.on{background:var(--g700);color:#fff}
   .ynb.no.on{background:#e9eeeb;color:#33413a}
   .jamts{margin-top:10px}
+  .jholes{margin-top:8px}
   .pills.two{grid-template-columns:1fr 1fr}
   .presscard .pressbtn{margin-top:8px;min-height:46px;font-size:14px}
   .presscard .pressbtn:first-of-type{margin-top:0}
@@ -1324,7 +1325,7 @@ function scaleS(S,f){ var o=Object.assign({},S); if(f>0 && f!==1) AMT_KEYS.forEa
 function setupSettings(){
   var su=state.gameSetup, S=loadPreset(su.preset||'closeout'), m=mainAmt(S), st=+su.stake>0?+su.stake:m;
   var o=m>0?scaleS(S,st/m):Object.assign({},S), jx=su.jx||{};
-  JUNK.forEach(function(j){ var x=jx[j.id]; if(!x) return; if(x.on===true||x.on===false) o[j.id+'On']=x.on; if(+x.amt>0) o[j.id+'Amt']=+x.amt; });
+  JUNK.forEach(function(j){ var x=jx[j.id]; if(!x) return; if(x.on===true||x.on===false) o[j.id+'On']=x.on; if(+x.amt>0) o[j.id+'Amt']=+x.amt; if(j.id==='greenie' && (x.holes==='all'||x.holes==='par3')) o.greenieHoles=x.holes; });
   o.junkOn=anyJunk(o); return o;
 }
 function presetTitle(S){
@@ -1535,7 +1536,7 @@ function settingsChips(S){
     c.push(S.autoPress?'Auto press '+money(S.pressAmount)+' @ '+S.pressTrigger+' down':'No auto press');
     if(S.manualPress) c.push('Manual press '+money(S.pressAmount));
   }
-  if(jk) JUNK.forEach(function(j){ if(jOn(S,j.id)&&+S[j.id+'Amt']>0) c.push(j.ico+' '+j.name+' '+money(S[j.id+'Amt'])+(j.id==='greenie'&&S.greenieHoles!=='all'?' · par 3s':'')); });
+  if(jk) JUNK.forEach(function(j){ if(jOn(S,j.id)&&+S[j.id+'Amt']>0) c.push(j.ico+' '+j.name+' '+money(S[j.id+'Amt'])+(j.id==='greenie'&&S.greenieHoles==='par3'?' (par 3s)':'')); });
   else c.push('Junk off');
   c.push((S.matchUnits==='perTeam'?'Match: per team':'Match: per player')+(jk?' · '+(S.junkUnits==='perTeam'?'Junk: per team':'Junk: per player'):''));
   return '<div class="tagchips">'+c.map(function(x){ return '<span class="chip">'+esc(x)+'</span>'; }).join('')+'</div>';
@@ -1546,8 +1547,9 @@ function junkPickerHtml(S){
     var on=jOn(S,j.id), amt=+S[j.id+'Amt'], x=jx[j.id]||{}, custom=!!x.custom||j.amts.indexOf(amt)<0;
     var amts=on?'<div class="stakes jamts">'+j.amts.map(function(v){ var a=!custom&&v===amt; return '<button class="stakeb'+(a?' on':'')+'" data-act="jamt" data-ji="'+j.id+'" data-v="'+v+'" aria-pressed="'+a+'">$'+v+'</button>'; }).join('')+
       '<button class="stakeb'+(custom?' on':'')+'" data-act="jcustom" data-ji="'+j.id+'" aria-pressed="'+custom+'">'+(custom?money(amt):'Custom')+'</button></div>'+
-      (custom?'<div class="money-in" style="margin-top:8px;max-width:170px"><span>$</span><input class="in jcust" data-jc="'+j.id+'" type="number" min="1" step="1" inputmode="decimal" value="'+amt+'" aria-label="Custom '+j.one+' amount"></div>':''):'';
-    return '<div class="jitem'+(on?' on':'')+'" data-ji="'+j.id+'"><div class="jtop"><span class="jt"><label class="fl jh">'+j.name+(on?' · '+money(amt)+' each':'')+(j.isNew?' <em>New</em>':'')+'</label><small>'+j.ico+' '+esc(junkHint(S,j.id))+'</small></span>'+
+      (custom?'<div class="money-in" style="margin-top:8px;max-width:170px"><span>$</span><input class="in jcust" data-jc="'+j.id+'" type="number" min="1" step="1" inputmode="decimal" value="'+amt+'" aria-label="Custom '+j.one+' amount"></div>':'')+
+      (j.id==='greenie'?'<div class="stakes jholes" id="greenieHoles">'+[['all','All holes'],['par3','Par 3s only']].map(function(o){ var a=(S.greenieHoles==='par3'?'par3':'all')===o[0]; return '<button class="stakeb'+(a?' on':'')+'" data-act="jholes" data-v="'+o[0]+'" aria-pressed="'+a+'">'+o[1]+'</button>'; }).join('')+'</div>':''):'';
+    return '<div class="jitem'+(on?' on':'')+'" data-ji="'+j.id+'"><div class="jtop"><span class="jt"><label class="fl jh">'+j.name+(on?' · '+money(amt)+' each'+(j.id==='greenie'&&S.greenieHoles==='par3'?' · par 3s':''):'')+(j.isNew?' <em>New</em>':'')+'</label><small>'+j.ico+' '+esc(junkHint(S,j.id))+'</small></span>'+
       '<span class="yn" role="group" aria-label="'+j.name+'"><button class="ynb yes'+(on?' on':'')+'" data-act="jyn" data-ji="'+j.id+'" data-v="1" aria-pressed="'+on+'">Yes</button><button class="ynb no'+(on?'':' on')+'" data-act="jyn" data-ji="'+j.id+'" data-v="0" aria-pressed="'+!on+'">No</button></span></div>'+amts+'</div>';
   }).join('')+'</div>';
 }
@@ -1650,7 +1652,7 @@ function scoringHtml(g,R){
       ''+'</div>'+
       '<div class="sbox"><div class="stp"><button data-act="dec" data-k="'+k+'" aria-label="Decrease '+esc(p.name)+'">−</button><span class="sv'+(gv==null?' empty':'')+'" data-sv="'+k+'">'+(gv==null?'–':gv)+'</span><button data-act="inc" data-k="'+k+'" aria-label="Increase '+esc(p.name)+'">+</button></div>'+
       '<div class="rel '+(gv==null?'':relCls(gv,par))+'">'+(gv==null?'':relName(gv,par)+(g.useHandicap&&st?' · net '+nv:''))+'</div></div>'+
-(R.jon.greenie||R.jon.sandy||R.jon.pulley?'<div class="jrow">'+(R.jon.greenie?'<button class="jb'+(isG?' on':'')+'" data-act="greenie" data-k="'+k+'"'+(elig?'':' disabled title="Greenies are par 3s only (Game settings)"')+'>⛳ Greenie</button>':'')+
+((R.jon.greenie&&elig)||R.jon.sandy||R.jon.pulley?'<div class="jrow">'+(R.jon.greenie&&elig?'<button class="jb'+(isG?' on':'')+'" data-act="greenie" data-k="'+k+'">⛳ Greenie</button>':'')+
       (R.jon.sandy?'<button class="jb'+(isS?' on':'')+(sandyBad?' warn':'')+'" data-act="sandy" data-k="'+k+'" title="'+(sandyBad?'Not counted: needs par or better':'Up & down from a bunker for par or better')+'">🏖 Sandy</button>':'')+
       (R.jon.pulley?'<button class="jb'+(isP?' on':'')+'" data-act="pulley" data-k="'+k+'" title="Made a putt longer than the flagstick">🎯 Pulley</button>':'')+'</div>':'')+'</div>';
   }
@@ -2067,6 +2069,7 @@ gameRoot.addEventListener('click',function(e){
   if(act==='mode'){ su.mode=b.getAttribute('data-mode'); save(); renderGames(); return; }
   if(act==='preset'){ var pid=b.getAttribute('data-preset-pick'); if(su.preset!==pid){ su.preset=pid; su.stake=null; su.jx=null; su.stakeCustom=false; } save(); renderGames(); toast(presetTitle(setupSettings())+' selected'); return; }
   if(act==='stake'){ su.stake=+b.getAttribute('data-v'); su.stakeCustom=false; save(); renderGames(); var S2=setupSettings(); toast(presetTitle(S2)+' · '+(S2.format==='closeout'?money(S2.front)+' per bet':'all amounts scaled')); return; }
+  if(act==='jholes'){ su.jx=su.jx||{}; su.jx.greenie=Object.assign(su.jx.greenie||{},{holes:b.getAttribute('data-v')}); save(); renderGames(); toast(b.getAttribute('data-v')==='par3'?'Greenies on par 3s only':'Greenies on every hole'); return; }
   if(act==='jyn'||act==='jamt'||act==='jcustom'){
     var ji=b.getAttribute('data-ji'), jj=JUNK.filter(function(x){return x.id===ji;})[0]; su.jx=su.jx||{}; var jx=su.jx[ji]=su.jx[ji]||{};
     if(act==='jyn'){ jx.on=b.getAttribute('data-v')==='1'; save(); renderGames(); var S3=setupSettings(); toast(jj.name+(jx.on?' on · '+money(S3[ji+'Amt'])+' each':' off')); return; }
