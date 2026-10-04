@@ -412,6 +412,44 @@
   .scard small{display:block;font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
   nav.tabs button{font-size:10.5px}
   nav.tabs .ic{width:46px}
+  /* ---- v12: accounts / groups / live ---- */
+  .acctbtn{margin-left:auto;height:34px;min-width:34px;padding:0 12px;border-radius:999px;border:0;background:rgba(255,255,255,.16);color:#fff;font:inherit;font-weight:700;font-size:13px;cursor:pointer;position:relative;flex:none}
+  .acctbtn.in{padding:0;width:34px;background:none}
+  #acctBtn + #shareBtn{margin-left:8px}
+  .acct-av{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#f2d36b;color:#0f3d2e;font-weight:800;font-size:13px}
+  .acct-av.big{width:44px;height:44px;font-size:16px;flex:none}
+  .acct-off{position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;background:#e0a800;border:2px solid #0f3d2e}
+  .acct-id{display:flex;gap:12px;align-items:center}
+  .acct-id small{display:block;color:var(--muted);font-size:12.5px}
+  .splist{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+  .spbtn{display:flex;align-items:center;gap:8px;text-align:left;font:inherit;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;cursor:pointer;min-height:48px}
+  .spbtn b{flex:1}
+  .spbtn small{color:var(--muted);font-size:12px}
+  .spbtn.on{border-color:var(--g700);background:var(--g50)}
+  .gbtn{background:#fff!important;color:#1f1f1f!important;border:1.5px solid #dadce0!important;min-height:48px}
+  .gbtn .g{font-weight:900;color:#4285f4;margin-right:6px}
+  .or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:14px 0 10px}
+  .or:before,.or:after{content:'';flex:1;height:1px;background:var(--line)}
+  .err{color:#b3261e;font-size:13px;min-height:1px;margin-top:6px}
+  .uplist{margin:6px 0 8px 18px;padding:0;font-size:14px;line-height:1.7}
+  .sipr{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:12px 14px}
+  .sipr-t{font-size:13.5px;min-width:0;flex:1}
+  .sipr .btn{white-space:nowrap}
+  .sipr .row{flex:none}
+  .sipr-t small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+  .livecard .lv-t,.livebar .lb-t{font-size:12.5px;font-weight:800;letter-spacing:.3px;color:#b3261e;display:flex;align-items:center;gap:6px;margin-bottom:4px}
+  .livecard b{display:block;font-size:15px}
+  .livecard small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+  .lvdot{width:9px;height:9px;border-radius:50%;background:#e53935;box-shadow:0 0 0 3px rgba(229,57,53,.2);animation:lvp 1.6s infinite}
+  @keyframes lvp{50%{box-shadow:0 0 0 6px rgba(229,57,53,.05)}}
+  .livebar{padding:10px 12px;margin:10px 0 0;border:1.5px solid rgba(229,57,53,.25)}
+  .livebar.ended .lb-t{color:var(--g800)}
+  .livebar .lb-st{font-size:12px;color:#8a6d00;margin:2px 0 4px}
+  .livebar .lb-ctl{gap:8px;margin-top:6px;flex-wrap:wrap}
+  .livebar .lb-ro{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .lv-any.on{background:var(--g700)!important;color:#fff!important}
+  .live-ro [data-act="inc"],.live-ro [data-act="dec"],.live-ro .jb,.live-ro [data-act="press"]{opacity:.4}
+  .chip.mem{font-size:10px;padding:1px 6px;vertical-align:2px}
   /* ---- v11: saved rounds / history ---- */
   .savecard{text-align:center}
   .savecard .btn.big{min-height:54px;font-size:16.5px}
@@ -523,6 +561,7 @@
         <h1>Fairway Club</h1>
         <small>Golf games &amp; scoring</small>
       </div>
+      <button class="acctbtn" id="acctBtn" aria-label="Sign in">Sign in</button>
       <button class="iconbtn" id="shareBtn" aria-label="Share" title="Share">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7.5 7.5L12 3l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
       </button>
@@ -713,7 +752,7 @@ function migrate(s){
 var state;
 try { state = JSON.parse(localStorage.getItem(KEY)); } catch(e){ state = null; }
 state = migrate(state);
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} cloudOnSave(); }
 
 /* ---------- Helpers ---------- */
 var $ = function(s){ return document.querySelector(s); };
@@ -1196,24 +1235,25 @@ function go(tab, noHash){
 document.querySelector('nav.tabs').addEventListener('click',function(e){ var b=e.target.closest('button'); if(b) go(b.getAttribute('data-tab')); });
 window.addEventListener('hashchange',function(){ go(location.hash.slice(1), true); });
 $('#resetBtn').addEventListener('click',function(){
-  openSheet('<h3>Clear all data?</h3><p>This deletes everything saved on this phone: players, tee times, pairings, posted scores, the current round'+((state.saved||[]).length?' and <b>'+state.saved.length+' saved round'+(state.saved.length===1?'':'s')+'</b> (export a backup in History first)':'')+'. Your bet settings are kept. This can’t be undone.</p>'+
+  openSheet('<h3>Clear all data?</h3><p>This deletes everything saved on this phone: players, tee times, pairings, posted scores, the current round'+((state.saved||[]).length?' and <b>'+state.saved.length+' saved round'+(state.saved.length===1?'':'s')+'</b> (export a backup in History first)':'')+'. Your bet settings are kept. This can’t be undone.'+(CL.user?' You’ll be signed out; your cloud data stays in your account/group.':'')+'</p>'+
     '<div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn danger" id="clrYes">Clear all data</button></div>');
-  $('#clrYes').onclick=function(){ state=emptyState(); ensureGameState(); save(); closeSheet(); renderAll(); initForm(); go('games'); toast('All data cleared'); };
+  $('#clrYes').onclick=function(){ if(CL.user) cloudSignOut(); cloudForgetLocal(); state=emptyState(); ensureGameState(); save(); closeSheet(); renderAll(); initForm(); go('games'); toast('All data cleared'); };
 });
 
 /* =====================================================================
    v2: SHEET, SHARE, FRIENDS, GAMES (betting)
    ===================================================================== */
 var sheetBg = $('#sheetBg'), sheetEl = $('#sheet');
-function openSheet(html){ sheetEl.innerHTML = '<div class="grab"></div>'+html; sheetBg.classList.add('show'); sheetEl.scrollTop=0; }
-function closeSheet(){ sheetBg.classList.remove('show'); sheetEl.innerHTML=''; }
+var onSheetClose=null;
+function openSheet(html){ onSheetClose=null; sheetEl.innerHTML = '<div class="grab"></div>'+html; sheetBg.classList.add('show'); sheetEl.scrollTop=0; }
+function closeSheet(){ sheetBg.classList.remove('show'); sheetEl.innerHTML=''; if(onSheetClose){ var f=onSheetClose; onSheetClose=null; f(); } }
 sheetBg.addEventListener('click',function(e){ if(e.target===sheetBg) closeSheet(); });
 document.addEventListener('keydown',function(e){ if(e.key==='Escape' && sheetBg.classList.contains('show')) closeSheet(); });
 sheetEl.addEventListener('click',function(e){ var b=e.target.closest('[data-close]'); if(b) closeSheet(); });
 
 function showShare(){
   var url=location.href.split('#')[0];
-  openSheet('<h3>Share Fairway Club</h3><p>Send this link to your group. Each phone keeps its own data — scores, friends and rounds are <b>not synced</b> between players.</p>'+
+  openSheet('<h3>Share Fairway Club</h3><p>Send this link to your group. Without an account each phone keeps its own data. <b>Sign in and create a group</b> (top right) to share players, saved rounds and live scores — use the group’s invite link for that.</p>'+
     '<div class="info" style="word-break:break-all"><b id="shUrl">'+esc(url)+'</b></div>'+
     '<div class="sheet-actions">'+(navigator.share?'<button class="btn" id="shNative">Share link…</button>':'')+'<button class="btn'+(navigator.share?' ghost':'')+'" id="shCopy">Copy link</button><button class="btn ghost full" data-close>Close</button></div>'+
     '<p style="font-size:12px">Tip: open the link in Safari or Chrome and choose “Add to Home Screen” to launch it like an app.</p>');
@@ -1245,7 +1285,7 @@ function renderFriends(){
   $('#friendList').innerHTML = shown.map(function(f){
     var contact=[f.phone,f.email].filter(Boolean).map(esc).join(' · ');
     return '<div class="card friend" data-fid="'+f.id+'">'+gAv({key:'F:'+f.id,name:f.name})+
-      '<div class="ft"><b>'+esc(f.name)+'</b><small>Course hcp <b class="chv">'+fmtCH(f.hcp)+'</b>'+(f.chCheck?' <span class="chip warn" title="Saved before course handicaps — update from GHIN">check</span>':'')+(f.ghin?'<span class="ghin">GHIN '+esc(f.ghin)+'</span>':'')+'</small>'+(contact?'<small>'+contact+'</small>':'')+'</div>'+
+      '<div class="ft"><b>'+esc(f.name)+(f.uid?' <span class="chip mem" title="Signed-in group member">member</span>':'')+'</b><small>Course hcp <b class="chv">'+fmtCH(f.hcp)+'</b>'+(f.chCheck?' <span class="chip warn" title="Saved before course handicaps — update from GHIN">check</span>':'')+(f.ghin?'<span class="ghin">GHIN '+esc(f.ghin)+'</span>':'')+'</small>'+(contact?'<small>'+contact+'</small>':'')+'</div>'+
       '<div class="fa"><button class="btn ghost sm" data-fact="edit" data-fid="'+f.id+'">Edit</button><button class="btn sm" data-fact="use" data-fid="'+f.id+'">+ Round</button></div></div>';
   }).join('');
 }
@@ -1328,7 +1368,7 @@ function loadDefaults(){
   }catch(e){}
   return Object.assign({},STANDARD);
 }
-function saveDefaults(s){ try{ localStorage.setItem(GKEY, JSON.stringify(s)); localStorage.setItem(GVER_KEY, String(GVER)); }catch(e){} }
+function saveDefaults(s){ try{ localStorage.setItem(GKEY, JSON.stringify(s)); localStorage.setItem(GVER_KEY, String(GVER)); }catch(e){} cloudOnSave(); }
 /* ---- Game presets (Games setup picker, in this order). Saved settings from before presets existed = East Greenwich Nassau. ---- */
 var PRESETS=[
   {id:'closeout', name:'Close Out', def:Object.assign({},STANDARD,{front:20,back:20,overall:0,autoPress:false,pressAmount:20,greenieAmt:5,sandyAmt:5,pulleyAmt:5,birdieAmt:10,eagleAmt:50,greenieOn:false,sandyOn:false,pulleyOn:false,birdieOn:false,eagleOn:false,preset:'closeout',format:'closeout',junkOn:false,manualPress:false}),
@@ -1362,8 +1402,8 @@ function loadPreset(id){
   var sv=readPresets()[P.id]||null;
   return normJunk(Object.assign({},P.def,sv||{},{preset:P.id,format:P.def.format}),sv);
 }
-function savePreset(id,v){ if(presetById(id).id==='egn'){ saveDefaults(v); return; } var a=readPresets(); a[id]=v; try{ localStorage.setItem(PKEY,JSON.stringify(a)); }catch(e){} }
-function resetPreset(id){ if(presetById(id).id==='egn'){ saveDefaults(Object.assign({},STANDARD)); return; } var a=readPresets(); delete a[id]; try{ localStorage.setItem(PKEY,JSON.stringify(a)); }catch(e){} }
+function savePreset(id,v){ if(presetById(id).id==='egn'){ saveDefaults(v); return; } var a=readPresets(); a[id]=v; try{ localStorage.setItem(PKEY,JSON.stringify(a)); }catch(e){} cloudOnSave(); }
+function resetPreset(id){ if(presetById(id).id==='egn'){ saveDefaults(Object.assign({},STANDARD)); return; } var a=readPresets(); delete a[id]; try{ localStorage.setItem(PKEY,JSON.stringify(a)); }catch(e){} cloudOnSave(); }
 function mainAmt(S){ return +S.front||+S.back||+S.overall||0; }
 function scaleS(S,f){ var o=Object.assign({},S); if(f>0 && f!==1) AMT_KEYS.forEach(function(k){ o[k]=Math.round((+S[k]||0)*f*100)/100; }); return o; }
 /* settings for the round being set up: chosen preset (default Close Out) scaled by the stakes chooser */
@@ -1672,7 +1712,8 @@ function renderGames(){
   if(!root) return;
   if(state.ui.history){ root.innerHTML=historyHtml(); var hf=$('#histFile'); if(hf) hf.onchange=function(){ var f=hf.files&&hf.files[0]; if(!f) return; var rd=new FileReader(); rd.onload=function(){ importRounds(String(rd.result)); }; rd.readAsText(f); }; return; }
   if(state.ui.ideas){ root.innerHTML=ideasHtml(); return; }
-  if(!g){ root.innerHTML=setupHtml()+tryStripHtml(); bindQuickAddEnter('qa', setupQuickAdd); return; }
+  root.classList.toggle('live-ro', liveRO(g));
+  if(!g){ root.innerHTML=liveCardsHtml()+signinPromptHtml()+setupHtml()+tryStripHtml(); bindQuickAddEnter('qa', setupQuickAdd); return; }
   var R=computeGame(g), v=state.ui.gameView;
   var head='<div class="ghead"><div class="row" style="align-items:flex-start"><div style="flex:1;min-width:0">'+
     '<div class="gh-t">'+esc(R.C.name)+'</div>'+
@@ -1680,7 +1721,7 @@ function renderGames(){
     '<button class="btn sm glass" data-act="newround">New round</button></div>'+
     '<div class="vs"><div class="side A"><b>'+(R.teams?'Team A':'Side A')+'</b>'+esc(sideLabel(g,R,'A'))+'</div><div class="vsx">VS</div><div class="side B"><b>'+(R.teams?'Team B':'Side B')+'</b>'+esc(sideLabel(g,R,'B'))+'</div></div></div>';
   var seg='<div class="seg" style="margin:12px 0"><button data-gv="score" class="'+(v==='score'?'on':'')+'">Scoring</button><button data-gv="card" class="'+(v==='card'?'on':'')+'">Card</button><button data-gv="bets" class="'+(v==='bets'?'on':'')+'">Bets<span class="cnt">'+R.bets.length+'</span></button><button data-gv="settle" class="'+(v==='settle'?'on':'')+'">Settle</button></div>';
-  root.innerHTML=head+seg+(v==='bets'?betsHtml(g,R):v==='settle'?settleHtml(g,R):v==='card'?cardHtml(g,R):scoringHtml(g,R));
+  root.innerHTML=head+liveBarHtml(g)+seg+(v==='bets'?betsHtml(g,R):v==='settle'?settleHtml(g,R):v==='card'?cardHtml(g,R):scoringHtml(g,R));
 }
 function scoringHtml(g,R){
   var h=g.hole, hd=R.holes[h], par=hd.par, S=g.settings, elig=S.greenieHoles==='all'||par===3;
@@ -1726,7 +1767,7 @@ function scoringHtml(g,R){
   var mrow='<div class="card" style="padding:10px 12px"><h3 class="sec" style="margin-bottom:8px">Running money <span class="muted" style="font-size:11.5px;font-weight:600">'+(R.final?'final':'if it ended now')+'</span></h3><div class="mrow">'+
     R.all.map(function(k){ var x=R.net[k]; return '<div class="mchip">'+esc(first(gp(g,k).name))+'<b class="'+mcls(x)+'">'+smoney(x)+'</b></div>'; }).join('')+'</div></div>';
   var navb='<div class="row" style="gap:8px;margin-bottom:12px"><button class="btn ghost" data-act="prev"'+(h===0?' disabled':'')+'>← '+(h===0?'Hole 1':'Hole '+h)+'</button><button class="btn" style="flex:1" data-act="next">'+(h===17?'Finish → Settle up':'Next: Hole '+(h+2)+' →')+'</button></div>';
-  var done=R.final&&!isSaved(g)?'<div class="card savecard"><div class="sv-t">🏁 Round complete</div><button class="btn block big" data-act="saveRound">💾 '+(g.savedId&&savedById(g.savedId)?'Update saved round':'Save round')+'</button></div>':'';
+  var done=R.final&&!isSaved(g)&&!liveRO(g)?'<div class="card savecard"><div class="sv-t">🏁 Round complete</div><button class="btn block big" data-act="saveRound">💾 '+(g.savedId&&savedById(g.savedId)?'Update saved round':'Save round')+'</button></div>':'';
   return done+strip+card+navb+pills+pressHtml(g,R)+mrow;
 }
 /* manual press (Nassau preset): the side that's down in a nine (or the overall) can start a new bet for the rest of it */
@@ -1837,12 +1878,13 @@ function roundSummary(g){
 function saveCurrentRound(){
   var g=state.game, R=computeGame(g), id=g.savedId&&savedById(g.savedId)?g.savedId:'r'+uid();
   g.early=!R.final;
-  var copy=JSON.parse(JSON.stringify(g)); delete copy.savedId; delete copy.savedSig;
+  var copy=JSON.parse(JSON.stringify(g)); delete copy.savedId; delete copy.savedSig; delete copy.live;
   var rec={id:id, savedAt:new Date().toISOString(), date:g.date, holes:R.doneCount, early:!R.final, game:copy, sum:roundSummary(copy)};
   var i=state.saved.map(function(r){return r.id;}).indexOf(id); if(i>=0) state.saved[i]=rec; else state.saved.push(rec);
-  g.savedId=id; g.savedSig=roundSig(g); save(); renderLeaderboard(); return rec;
+  g.savedId=id; g.savedSig=roundSig(g); if(g.live && CL.user && liveCanEdit(g)){ CL.endLive=true; CL.endJson=liveJson(g); delete g.live; } save(); renderLeaderboard(); return rec;
 }
 function saveCardHtml(g,R){
+  if(liveRO(g)) return '';
   var rec=g.savedId&&savedById(g.savedId), sv=isSaved(g);
   if(sv) return '<div class="card savecard ok" id="saveCard"><div class="sv-t">✓ Saved to History</div><small>'+esc(fmtDate(g.date))+' · '+esc(presetTitle(g.settings))+(g.early?' · finished early ('+R.doneCount+' holes)':'')+'</small>'+
     '<div class="row" style="gap:8px;margin-top:10px"><button class="btn" style="flex:1" data-act="newAfterSave">Start new round</button><button class="btn ghost" data-act="histGo" data-hid="'+rec.id+'">View in History</button></div></div>';
@@ -2253,6 +2295,17 @@ gameRoot.addEventListener('click',function(e){
   if(hb){ state.game.hole=+hb.getAttribute('data-hole'); save(); renderGames(); return; }
   var b=e.target.closest('[data-act]'); if(!b || b.tagName==='INPUT') return;
   var act=b.getAttribute('data-act'), g=state.game, su=state.gameSetup;
+  if(act==='signin'){ openAuth(); return; }
+  if(act==='signinNo'){ cset({dismissPrompt:true}); renderGames(); toast('You can sign in any time — top right'); return; }
+  if(act==='followLive'){ liveFollow(b.getAttribute('data-lid')); return; }
+  if(act==='liveHand'){ liveHandSheet(); return; }
+  if(act==='liveAny'){ liveToggleAny(); return; }
+  if(act==='liveClose'){ state.game=null; state.ui.gameView='score'; save(); renderGames(); window.scrollTo(0,0); return; }
+  if(act==='newround' && g && g.live && !liveCanEdit(g)){
+    openSheet('<h3>Stop following this live round?</h3><p>You can follow it again from the Games screen while it’s live.</p><div class="sheet-actions"><button class="btn ghost" data-close>Keep watching</button><button class="btn danger" id="nrYes">Stop following</button></div>');
+    $('#nrYes').onclick=function(){ state.game=null; state.ui.gameView='score'; save(); closeSheet(); renderGames(); }; return;
+  }
+  if(liveGuard(act)) return;
   if(act==='mode'){ su.mode=b.getAttribute('data-mode'); save(); renderGames(); return; }
   if(act==='preset'){ var pid=b.getAttribute('data-preset-pick'); if(su.preset!==pid){ su.preset=pid; su.stake=null; su.jx=null; su.stakeCustom=false; } save(); renderGames(); toast(presetTitle(setupSettings())+' selected'); return; }
   if(act==='stake'){ su.stake=+b.getAttribute('data-v'); su.stakeCustom=false; save(); renderGames(); var S2=setupSettings(); toast(presetTitle(S2)+' · '+(S2.format==='closeout'?money(S2.front)+' per bet':'all amounts scaled')); return; }
@@ -2274,7 +2327,7 @@ gameRoot.addEventListener('click',function(e){
     if(new Set(ks).size!==ks.length){ $('#suErr').textContent='Each player can only be in the round once.'; return; }
     syncSetupToPairings(); state.game=newGame(su); state.ui.gameView='score';
     su.preset='closeout'; su.stake=null; su.jx=null; su.stakeCustom=false;   // next round starts from the $20 Close Out default again
-    save(); renderGames(); toast(presetTitle(state.game.settings)+' — good luck!'); return;
+    liveStartIfGroup(state.game); save(); renderGames(); toast(presetTitle(state.game.settings)+' — good luck!'+(state.game.live?' · live for '+state.game.live.gn:'')); return;
   }
   if(!g) return;
   var h=g.hole, k=b.getAttribute('data-k'), par=gcourse(g.course).par[h];
@@ -2330,11 +2383,13 @@ gameRoot.addEventListener('change',function(e){
   if(t.id==='suHcp'){ su.useHandicap=t.checked; save(); return; }
   if(t.hasAttribute('data-jc')){ var jc=t.getAttribute('data-jc'), jv=+t.value; if(!(jv>0&&jv<=100000)){ toast('Enter an amount of $1 or more'); renderGames(); return; } su.jx=su.jx||{}; su.jx[jc]=Object.assign(su.jx[jc]||{},{amt:Math.round(jv*100)/100,custom:true}); save(); renderGames(); return; }
   if(t.id==='suStake'){ var sv=+t.value; if(!(sv>0&&sv<=100000)){ toast('Enter a stake of $1 or more'); renderGames(); return; } su.stake=Math.round(sv*100)/100; su.stakeCustom=true; save(); renderGames(); toast(presetTitle(setupSettings())); return; }
+  if(t.getAttribute('data-act')==='hcp' && state.game && liveGuard('hcp')){ t.checked=!t.checked; return; }
   if(t.getAttribute('data-act')==='hcp' && state.game){ state.game.useHandicap=t.checked; save(); renderGames(); toast(t.checked?'Handicap strokes on (net)':'Handicap strokes off (gross)'); }
 });
 
 /* ---------- Games: settings sheet ---------- */
 function openSettings(){
+  if(state.game && liveRO(state.game)){ liveGuard('settings'); return; }
   var g=state.game, S=g?g.settings:setupSettings(), pid=S.preset||'egn', P=presetById(pid), CO=S.format==='closeout';
   function mf(id,lab,val,hide){ return '<div'+(hide?' hidden':'')+'><label class="fl" for="gs_'+id+'">'+lab+'</label><div class="money-in"><span>$</span><input class="in" id="gs_'+id+'" type="number" min="0" step="1" inputmode="decimal" value="'+val+'"></div></div>'; }
   function sw(id,lab,sub,on,hide){ return '<div class="toggle full"'+(hide?' hidden':'')+'><div><b>'+lab+'</b><small>'+sub+'</small></div><label class="switch"><input type="checkbox" id="gs_'+id+'" '+(on?'checked':'')+'><span></span></label></div>'; }
@@ -2387,10 +2442,529 @@ $('#gHistBtn').addEventListener('click',function(){ openHistory(); });
 gameRoot.addEventListener('toggle',function(e){ var d=e.target; if(d.tagName==='DETAILS'&&d.classList.contains('idea')){ if(d.open) state.ui.ideaOpen=d.getAttribute('data-id'); else if(state.ui.ideaOpen===d.getAttribute('data-id')) state.ui.ideaOpen=null; save(); } },true);
 
 
+/* ================= Cloud (optional): sign-in, groups, sync, live rounds =================
+   Nothing here runs until someone taps Sign in (or was signed in before / opened an invite link).
+   Signed out, the app is 100% local exactly as before. Firebase JS SDK is lazy-loaded from gstatic. */
+var FB_CONFIG={apiKey:'AIzaSyAyXEmZKNfc55OYNDVbi7iZX_b8ibPzbPA', authDomain:'fairway-club-ea5f1.firebaseapp.com', projectId:'fairway-club-ea5f1',
+  storageBucket:'fairway-club-ea5f1.firebasestorage.app', messagingSenderId:'671039044605', appId:'1:671039044605:web:321d78002f76da0de0b794'};
+var FB_CDN='https://www.gstatic.com/firebasejs/12.19.0/';
+var CKEY='fairwayClub.cloud.v1', SYNC_KEYS=['friends','rounds','teeTimes','scores','settings'];
+var CL={user:null, profile:null, groups:{}, space:null, unsubs:[], gUnsub:null, synced:{}, remote:{}, got:{}, ready:false, stored:false,
+  pushT:null, applying:false, liveList:[], liveUnsub:null, liveId:null, livePushT:null, lastLiveJson:null, lastRemoteHole:null, applyingLive:false, endLive:false, authKnown:false, loading:null};
+function cget(){ try{ return JSON.parse(localStorage.getItem(CKEY))||{}; }catch(e){ return {}; } }
+function cset(o){ var c=Object.assign(cget(),o); try{ localStorage.setItem(CKEY,JSON.stringify(c)); }catch(e){} return c; }
+function hsh(s){ var h=5381, i=s.length; while(i) h=((h*33)^s.charCodeAt(--i))|0; return (h>>>0).toString(36)+'.'+s.length; }
+function myUid(){ return CL.user&&CL.user.uid; }
+function myName(){ return (CL.profile&&CL.profile.name)||CL.pendingName||(CL.user&&(CL.user.displayName||String(CL.user.email||'').split('@')[0]))||'Me'; }
+function cloudErr(e){
+  var c=e&&e.code||'', m=c==='permission-denied'?'Cloud: permission denied (are you still in this group?)':c==='unavailable'?'Offline — changes are saved on this phone and will sync':'Cloud sync: '+(e&&e.message||e);
+  try{ console.warn('[cloud]',c,e&&e.message); }catch(x){} toast(m);
+}
+function onSheetCloseSet(f){ onSheetClose=f; }
+function sheetDone(){ onSheetClose=null; closeSheet(); }
+
+/* ---------- SDK loading ---------- */
+function loadFirebase(){
+  if(CL.loading) return CL.loading;
+  CL.loading=Promise.all(['firebase-app.js','firebase-auth.js','firebase-firestore.js'].map(function(f){ return import(FB_CDN+f); })).then(function(m){
+    var A=m[0], U=m[1], F=m[2]; CL.U=U; CL.F=F;
+    var app=A.initializeApp(FB_CONFIG), emu=localStorage.getItem('fairwayClub.emu');
+    var auth=U.getAuth(app), db;
+    try{ db=F.initializeFirestore(app,{localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})}); }catch(e){ db=F.getFirestore(app); }
+    if(emu){ U.connectAuthEmulator(auth,'http://'+emu+':9099',{disableWarnings:true}); F.connectFirestoreEmulator(db,emu,8080); }
+    CL.auth=auth; CL.db=db;
+    if(cget().pendingRedirect){ cset({pendingRedirect:false}); U.getRedirectResult(auth).catch(function(e){ toast(authMsg(e)); }); }
+    U.onAuthStateChanged(auth,onAuth);
+    return CL;
+  });
+  CL.loading.catch(function(e){ CL.loading=null; try{ console.warn('[cloud] load failed',e); }catch(x){} renderAccount(); toast('Can’t reach the sign-in service right now — the app still works offline.'); });
+  renderAccount();
+  return CL.loading;
+}
+function authMsg(e){
+  var c=(e&&e.code||'').replace('auth/','');
+  return ({'invalid-email':'That email address doesn’t look right.','missing-password':'Enter a password.','weak-password':'Password must be at least 6 characters.',
+    'email-already-in-use':'There’s already an account with that email — sign in instead.','invalid-credential':'Email or password is incorrect.',
+    'wrong-password':'Email or password is incorrect.','user-not-found':'No account with that email — create one.','too-many-requests':'Too many tries — wait a minute and try again.',
+    'network-request-failed':'No connection — try again when you have signal.','popup-closed-by-user':'Google sign-in was closed.','unauthorized-domain':'This web address isn’t authorized for sign-in yet.'})[c]||('Sign-in problem: '+(c||e&&e.message||e));
+}
+
+/* ---------- auth state ---------- */
+function onAuth(u){
+  CL.authKnown=true; var was=myUid(); CL.user=u||null; cset({wanted:!!u});
+  if(!u){ if(was) cloudDetachAll(); CL.profile=null; CL.groups={}; renderAccount(); renderAll();
+    if(cget().pendingJoin) openAuth('join'); return; }
+  if(was===u.uid) return;
+  if(document.querySelector('#auEmail')) sheetDone();
+  renderAccount();
+  ensureProfile().then(watchGroups).then(function(){ return handleJoin(); }).then(function(){ return chooseSpace(); }).then(function(){ liveResume(); renderAll(); }).catch(cloudErr);
+}
+function ensureProfile(){
+  var F=CL.F;
+  return F.getDoc(F.doc(CL.db,'users',myUid())).then(function(s){
+    if(s.exists() && s.data().name){ CL.profile=s.data(); renderAccount(); return; }
+    return profileSheet(true);
+  },function(){ CL.profile={name:myName(), hcp:null}; });
+}
+function profileSheet(first){
+  return new Promise(function(res){
+    var p=CL.profile||{}, nm=p.name||myName(), hc=p.hcp==null?'':p.hcp;
+    var me=state.friends.filter(function(f){ return f.uid===myUid(); })[0] || findPlayerByName(nm);
+    var opts='<option value="new">New player (add me)</option>'+sortedPlayers().map(function(f){ return '<option value="'+esc(f.id)+'"'+(me&&me.id===f.id?' selected':'')+'>'+esc(f.name)+' ('+fmtCH(f.hcp)+')</option>'; }).join('');
+    openSheet('<h3>'+(first?'Welcome! Set up your profile':'Your profile')+'</h3><p>Your name and course handicap are used in groups and on scorecards.</p>'+
+      '<label class="fl" for="pfName">Display name</label><input class="in" id="pfName" maxlength="60" value="'+esc(nm)+'" autocomplete="name">'+
+      '<label class="fl" for="pfHcp" style="margin-top:10px">Course handicap</label><input class="in" id="pfHcp" type="number" inputmode="decimal" min="-10" max="60" step="1" value="'+esc(hc)+'" placeholder="e.g. 12">'+
+      '<label class="fl" for="pfLink" style="margin-top:10px">Which player are you?</label><select class="in" id="pfLink">'+opts+'</select>'+
+      '<div class="err" id="pfErr"></div><div class="sheet-actions"><button class="btn full" id="pfSave">Save profile</button></div>');
+    var finish=function(useForm){
+      var name=useForm?$('#pfName').value.trim():nm, hv=useForm?$('#pfHcp').value.trim():String(hc), link=useForm?$('#pfLink').value:(me?me.id:'new');
+      if(useForm && !name){ $('#pfErr').textContent='Enter your name.'; return false; }
+      var hcp=hv===''||isNaN(+hv)?null:Math.max(-10,Math.min(60,Math.round(+hv)));
+      var f=link!=='new'?player(link):null;
+      if(f){ f.uid=myUid(); if(hcp!=null){ f.hcp=hcp; delete f.chCheck; } }
+      else { f={id:'f'+uid(), name:name.slice(0,60), hcp:hcp==null?'':hcp, ghin:'', phone:'', email:CL.user.email||'', uid:myUid()}; state.friends.push(f); }
+      CL.profile={name:name.slice(0,60), hcp:hcp, email:CL.user.email||'', playerId:f.id};
+      var doc=Object.assign({},CL.profile,{updatedAt:CL.F.serverTimestamp()}); if(first) doc.createdAt=CL.F.serverTimestamp();
+      CL.F.setDoc(CL.F.doc(CL.db,'users',myUid()),doc,{merge:true}).catch(cloudErr);
+      if(CL.space && CL.space!=='u'){ var o={}; o['memberInfo.'+myUid()]={name:CL.profile.name, hcp:hcp}; CL.F.updateDoc(CL.F.doc(CL.db,'groups',CL.space.slice(2)),o).catch(function(){}); }
+      save(); renderAll(); renderAccount(); return true;
+    };
+    $('#pfSave').onclick=function(){ if(finish(true)){ sheetDone(); toast('Profile saved'); res(); } };
+    onSheetCloseSet(function(){ finish(false); res(); });
+  });
+}
+
+/* ---------- sign-in UI ---------- */
+function openAuth(why){
+  loadFirebase();
+  var mode='in', standalone=navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+  function html(){
+    return '<h3>'+(why==='join'?'Sign in to join the group':'Sign in to Fairway Club')+'</h3>'+
+      '<p>'+(why==='join'?'You’ve been invited to a group. Sign in or create an account to join — it’s free.':'Optional: sync players, saved rounds and tee times with your group and follow live rounds. Without an account everything stays on this phone, like now.')+'</p>'+
+      '<button class="btn block gbtn" id="auGoogle"><span class="g">G</span> Continue with Google</button>'+
+      (standalone?'<p class="muted" style="font-size:11.5px;margin:6px 2px 0">On the home-screen app Google may need to open Safari — email sign-in below always works.</p>':'')+
+      '<div class="or"><span>or use email</span></div>'+
+      '<div class="seg" style="margin-bottom:10px"><button data-am="in" class="'+(mode==='in'?'on':'')+'">Sign in</button><button data-am="up" class="'+(mode==='up'?'on':'')+'">Create account</button></div>'+
+      (mode==='up'?'<label class="fl" for="auName">Your name</label><input class="in" id="auName" maxlength="60" autocomplete="name">':'')+
+      '<label class="fl" for="auEmail"'+(mode==='up'?' style="margin-top:8px"':'')+'>Email</label><input class="in" id="auEmail" type="email" autocomplete="email" inputmode="email">'+
+      '<label class="fl" for="auPass" style="margin-top:8px">Password</label><input class="in" id="auPass" type="password" autocomplete="'+(mode==='up'?'new-password':'current-password')+'" placeholder="'+(mode==='up'?'At least 6 characters':'')+'">'+
+      '<div class="err" id="auErr"></div>'+
+      '<div class="sheet-actions"><button class="btn full" id="auGo">'+(mode==='up'?'Create account':'Sign in')+'</button>'+(mode==='in'?'<button class="btn ghost full" id="auReset">Forgot password?</button>':'')+'</div>';
+  }
+  function bind(){
+    sheetEl.querySelectorAll('[data-am]').forEach(function(b){ b.onclick=function(){ var em=$('#auEmail').value; mode=b.getAttribute('data-am'); openSheet(html()); bind(); $('#auEmail').value=em; }; });
+    var err=function(e){ var x=$('#auErr'); if(x) x.textContent=typeof e==='string'?e:authMsg(e); };
+    $('#auGoogle').onclick=function(){
+      if(!CL.U){ err('Loading sign-in… try again in a second.'); return; }
+      var U=CL.U, prov=new U.GoogleAuthProvider(); prov.setCustomParameters({prompt:'select_account'});
+      U.signInWithPopup(CL.auth,prov).catch(function(e){
+        var c=e&&e.code||'';
+        if(/popup-blocked|operation-not-supported|cancelled-popup-request|web-storage-unsupported|internal-error/.test(c)){ cset({pendingRedirect:true}); U.signInWithRedirect(CL.auth,prov).catch(function(e2){ cset({pendingRedirect:false}); err(e2); }); }
+        else err(e);
+      });
+    };
+    $('#auGo').onclick=function(){
+      var em=$('#auEmail').value.trim(), pw=$('#auPass').value, nm=mode==='up'?$('#auName').value.trim():'';
+      if(!em){ err('Enter your email.'); return; } if(!pw){ err('Enter a password.'); return; } if(mode==='up' && !nm){ err('Enter your name.'); return; }
+      var b=$('#auGo'); b.disabled=true; b.textContent='One moment…';
+      loadFirebase().then(function(){ var U=CL.U;
+        return mode==='up' ? U.createUserWithEmailAndPassword(CL.auth,em,pw).then(function(cr){ CL.pendingName=nm; return U.updateProfile(cr.user,{displayName:nm}); })
+                           : U.signInWithEmailAndPassword(CL.auth,em,pw);
+      }).catch(function(e){ err(e); var b2=$('#auGo'); if(b2){ b2.disabled=false; b2.textContent=mode==='up'?'Create account':'Sign in'; } });
+    };
+    var rb=$('#auReset'); if(rb) rb.onclick=function(){
+      var em=$('#auEmail').value.trim(); if(!em){ err('Type your email above, then tap Forgot password.'); return; }
+      loadFirebase().then(function(){ return CL.U.sendPasswordResetEmail(CL.auth,em); }).then(function(){ err(''); toast('Password reset email sent to '+em); }).catch(err);
+    };
+  }
+  openSheet(html()); bind();
+}
+function cloudSignOut(){
+  if(!CL.auth) return Promise.resolve();
+  flushPush(); cloudDetachAll();
+  return CL.U.signOut(CL.auth).then(function(){ toast('Signed out — this phone keeps working offline'); });
+}
+function cloudDetachAll(){ stashSpace(); detachSpace(); if(CL.gUnsub){ CL.gUnsub(); CL.gUnsub=null; } liveStop(); CL.groups={}; }
+
+/* ---------- account menu ---------- */
+function renderAccount(){
+  var b=$('#acctBtn'); if(!b) return;
+  if(CL.user){ b.classList.add('in'); b.innerHTML='<span class="acct-av">'+esc(initials(myName()))+'</span>'+(navigator.onLine?'':'<i class="acct-off" title="Offline"></i>'); b.setAttribute('aria-label','Account: '+myName()); }
+  else { b.classList.remove('in'); b.textContent=(CL.loading&&cget().wanted&&!CL.authKnown)?'…':'Sign in'; b.setAttribute('aria-label','Sign in'); }
+}
+function syncStatus(){
+  if(!CL.space) return 'Not syncing';
+  if(!navigator.onLine) return '⚠︎ Offline — changes are saved on this phone and sync when you have signal';
+  return CL.ready?'✓ Synced':'Connecting…';
+}
+function spaceName(k){ if(!k||k==='u') return 'Just me (personal)'; var g=CL.groups[k.slice(2)]; return g?g.name:'Group'; }
+function openAccount(){
+  if(!CL.user){ openAuth(); return; }
+  var gs=Object.keys(CL.groups).map(function(id){ return CL.groups[id]; }).sort(function(a,b){ return a.name.localeCompare(b.name); });
+  var cur=CL.space, g=cur&&cur!=='u'?CL.groups[cur.slice(2)]:null;
+  var sp=['u'].concat(gs.map(function(x){return 'g:'+x.id;})).map(function(k){ return '<button class="spbtn'+(k===cur?' on':'')+'" data-space="'+esc(k)+'"><b>'+esc(spaceName(k))+'</b><small>'+(k==='u'?'Only you':(CL.groups[k.slice(2)].members||[]).length+' member'+((CL.groups[k.slice(2)].members||[]).length===1?'':'s'))+'</small>'+(k===cur?'<span class="chip fin">Active</span>':'')+'</button>'; }).join('');
+  openSheet('<h3>Account</h3><div class="acct-id"><span class="acct-av big">'+esc(initials(myName()))+'</span><div><b>'+esc(myName())+'</b><small>'+esc(CL.user.email||'')+(CL.profile&&CL.profile.hcp!=null?' · CH '+esc(CL.profile.hcp):'')+'</small></div></div>'+
+    '<p class="muted" id="syncLine" style="font-size:12.5px;margin:8px 0 4px">'+esc(syncStatus())+'</p>'+
+    '<label class="fl">Sync players, rounds &amp; tee times with</label><div class="splist">'+sp+'</div>'+
+    (g?'<div class="row" style="gap:8px;margin-top:10px"><button class="btn" style="flex:1" id="acInvite">✉︎ Invite to '+esc(g.name)+'</button>'+(g.ownerId!==myUid()?'<button class="btn ghost" id="acLeave">Leave</button>':'')+'</div>':'')+
+    '<button class="btn ghost block" style="margin-top:8px" id="acNewGroup">+ Create a group</button>'+
+    '<div class="sheet-actions"><button class="btn ghost" id="acProfile">Edit profile</button><button class="btn ghost" id="acOut">Sign out</button></div>');
+  sheetEl.querySelectorAll('[data-space]').forEach(function(b){ b.onclick=function(){ var k=b.getAttribute('data-space'); sheetDone(); if(k!==CL.space) switchSpace(k).then(function(){ toast('Now syncing with '+spaceName(k)); }); }; });
+  $('#acNewGroup').onclick=function(){ groupSheet(); };
+  $('#acProfile').onclick=function(){ sheetDone(); profileSheet(false); };
+  $('#acOut').onclick=function(){ sheetDone(); cloudSignOut(); };
+  var iv=$('#acInvite'); if(iv) iv.onclick=function(){ inviteSheet(g.id); };
+  var lv=$('#acLeave'); if(lv) lv.onclick=function(){
+    openSheet('<h3>Leave '+esc(g.name)+'?</h3><p>You’ll stop seeing the group’s players, rounds and live scores. You can rejoin with an invite link.</p><div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn danger" id="lvYes">Leave group</button></div>');
+    $('#lvYes').onclick=function(){ var F=CL.F, o={members:F.arrayRemove(myUid())}; o['memberInfo.'+myUid()]=F.deleteField(); sheetDone();
+      stashSpace(); detachSpace(); F.updateDoc(F.doc(CL.db,'groups',g.id),o).then(function(){ delete CL.groups[g.id]; return switchSpace('u'); }).then(function(){ toast('You left '+g.name); }).catch(cloudErr); };
+  };
+}
+function mkCode(){ var a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', r=new Uint8Array(8), s=''; crypto.getRandomValues(r); for(var i=0;i<8;i++) s+=a[r[i]%a.length]; return s; }
+function inviteUrl(code){ return location.origin+location.pathname+'?join='+code; }
+function groupSheet(){
+  openSheet('<h3>Create a group</h3><p>Your group shares one list of players, saved rounds and tee times, and can follow live rounds. Invite friends with a link.</p>'+
+    '<label class="fl" for="grName">Group name</label><input class="in" id="grName" maxlength="60" placeholder="Saturday Group">'+
+    '<div class="err" id="grErr"></div><div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn" id="grCreate">Create group</button></div>');
+  $('#grCreate').onclick=function(){
+    var name=$('#grName').value.trim(); if(!name){ $('#grErr').textContent='Give the group a name.'; return; }
+    var F=CL.F, gref=F.doc(F.collection(CL.db,'groups')), code=mkCode(), me=myUid(), mi={}, b=F.writeBatch(CL.db);
+    mi[me]={name:myName(), hcp:CL.profile&&CL.profile.hcp!=null?CL.profile.hcp:null};
+    b.set(gref,{name:name, ownerId:me, members:[me], memberInfo:mi, inviteCode:code, createdAt:F.serverTimestamp()});
+    b.set(F.doc(CL.db,'invites',code),{gid:gref.id, groupName:name, ownerId:me, createdAt:F.serverTimestamp()});
+    $('#grCreate').disabled=true; $('#grCreate').textContent='Creating…';
+    b.commit().then(function(){
+      CL.groups[gref.id]={id:gref.id, name:name, ownerId:me, members:[me], memberInfo:mi, inviteCode:code};
+      sheetDone(); return switchSpace('g:'+gref.id);
+    }).then(function(){ toast(name+' created'); inviteSheet(gref.id); }).catch(function(e){ var x=$('#grErr'); if(x){ x.textContent=e&&e.code==='unavailable'?'You need a connection to create a group.':authMsg(e); $('#grCreate').disabled=false; $('#grCreate').textContent='Create group'; } else cloudErr(e); });
+  };
+}
+function inviteSheet(gid){
+  var g=CL.groups[gid]; if(!g) return; var url=inviteUrl(g.inviteCode), txt='Join my golf group “'+g.name+'” on Fairway Club: '+url;
+  openSheet('<h3>Invite to '+esc(g.name)+'</h3><p>Text this link to your friends. When they open it and sign in, they join the group and share its players, rounds and live scores.</p>'+
+    '<div class="info" style="word-break:break-all"><b id="invUrl">'+esc(url)+'</b></div><p class="muted" style="font-size:12px">Invite code <b id="invCode">'+esc(g.inviteCode)+'</b></p>'+
+    '<div class="sheet-actions">'+(navigator.share?'<button class="btn" id="invShare">Share link…</button>':'')+'<button class="btn'+(navigator.share?' ghost':'')+'" id="invCopy">Copy link</button>'+
+    (g.ownerId===myUid()?'<button class="btn ghost" id="invReset">New link (old one stops working)</button>':'')+'<button class="btn ghost full" data-close>Done</button></div>');
+  if(navigator.share) $('#invShare').onclick=function(){ navigator.share({title:'Fairway Club',text:txt,url:url}).catch(function(){}); };
+  $('#invCopy').onclick=function(){ copyText(txt,'Invite link copied — paste it in a text'); };
+  var rs=$('#invReset'); if(rs) rs.onclick=function(){
+    var F=CL.F, code=mkCode(), b=F.writeBatch(CL.db);
+    b.update(F.doc(CL.db,'groups',gid),{inviteCode:code}); b.set(F.doc(CL.db,'invites',code),{gid:gid, groupName:g.name, ownerId:myUid(), createdAt:F.serverTimestamp()}); b.delete(F.doc(CL.db,'invites',g.inviteCode));
+    b.commit().then(function(){ g.inviteCode=code; inviteSheet(gid); toast('New invite link made'); }).catch(cloudErr);
+  };
+}
+function watchGroups(){
+  var F=CL.F;
+  return new Promise(function(res){ var first=true;
+    CL.gUnsub=F.onSnapshot(F.query(F.collection(CL.db,'groups'),F.where('members','array-contains',myUid())),function(s){
+      var m={}; s.forEach(function(d){ m[d.id]=Object.assign({id:d.id},d.data()); }); CL.groups=m;
+      if(CL.space && CL.space!=='u' && !m[CL.space.slice(2)] && !s.metadata.fromCache){ toast('You’re no longer in that group'); stashSpace(); detachSpace(); switchSpace('u'); }
+      renderAccount(); if(first){ first=false; res(); }
+    },function(e){ cloudErr(e); if(first){ first=false; res(); } });
+  });
+}
+function handleJoin(){
+  var code=cget().pendingJoin; if(!code) return Promise.resolve();
+  var F=CL.F;
+  return F.getDoc(F.doc(CL.db,'invites',code)).then(function(s){
+    if(!s.exists()){ cset({pendingJoin:null}); toast('That invite link isn’t valid any more — ask for a new one'); return; }
+    var inv=s.data();
+    if(CL.groups[inv.gid]){ cset({pendingJoin:null, activeSpace:'g:'+inv.gid}); toast('You’re already in '+inv.groupName); return; }
+    return new Promise(function(res){
+      openSheet('<h3>Join '+esc(inv.groupName)+'?</h3><p>You’ll share the group’s players, saved rounds and tee times, and see live rounds as they’re scored.</p><div class="sheet-actions"><button class="btn ghost" id="jnNo">Not now</button><button class="btn" id="jnYes">Join group</button></div>');
+      var no=function(){ cset({pendingJoin:null}); res(); };
+      onSheetCloseSet(no); $('#jnNo').onclick=function(){ sheetDone(); no(); };
+      $('#jnYes').onclick=function(){
+        var o={members:F.arrayUnion(myUid()), joinCode:code}; o['memberInfo.'+myUid()]={name:myName(), hcp:CL.profile&&CL.profile.hcp!=null?CL.profile.hcp:null};
+        $('#jnYes').disabled=true;
+        F.updateDoc(F.doc(CL.db,'groups',inv.gid),o).then(function(){ return F.getDoc(F.doc(CL.db,'groups',inv.gid)); }).then(function(gs){
+          CL.groups[inv.gid]=Object.assign({id:inv.gid},gs.data()); cset({pendingJoin:null, activeSpace:'g:'+inv.gid}); sheetDone(); toast('Welcome to '+inv.groupName+'!'); res();
+        }).catch(function(e){ sheetDone(); cset({pendingJoin:null}); cloudErr(e); res(); });
+      };
+    });
+  },function(e){ cloudErr(e); });
+}
+function chooseSpace(){
+  var a=cget().activeSpace, k=a&&(a==='u'||CL.groups[String(a).slice(2)])?a:null;
+  if(!k){ var ids=Object.keys(CL.groups); k=ids.length?'g:'+ids[0]:'u'; }
+  return switchSpace(k);
+}
+
+/* ---------- sync engine (three-way: local / last-synced hashes / remote) ---------- */
+function friendDoc(f){ var o={id:String(f.id), name:String(f.name||'Player').slice(0,60), hcp:(f.hcp===''||f.hcp==null||isNaN(+f.hcp))?null:+f.hcp, ghin:String(f.ghin||'').slice(0,20), phone:String(f.phone||'').slice(0,40), email:String(f.email||'').slice(0,120)};
+  if(f.uid) o.uid=String(f.uid); if(f.chCheck) o.chCheck=true; return o; }
+function friendFrom(d){ var o={id:d.id, name:d.name, hcp:d.hcp==null?'':d.hcp, ghin:d.ghin||'', phone:d.phone||'', email:d.email||''}; if(d.uid) o.uid=d.uid; if(d.chCheck) o.chCheck=true; return o; }
+function blob(id,obj,date){ return {id:String(id), json:JSON.stringify(obj), date:String(date||'').slice(0,10)}; }
+function blobCanon(d){ return {id:d.id, json:d.json, date:d.date||''}; }
+var SYNC={
+  friends:{ local:function(){ var m={}; state.friends.forEach(function(f){ m[f.id]=friendDoc(f); }); return m; }, canon:function(d){ return friendDoc(friendFrom(d)); },
+    apply:function(m){ var old=state.friends.map(function(f){return f.id;}); state.friends=Object.keys(m).sort(function(a,b){ var i=old.indexOf(a), j=old.indexOf(b); return (i<0?1e9:i)-(j<0?1e9:j); }).map(function(id){ return friendFrom(m[id]); }); } },
+  rounds:{ local:function(){ var m={}; (state.saved||[]).forEach(function(r){ m[r.id]=blob(r.id,r,r.date); }); return m; }, canon:blobCanon,
+    apply:function(m){ state.saved=Object.keys(m).map(function(id){ return JSON.parse(m[id].json); }); } },
+  teeTimes:{ local:function(){ var m={}; state.teeTimes.forEach(function(t){ m[t.id]=blob(t.id,{tt:t, su:state.signups[t.id]||null, pr:state.pairings[t.id]||null},t.date); }); return m; }, canon:blobCanon,
+    apply:function(m){ var tts=[], su={}, pr={}; Object.keys(m).forEach(function(id){ var o=JSON.parse(m[id].json); tts.push(o.tt); if(o.su) su[id]=o.su; if(o.pr) pr[id]=o.pr; });
+      tts.sort(function(a,b){ return (a.date+a.time).localeCompare(b.date+b.time); }); state.teeTimes=tts; state.signups=su; state.pairings=pr; } },
+  scores:{ local:function(){ var m={}; state.rounds.forEach(function(r){ m[r.id]=blob(r.id,r,r.date); }); return m; }, canon:blobCanon,
+    apply:function(m){ state.rounds=Object.keys(m).map(function(id){ return JSON.parse(m[id].json); }); } },
+  settings:{ local:function(){ return {presets:{json:JSON.stringify({g:localStorage.getItem(GKEY), p:localStorage.getItem(PKEY)})}}; }, canon:function(d){ return {json:d.json}; },
+    apply:function(m){ var d=m.presets; if(!d) return; var o=JSON.parse(d.json); try{ if(o.g) localStorage.setItem(GKEY,o.g); else localStorage.removeItem(GKEY); if(o.p) localStorage.setItem(PKEY,o.p); else localStorage.removeItem(PKEY); localStorage.setItem(GVER_KEY,String(GVER)); }catch(e){} } }
+};
+function localMap(c){ var m=SYNC[c].local(), o={}; Object.keys(m).forEach(function(id){ o[id]=JSON.stringify(m[id]); }); return o; }
+function hashes(m){ var o={}; Object.keys(m).forEach(function(id){ o[id]=hsh(m[id]); }); return o; }
+function parseMap(m){ var o={}; Object.keys(m).forEach(function(id){ o[id]=JSON.parse(m[id]); }); return o; }
+function sameMap(a,b){ var ka=Object.keys(a), kb=Object.keys(b); return ka.length===kb.length && ka.every(function(k){ return a[k]===b[k]; }); }
+function skey(k){ return 'fairwayClub.sync.'+myUid()+'|'+(k||CL.space); }
+function dkey(k){ return 'fairwayClub.spaceData.'+myUid()+'|'+(k||CL.space); }
+function storeSynced(){ try{ localStorage.setItem(skey(),JSON.stringify(CL.synced)); }catch(e){} }
+function basePath(){ return CL.space==='u'?['users',myUid()]:['groups',CL.space.slice(2)]; }
+function cref(c,id){ var F=CL.F, p=[CL.db].concat(basePath(),[c]); if(id!=null) p.push(id); return id!=null?F.doc.apply(null,p):F.collection.apply(null,p); }
+function stashSpace(){ if(!CL.space||!CL.ready||!CL.user) return; flushPush();
+  try{ localStorage.setItem(dkey(),JSON.stringify({friends:state.friends, saved:state.saved, teeTimes:state.teeTimes, signups:state.signups, pairings:state.pairings, rounds:state.rounds, g:localStorage.getItem(GKEY), p:localStorage.getItem(PKEY)})); }catch(e){} }
+function unstash(k){ var d=null; try{ d=JSON.parse(localStorage.getItem(dkey(k))); }catch(e){} if(!d||!localStorage.getItem(skey(k))) return false;
+  state.friends=d.friends||[]; state.saved=d.saved||[]; state.teeTimes=d.teeTimes||[]; state.signups=d.signups||{}; state.pairings=d.pairings||{}; state.rounds=d.rounds||[];
+  try{ if(d.g) localStorage.setItem(GKEY,d.g); if(d.p) localStorage.setItem(PKEY,d.p); }catch(e){} return true; }
+function detachSpace(){ CL.unsubs.forEach(function(u){ try{ u(); }catch(e){} }); CL.unsubs=[]; clearTimeout(CL.pushT); CL.pushT=null; CL.ready=false; CL.space=null; CL.liveList=[]; }
+function switchSpace(k){
+  if(CL.space===k && CL.ready) return Promise.resolve();
+  if(CL.space){ stashSpace(); detachSpace(); if(unstash(k)){ CL.applying=true; save(); CL.applying=false; renderAll(); } }
+  cset({activeSpace:k});
+  return attachSpace(k);
+}
+function attachSpace(k){
+  var F=CL.F; detachSpace(); CL.space=k; CL.got={}; CL.remote={}; CL.stored=!!localStorage.getItem(skey(k));
+  return new Promise(function(res){
+    CL.readyRes=res;
+    SYNC_KEYS.forEach(function(c){
+      CL.unsubs.push(F.onSnapshot(cref(c),{includeMetadataChanges:false},function(s){ onSnap(c,s); },function(e){ cloudErr(e); }));
+    });
+    if(k!=='u') CL.unsubs.push(F.onSnapshot(F.query(F.collection(CL.db,'groups',k.slice(2),'live'),F.where('status','==','live')),function(s){
+      CL.liveList=s.docs.map(function(d){ return Object.assign({id:d.id},d.data()); }); if(!state.game || state.ui.history || state.ui.ideas) renderGames(); },function(e){ cloudErr(e); }));
+    renderAccount();
+  });
+}
+function onSnap(c,s){
+  var rm={}; s.forEach(function(d){ try{ rm[d.id]=JSON.stringify(SYNC[c].canon(d.data())); }catch(e){} });
+  CL.remote[c]=rm;
+  if(!CL.ready){ if(s.metadata.fromCache && !CL.stored) return; CL.got[c]=1; if(SYNC_KEYS.every(function(x){ return CL.got[x]; })) firstSync(); return; }
+  mergeRemote(c,rm);
+}
+function mergeRemote(c,rm){
+  var cur=localMap(c), base=CL.synced[c]||{}, out={};
+  Object.keys(rm).forEach(function(id){ out[id]=rm[id]; });
+  Object.keys(cur).forEach(function(id){ if(hsh(cur[id])!==base[id]) out[id]=cur[id]; });                 // local edits not pushed yet win
+  Object.keys(base).forEach(function(id){ if(!(id in cur) && (id in out) && hsh(out[id])===base[id]) delete out[id]; });   // local delete pending
+  CL.synced[c]=hashes(rm); storeSynced();
+  if(!sameMap(out,cur)){ CL.applying=true; SYNC[c].apply(parseMap(out)); save(); CL.applying=false; renderAll(); }
+  pushSoon();
+}
+function pushSoon(){ if(!CL.ready||!CL.user) return; clearTimeout(CL.pushT); CL.pushT=setTimeout(pushNow,450); }
+function flushPush(){ if(CL.pushT){ clearTimeout(CL.pushT); CL.pushT=null; pushNow(); } }
+function pushNow(){
+  CL.pushT=null; if(!CL.ready||!CL.user||!CL.space) return;
+  var F=CL.F, ops=[], me=myUid();
+  SYNC_KEYS.forEach(function(c){ var cur=localMap(c), base=CL.synced[c]||(CL.synced[c]={});
+    Object.keys(cur).forEach(function(id){ var h=hsh(cur[id]); if(h!==base[id]){ ops.push([c,id,Object.assign(JSON.parse(cur[id]),{updatedAt:F.serverTimestamp(), by:me})]); base[id]=h; } });
+    Object.keys(base).forEach(function(id){ if(!(id in cur)){ ops.push([c,id,null]); delete base[id]; } });
+  });
+  if(!ops.length) return; storeSynced();
+  for(var i=0;i<ops.length;i+=400){ var b=F.writeBatch(CL.db); ops.slice(i,i+400).forEach(function(o){ if(o[2]) b.set(cref(o[0],o[1]),o[2]); else b.delete(cref(o[0],o[1])); });
+    b.commit().catch(function(e){ cloudErr(e); SYNC_KEYS.forEach(function(c){ CL.synced[c]=hashes(CL.remote[c]||{}); }); storeSynced(); }); }
+}
+function roundSigOf(r){ var g=r.game||{}; return [r.date, g.course, (g.players||[]).map(function(p){ return String(p.name).toLowerCase()+':'+((g.scores||{})[p.key]||[]).join('.'); }).sort().join(',')].join('|'); }
+function dedupePlan(){
+  var R=CL.remote, idMap={}, add={friends:[],rounds:[],teeTimes:[],scores:[],settings:[]}, dup=0;
+  var rf={}; Object.keys(R.friends).forEach(function(id){ var f=JSON.parse(R.friends[id]); rf[String(f.name).trim().toLowerCase()]=id; });
+  state.friends.forEach(function(f){ if(R.friends[f.id]){ dup++; return; } var m=rf[String(f.name).trim().toLowerCase()]; if(m){ idMap[f.id]=m; dup++; } else add.friends.push(f.id); });
+  var rs={}; Object.keys(R.rounds).forEach(function(id){ try{ rs[roundSigOf(JSON.parse(JSON.parse(R.rounds[id]).json))]=1; }catch(e){} });
+  (state.saved||[]).forEach(function(r){ if(R.rounds[r.id]||rs[roundSigOf(r)]) dup++; else add.rounds.push(r.id); });
+  var ts={}; Object.keys(R.teeTimes).forEach(function(id){ try{ var t=JSON.parse(JSON.parse(R.teeTimes[id]).json).tt; ts[t.date+'|'+t.time+'|'+t.course]=1; }catch(e){} });
+  state.teeTimes.forEach(function(t){ if(R.teeTimes[t.id]||ts[t.date+'|'+t.time+'|'+t.course]) dup++; else add.teeTimes.push(t.id); });
+  var ss={}; Object.keys(R.scores).forEach(function(id){ try{ var x=JSON.parse(JSON.parse(R.scores[id]).json); ss[x.pid+'|'+x.date+'|'+x.gross]=1; }catch(e){} });
+  state.rounds.forEach(function(x){ if(R.scores[x.id]||ss[(idMap[x.pid]||x.pid)+'|'+x.date+'|'+x.gross]) dup++; else add.scores.push(x.id); });
+  if(!Object.keys(R.settings).length && (localStorage.getItem(GKEY)||localStorage.getItem(PKEY))) add.settings.push('presets');
+  return {idMap:idMap, add:add, dup:dup, total:add.friends.length+add.rounds.length+add.teeTimes.length+add.scores.length};
+}
+function remapIds(idMap){
+  var ks=Object.keys(idMap); if(!ks.length) return;
+  var fr=state.friends; state.friends=[]; var s=JSON.stringify(state);
+  ks.forEach(function(o){ s=s.split('"F:'+o+'"').join('"F:'+idMap[o]+'"').split('"'+o+'"').join('"'+idMap[o]+'"'); });
+  state=JSON.parse(s); state.friends=fr.filter(function(f){ return !idMap[f.id]; });
+}
+function firstSync(){
+  if(CL.stored){ try{ CL.synced=JSON.parse(localStorage.getItem(skey()))||{}; }catch(e){ CL.synced={}; } CL.ready=true; SYNC_KEYS.forEach(function(c){ mergeRemote(c,CL.remote[c]); }); afterReady(); return; }
+  var plan=dedupePlan();
+  var go=function(upload){
+    if(!upload && plan.total){ try{ localStorage.setItem('fairwayClub.localBackup.v1',JSON.stringify({at:new Date().toISOString(), state:state, g:localStorage.getItem(GKEY), p:localStorage.getItem(PKEY)})); }catch(e){} }
+    remapIds(plan.idMap); CL.applying=true; CL.synced={};
+    SYNC_KEYS.forEach(function(c){ var rm=CL.remote[c], out={}, cur=localMap(c); Object.keys(rm).forEach(function(id){ out[id]=rm[id]; });
+      if(upload||c==='settings') plan.add[c].forEach(function(id){ if(cur[id]) out[id]=cur[id]; });
+      SYNC[c].apply(parseMap(out)); CL.synced[c]=hashes(rm); });
+    save(); CL.applying=false; CL.ready=true; storeSynced(); pushNow(); afterReady(); renderAll();
+    if(upload && plan.total) toast('Uploaded to '+spaceName(CL.space)+(plan.dup?' · '+plan.dup+' duplicate'+(plan.dup===1?'':'s')+' skipped':''));
+  };
+  if(!plan.total){ go(false); return; }
+  var a=plan.add, li=function(n,w){ return n?'<li><b>'+n+'</b> '+w+(n===1?'':'s')+'</li>':''; };
+  var show=function(){
+    openSheet('<h3>Upload this phone’s data?</h3><p>Copy what’s on this phone into <b>'+esc(spaceName(CL.space))+'</b> so it’s backed up'+(CL.space==='u'?'':' and shared with the group')+':</p><ul class="uplist">'+
+      li(a.friends.length,'player')+li(a.rounds.length,'saved round')+li(a.teeTimes.length,'tee time')+li(a.scores.length,'posted score')+'</ul>'+
+      (plan.dup?'<p class="muted" style="font-size:12.5px">'+plan.dup+' item'+(plan.dup===1?' is':'s are')+' already in the cloud and will be skipped (no duplicates).</p>':'')+
+      '<div class="sheet-actions"><button class="btn full" id="upYes">⬆︎ Upload to '+esc(spaceName(CL.space))+'</button><button class="btn ghost full" id="upNo">Not now — just use the cloud data</button></div>'+
+      '<p class="muted" style="font-size:11.5px">“Not now” keeps a backup copy of this phone’s data.</p>');
+    onSheetCloseSet(function(){ setTimeout(show,0); });
+    $('#upYes').onclick=function(){ sheetDone(); go(true); };
+    $('#upNo').onclick=function(){ sheetDone(); go(false); };
+  };
+  show();
+}
+function afterReady(){ ensureMe(); renderAccount(); var r=CL.readyRes; CL.readyRes=null; if(r) r(); }
+function ensureMe(){
+  if(!CL.user||!CL.profile) return; var me=myUid();
+  if(state.friends.some(function(f){ return f.uid===me; })) return;
+  var f=state.friends.filter(function(x){ return !x.uid && String(x.name).trim().toLowerCase()===String(CL.profile.name).trim().toLowerCase(); })[0];
+  if(f){ f.uid=me; if(CL.profile.hcp!=null) f.hcp=CL.profile.hcp; }
+  else state.friends.push({id:CL.profile.playerId&&!player(CL.profile.playerId)?CL.profile.playerId:'f'+uid(), name:CL.profile.name, hcp:CL.profile.hcp==null?'':CL.profile.hcp, ghin:'', phone:'', email:CL.user.email||'', uid:me});
+  save(); renderAll();
+}
+function cloudOnSave(){
+  if(typeof CL==='undefined'||!CL||!CL.user) return;
+  if(!CL.applying && CL.ready) pushSoon();
+  liveOnSave();
+}
+
+/* ---------- live shared round ---------- */
+function liveGid(){ return CL.space&&CL.space!=='u'?CL.space.slice(2):null; }
+function liveJson(g){ var c=Object.assign({},g); delete c.live; delete c.hole; return JSON.stringify(c); }
+function liveCanEdit(g){ if(!g||!g.live) return true; if(g.live.ended||!CL.user) return false; return g.live.k===myUid()||!!g.live.any; }
+function liveRO(g){ return !!(g&&g.live&&!liveCanEdit(g)); }
+function liveCanManage(g){ return !!(g&&g.live&&!g.live.ended&&CL.user&&(g.live.k===myUid()||g.live.by===myUid())); }
+function liveStartIfGroup(g){
+  var gid=liveGid(); if(!gid||!CL.user||!CL.ready) return;
+  var F=CL.F, me=myUid();
+  g.live={gid:gid, id:g.id, k:me, kn:myName(), any:false, by:me, gn:spaceName(CL.space)};
+  CL.lastLiveJson=liveJson(g); CL.lastLiveHole=g.hole;
+  F.setDoc(F.doc(CL.db,'groups',gid,'live',g.id),{id:g.id, createdBy:me, createdByName:myName(), scorekeeper:me, scorekeeperName:myName(), anyoneCanEdit:false, status:'live',
+    gameJson:CL.lastLiveJson, hole:g.hole||0, startedAt:F.serverTimestamp(), updatedAt:F.serverTimestamp(), updatedBy:me}).catch(cloudErr);
+  liveListen(g);
+}
+function liveListen(g){
+  if(CL.liveId===g.live.id) return; liveStop(); var F=CL.F; CL.liveId=g.live.id;
+  CL.liveUnsub=F.onSnapshot(F.doc(CL.db,'groups',g.live.gid,'live',g.live.id),onLiveDoc,function(e){ cloudErr(e); });
+}
+function liveStop(){ if(CL.liveUnsub){ try{ CL.liveUnsub(); }catch(e){} } CL.liveUnsub=null; CL.liveId=null; clearTimeout(CL.livePushT); CL.livePushT=null; }
+function liveResume(){ var g=state.game; if(g&&g.live&&!g.live.ended&&CL.user) liveListen(g); }
+function onLiveDoc(s){
+  var g=state.game; if(!g||!g.live||s.id!==g.live.id) return;
+  if(!s.exists()){ g.live.ended=true; liveStop(); CL.applyingLive=true; save(); CL.applyingLive=false; renderGames(); return; }
+  var d=s.data(), wasRO=liveRO(g);
+  Object.assign(g.live,{k:d.scorekeeper, kn:d.scorekeeperName||'', any:!!d.anyoneCanEdit, by:d.createdBy, ended:d.status!=='live'});
+  var ng=g, mine=d.gameJson===CL.lastLiveJson;
+  if(!mine && !CL.livePushT && d.gameJson!==liveJson(g)){
+    try{ ng=JSON.parse(d.gameJson); }catch(e){ ng=g; }
+    ng.live=g.live; ng.hole=g.hole; CL.lastLiveJson=d.gameJson;
+  }
+  if(liveRO(ng) && d.hole!==CL.lastRemoteHole) ng.hole=d.hole;
+  CL.lastRemoteHole=d.hole;
+  if(g.live.ended) liveStop();
+  state.game=ng; CL.applyingLive=true; save(); CL.applyingLive=false;
+  if(wasRO!==liveRO(ng) && !liveRO(ng) && g.live.k===myUid() && !g.live.ended) toast('You’re the scorekeeper now');
+  renderGames();
+}
+var lastFollow=null;
+function liveOnSave(){
+  var g=state.game, cur=g&&g.live&&!g.live.ended?g.live.id:null;
+  if(lastFollow && lastFollow.id!==cur){   // left a live round (new round / saved / discarded / stopped watching)
+    var lf=lastFollow; lastFollow=null;
+    if((lf.manage||CL.endLive) && CL.user){ var F=CL.F, up={status:'done', updatedAt:F.serverTimestamp(), updatedBy:myUid()}; if(CL.endJson) up.gameJson=CL.endJson; clearTimeout(CL.livePushT); CL.livePushT=null;
+      F.updateDoc(F.doc(CL.db,'groups',lf.gid,'live',lf.id),up).catch(function(){}); }
+    CL.endLive=false; CL.endJson=null; if(CL.liveId===lf.id) liveStop();
+  }
+  if(cur){ lastFollow={id:cur, gid:g.live.gid, manage:liveCanManage(g)}; }
+  if(!cur||CL.applyingLive||!liveCanEdit(g)) return;
+  clearTimeout(CL.livePushT); CL.livePushT=setTimeout(livePush,300);
+}
+function livePush(){
+  CL.livePushT=null; var g=state.game; if(!g||!g.live||g.live.ended||!liveCanEdit(g)||!CL.user) return;
+  var j=liveJson(g); if(j===CL.lastLiveJson && g.hole===CL.lastLiveHole) return;
+  CL.lastLiveJson=j; CL.lastLiveHole=g.hole; var F=CL.F;
+  F.updateDoc(F.doc(CL.db,'groups',g.live.gid,'live',g.live.id),{gameJson:j, hole:g.hole||0, updatedAt:F.serverTimestamp(), updatedBy:myUid()}).catch(cloudErr);
+}
+function liveFollow(id){
+  var d=CL.liveList.filter(function(x){ return x.id===id; })[0]; if(!d) return;
+  var go=function(){ var g; try{ g=JSON.parse(d.gameJson); }catch(e){ return; }
+    g.live={gid:liveGid(), id:d.id, k:d.scorekeeper, kn:d.scorekeeperName||'', any:!!d.anyoneCanEdit, by:d.createdBy, gn:spaceName(CL.space)};
+    g.hole=d.hole||0; CL.lastLiveJson=d.gameJson; CL.lastRemoteHole=d.hole; state.game=g; state.ui.gameView='score'; state.ui.history=false; state.ui.ideas=false;
+    CL.applyingLive=true; save(); CL.applyingLive=false; liveListen(g); sheetDone(); renderGames(); window.scrollTo(0,0);
+    toast(liveCanEdit(g)?'Joined the live round — you can enter scores':'Following live — '+(d.scorekeeperName||'the scorekeeper')+' is keeping score'); };
+  if(state.game && hasScores(state.game) && !isSaved(state.game) && !(state.game.live)){
+    openSheet('<h3>Follow the live round?</h3><p>Your own round on this phone isn’t saved and will be replaced.</p><div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn" id="lfYes">Follow live round</button></div>');
+    $('#lfYes').onclick=go;
+  } else go();
+}
+function liveCardsHtml(){
+  var mine=state.game&&state.game.live&&state.game.live.id;
+  var L=(CL.liveList||[]).filter(function(d){ return d.id!==mine; }); if(!L.length) return '';
+  return L.map(function(d){ var g={}, R=null, thru=0, txt=''; try{ g=JSON.parse(d.gameJson); R=computeGame(g); thru=R.doneCount; txt=sideLabel(g,R,'A')+' vs '+sideLabel(g,R,'B'); }catch(e){}
+    return '<div class="card livecard"><div class="lv-t"><span class="lvdot"></span> Live now in '+esc(spaceName(CL.space))+'</div><b>'+esc(txt)+'</b><small>'+esc(presetTitle(g.settings||{}))+' · thru '+thru+' · '+esc(d.scorekeeperName||'')+' keeping score</small>'+
+      '<button class="btn block" style="margin-top:10px" data-act="followLive" data-lid="'+esc(d.id)+'">Follow live round</button></div>'; }).join('');
+}
+function liveBarHtml(g){
+  if(!g||!g.live) return '';
+  var L=g.live, me=myUid(), keeper=L.k===me;
+  if(L.ended) return '<div class="card livebar ended"><div class="lb-t">🏁 This live round has ended'+(isSaved(g)?' · saved to History':'')+'</div>'+
+    '<div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" data-act="liveClose">Close round</button>'+(isSaved(g)?'<button class="btn ghost" data-act="histGo" data-hid="'+esc(g.savedId)+'">View in History</button>':'')+'</div></div>';
+  var st=!CL.user?'Signed out — not syncing':!navigator.onLine?'Offline — scores saved on this phone, will sync':'';
+  var who=keeper?'You’re keeping score':(esc(L.kn||'Scorekeeper')+' is keeping score');
+  var ctl='';
+  if(liveCanManage(g)) ctl='<div class="row lb-ctl"><button class="btn ghost sm" data-act="liveHand">'+(keeper?'Hand off scoring':'Take back scoring')+'</button><button class="btn ghost sm lv-any'+(L.any?' on':'')+'" data-act="liveAny" aria-pressed="'+(L.any?'true':'false')+'">'+(L.any?'✓ ':'')+'Anyone can edit</button></div>';
+  else ctl='<div class="lb-ro">'+(liveCanEdit(g)?'✏️ Anyone in the group can edit scores':'👀 View only — scores update live')+'</div>';
+  return '<div class="card livebar" id="liveBar"><div class="lb-t"><span class="lvdot"></span> LIVE · '+esc(L.gn||spaceName('g:'+L.gid))+' · '+who+'</div>'+(st?'<div class="lb-st">'+esc(st)+'</div>':'')+ctl+'</div>';
+}
+function liveHandSheet(){
+  var g=state.game, G=CL.groups[g.live.gid]; if(!G) return; var me=myUid(), keeper=g.live.k===me;
+  if(!keeper){ liveSetKeeper(me,myName()); return; }
+  var ms=(G.members||[]).filter(function(u){ return u!==g.live.k; });
+  openSheet('<h3>Hand off scoring</h3><p>Pick who keeps score now. They can edit; everyone else watches live.</p><div class="splist">'+
+    (ms.length?ms.map(function(u){ var i=(G.memberInfo||{})[u]||{}; return '<button class="spbtn" data-hand="'+esc(u)+'"><b>'+esc(i.name||'Member')+'</b><small>'+(i.hcp!=null?'CH '+esc(i.hcp):'')+'</small></button>'; }).join(''):'<p class="muted">No one else is in the group yet — send an invite first.</p>')+
+    '</div><div class="sheet-actions"><button class="btn ghost full" data-close>Cancel</button></div>');
+  sheetEl.querySelectorAll('[data-hand]').forEach(function(b){ b.onclick=function(){ var u=b.getAttribute('data-hand'), i=(G.memberInfo||{})[u]||{}; sheetDone(); liveSetKeeper(u,i.name||'Member'); }; });
+}
+function liveSetKeeper(u,name){
+  var g=state.game, F=CL.F; flushLive();
+  F.updateDoc(F.doc(CL.db,'groups',g.live.gid,'live',g.live.id),{scorekeeper:u, scorekeeperName:name, updatedAt:F.serverTimestamp(), updatedBy:myUid()}).then(function(){ toast(name+' is keeping score now'); }).catch(cloudErr);
+}
+function flushLive(){ if(CL.livePushT){ clearTimeout(CL.livePushT); livePush(); } }
+function liveToggleAny(){
+  var g=state.game, F=CL.F, v=!g.live.any; flushLive();
+  F.updateDoc(F.doc(CL.db,'groups',g.live.gid,'live',g.live.id),{anyoneCanEdit:v, updatedAt:F.serverTimestamp(), updatedBy:myUid()}).catch(cloudErr);
+  toast(v?'Anyone in the group can now edit scores':'Only the scorekeeper can edit now');
+}
+var LIVE_VIEW_OK=['copy','share','newround','liveHand','liveAny','liveClose','histGo','newAfterSave','followLive','signin','signinNo'];
+function liveGuard(act){
+  var g=state.game; if(!g||!liveRO(g)||LIVE_VIEW_OK.indexOf(act)>=0) return false;
+  toast(g.live.ended?'This live round has ended':'View only — '+(g.live.kn||'the scorekeeper')+' is keeping score'); return true;
+}
+function signinPromptHtml(){
+  if(CL.user||cget().dismissPrompt||cget().wanted) return '';
+  return '<div class="card sipr" id="signinPrompt"><div class="sipr-t">☁️ <b>Sign in to share with your group</b><small>Optional · sync players &amp; saved rounds, follow live scores</small></div>'+
+    '<div class="row" style="gap:8px"><button class="btn sm" data-act="signin">Sign in</button><button class="btn ghost sm" data-act="signinNo" aria-label="Not now">Not now</button></div></div>';
+}
+function cloudForgetLocal(){ try{ Object.keys(localStorage).forEach(function(k){ if(k.indexOf('fairwayClub.sync.')===0||k.indexOf('fairwayClub.spaceData.')===0) localStorage.removeItem(k); }); }catch(e){} cset({activeSpace:null}); }
+function cloudBoot(){
+  var m=/[?&]join=([A-Za-z0-9]{6,16})/.exec(location.search);
+  if(m){ cset({pendingJoin:m[1].toUpperCase()}); try{ history.replaceState(null,'',location.pathname+location.hash); }catch(e){} }
+  var c=cget(); if(c.wanted||c.pendingJoin||c.pendingRedirect) loadFirebase();
+  renderAccount();
+  window.addEventListener('online',function(){ renderAccount(); renderGames(); });
+  window.addEventListener('offline',function(){ renderAccount(); renderGames(); });
+  document.addEventListener('visibilitychange',function(){ if(document.hidden && CL.user){ flushPush(); flushLive(); } });
+  $('#acctBtn').addEventListener('click',function(){ if(CL.user) openAccount(); else openAuth(); });
+}
+
 function renderAll(){ renderTeeTimes(); renderPairings(); renderLeaderboard(); renderGames(); renderFriends(); }
 renderAll(); initForm();
 go(location.hash ? location.hash.slice(1) : state.ui.tab, true);
 historyMigration();
+cloudBoot();
 })();
 </script>
 </body>
