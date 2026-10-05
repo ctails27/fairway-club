@@ -55,7 +55,7 @@
   .chip.mine{background:var(--g700);color:#fff}
   .chip.warn{background:#fff3cd;color:#7a5b00}
   .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12.5px;color:#fff;flex:none;letter-spacing:.3px}
-  .btn{border:0;border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;background:var(--g700);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .08s,background .15s}
+  .btn{border:0;border-radius:12px;padding:10px 14px;min-height:44px;font-weight:700;font-size:14px;background:var(--g700);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .08s,background .15s}
   .btn:active{transform:scale(.97)}
   .btn:hover{background:var(--g600)}
   .btn.ghost{background:var(--g100);color:var(--g800)}
@@ -90,18 +90,19 @@
   .groupsep{grid-column:1/-1;font-size:10.5px;color:var(--muted);font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin:2px 0 -2px}
   /* Pairings */
   .controls{display:grid;gap:10px}
-  label.fl{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px}
-  select.in,input.in{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;font-size:15px;outline:none}
+  label.fl,div.fl{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px}
+  select.in,input.in,textarea.in{min-height:44px;width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;font-size:15px;outline:none}
   select.in:focus,input.in:focus{border-color:var(--g500);box-shadow:0 0 0 3px rgba(47,158,107,.15)}
   .toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;background:var(--g50);border:1px solid var(--line)}
   .toggle b{font-size:14px}
   .toggle small{display:block;color:var(--muted);font-size:12px;margin-top:1px}
-  .switch{position:relative;width:46px;height:28px;flex:none}
+  .switch{position:relative;width:48px;height:44px;flex:none;cursor:pointer}
   .switch input{opacity:0;width:0;height:0;position:absolute}
-  .switch span{position:absolute;inset:0;background:#c9d6cf;border-radius:999px;transition:.2s;cursor:pointer}
+  .switch span{position:absolute;inset:8px 0;background:#c9d6cf;border-radius:999px;transition:.2s;cursor:pointer}
   .switch span:before{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
   .switch input:checked+span{background:var(--g600)}
-  .switch input:checked+span:before{transform:translateX(18px)}
+  .switch input:checked+span:before{transform:translateX(20px)}
+  .switch input:focus-visible+span{outline:2.5px solid var(--g700);outline-offset:2px}
   .group{padding:0;overflow:hidden}
   .group-h{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:linear-gradient(90deg,var(--g100),#fff);border-bottom:1px solid var(--line)}
   .group-h h4{margin:0;font-size:15px;display:flex;align-items:center;gap:8px}
@@ -123,7 +124,7 @@
   .empty .big{font-size:34px;margin-bottom:6px}
   /* Leaderboard */
   .seg{display:flex;background:var(--g100);border-radius:12px;padding:3px;gap:3px}
-  .seg button{flex:1;border:0;background:transparent;border-radius:10px;padding:8px 10px;font-weight:700;font-size:14px;color:var(--g800)}
+  .seg button{flex:1;border:0;background:transparent;border-radius:10px;padding:8px 10px;min-height:44px;font-weight:700;font-size:14px;color:var(--g800)}
   .seg button.on{background:#fff;box-shadow:0 1px 3px rgba(8,42,31,.15);color:var(--g900)}
   .lb{padding:0;overflow:hidden}
   .lb-row{display:grid;grid-template-columns:30px 1fr 40px 52px 50px;align-items:center;gap:6px;padding:9px 12px;border-bottom:1px solid #eef3f0;font-variant-numeric:tabular-nums;transition:background .6s}
@@ -142,12 +143,12 @@
   .topar.under{color:#b0281a}
   .lb-row.me{background:var(--g50)}
   .lb-row.flash{background:#fff3c4}
-  .lb-row.dim{opacity:.55}
+  .lb-row.dim .t small{color:var(--muted)}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .form-grid .full{grid-column:1/-1}
-  .stepper{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
-  .stepper button{border:0;background:var(--g100);width:42px;font-size:20px;font-weight:700;color:var(--g800)}
-  .stepper input{border:0;text-align:center;width:100%;font-size:18px;font-weight:800;outline:none;padding:8px 0;-moz-appearance:textfield}
+  .stepper{display:flex;align-items:stretch;min-height:44px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+  .stepper button{border:0;background:var(--g100);width:44px;flex:none;min-height:44px;font-size:20px;font-weight:700;color:var(--g800)}
+  .stepper input{border:0;text-align:center;width:100%;min-width:0;font-size:18px;font-weight:800;outline:none;padding:8px 0;-moz-appearance:textfield}
   .stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .preview{display:flex;justify-content:space-around;background:var(--g50);border:1px dashed #b9d3c5;border-radius:12px;padding:8px;text-align:center}
   .preview div{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
@@ -156,29 +157,29 @@
   .recent{list-style:none;margin:0;padding:0}
   .recent li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #eef3f0;font-size:13.5px}
   .recent li:last-child{border-bottom:0}
-  .recent .x{border:0;background:transparent;color:#9aa;font-size:18px;width:30px;height:30px;border-radius:8px}
+  .recent .x{border:0;background:transparent;color:#6b7a73;font-size:20px;width:44px;height:44px;border-radius:10px}
   .recent .x:hover{background:#fdecea;color:var(--red)}
   .sc{font-weight:800;font-variant-numeric:tabular-nums}
   h3.sec{font-size:15px;margin:0 0 10px;display:flex;align-items:center;justify-content:space-between}
   /* Nav */
   nav.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,480px);z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
     border-top:1px solid var(--line);display:flex;padding:6px 8px calc(8px + env(safe-area-inset-bottom))}
-  nav.tabs button{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;font-size:11.5px;font-weight:700;color:#7d8c84;border-radius:12px}
+  nav.tabs button{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;min-height:52px;font-size:11.5px;font-weight:700;color:#56665e;border-radius:12px}
   nav.tabs button svg{width:24px;height:24px}
   nav.tabs button.on{color:var(--g700)}
   nav.tabs button.on .ic{background:var(--g100)}
   nav.tabs .ic{width:54px;height:30px;border-radius:999px;display:grid;place-items:center;transition:background .2s}
   footer.foot{text-align:center;font-size:12px;color:var(--muted);padding:6px 16px 16px}
-  footer.foot button{border:0;background:none;color:var(--g700);font-weight:700;text-decoration:underline;font-size:12px}
+  footer.foot button{border:0;background:none;color:var(--g700);font-weight:700;text-decoration:underline;font-size:12.5px;min-height:44px;padding:0 8px}
   .toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(20px);background:var(--g900);color:#fff;padding:10px 16px;border-radius:12px;font-size:13.5px;font-weight:600;
-    box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:all .25s;z-index:50;max-width:min(92vw,440px);text-align:center}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;visibility:hidden;pointer-events:none;transition:transform .25s;z-index:50;max-width:min(92vw,440px);text-align:center}
+  .toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
   .view{display:none;animation:fade .2s ease}
   .view.on{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
   @media (min-width:520px){ .app{margin-top:0} }
   /* ---- v2 additions ---- */
-  .iconbtn{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.12);border:0;color:#fff;display:grid;place-items:center;flex:none;margin-left:auto}
+  .iconbtn{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.12);border:0;color:#fff;display:grid;place-items:center;flex:none;margin-left:auto}
   .iconbtn:hover{background:rgba(255,255,255,.2)}
   .brand .me{margin-left:0}
   .btn.sm{padding:7px 11px;font-size:13px;border-radius:10px}
@@ -214,9 +215,10 @@
   .vs .side b{display:block;font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;opacity:.8}
   .vs .side.A{box-shadow:inset 3px 0 0 #8fe0b4} .vs .side.B{box-shadow:inset 3px 0 0 #9cc5f0}
   .vsx{font-size:12px;font-weight:800;opacity:.7}
-  .hstrip{display:grid;grid-template-columns:28px repeat(9,1fr);gap:4px;margin-bottom:10px;align-items:center}
+  .hstrip{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:10px;align-items:center}
   .hstrip .lab{font-size:9.5px;font-weight:800;color:var(--muted);letter-spacing:.4px}
-  .hc{height:30px;border-radius:9px;border:1px solid var(--line);background:#fff;font-size:12.5px;font-weight:700;color:var(--muted);padding:0}
+  .hc{height:44px;min-width:44px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:14px;font-weight:700;color:var(--muted);padding:0}
+  .hc.in9{border-style:dashed}
   .hc.wa{background:#dff3e8;color:var(--g800);border-color:#b8e0c9}
   .hc.wb{background:#e1edf9;color:#24507d;border-color:#bcd5ef}
   .hc.wh{background:#eef1ef;color:#55635b}
@@ -225,7 +227,7 @@
   .holehead .hn{font-size:26px;font-weight:800;letter-spacing:-.5px}
   .holehead .hm{font-size:13px;color:var(--muted);font-weight:600}
   .holehead .nav{margin-left:auto;display:flex;gap:6px}
-  .holehead .nav button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:16px;font-weight:800;color:var(--g800)}
+  .holehead .nav button{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:16px;font-weight:800;color:var(--g800)}
   .holehead .nav button:disabled{opacity:.35}
   .tlabel{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;margin:10px 0 4px;display:flex;align-items:center;gap:6px}
   .tlabel.A{color:var(--g700)} .tlabel.B{color:#2f5d8a}
@@ -241,14 +243,14 @@
   .jrow{display:flex;gap:5px;margin-top:5px}
   .prow{flex-wrap:wrap}
   .prow>.jrow{flex-basis:100%;flex-wrap:wrap;gap:6px;margin:0 0 0 47px}
-  .prow>.jrow .jb{font-size:12.5px;padding:6px 12px;min-height:34px}
-  .jb{border:1px solid var(--line);background:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:3px 8px;color:var(--muted);white-space:nowrap}
+  .prow>.jrow .jb{font-size:13px;padding:6px 12px;min-height:44px}
+  .jb{border:1px solid var(--line);background:#fff;border-radius:999px;font-size:12px;font-weight:700;padding:3px 10px;min-height:44px;color:#4d5d55;white-space:nowrap}
   .jb.on{background:var(--g700);border-color:var(--g700);color:#fff}
   .jb.on.warn{background:#c58b00;border-color:#c58b00}
   .jb:disabled{opacity:.35;cursor:not-allowed}
   .sbox{text-align:center;flex:none}
   .stp{display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
-  .stp button{border:0;background:var(--g100);width:36px;height:40px;font-size:20px;font-weight:700;color:var(--g800)}
+  .stp button{border:0;background:var(--g100);width:44px;height:44px;font-size:20px;font-weight:700;color:var(--g800)}
   .stp .sv{width:38px;text-align:center;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
   .stp .sv.empty{color:#b5c2bb}
   .rel{font-size:11px;font-weight:700;margin-top:3px;color:var(--muted);min-height:14px}
@@ -281,7 +283,7 @@
   .jlist li{display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #eef3f0;font-size:13px}
   .jlist li:last-child{border-bottom:0}
   .jlist .hno{width:30px;height:24px;border-radius:7px;background:var(--g100);color:var(--g800);font-weight:800;font-size:11.5px;display:grid;place-items:center;flex:none}
-  .jlist .no{opacity:.55;text-decoration:line-through}
+  .jlist .no{color:#5e6f66;text-decoration:line-through}
   .banner{border-radius:14px;padding:12px 14px;margin-bottom:12px;font-weight:700;font-size:14px;display:flex;gap:10px;align-items:center}
   .banner.final{background:linear-gradient(90deg,#fff3c4,#fdf8e6);color:#5c4700;border:1px solid #f0dc8a}
   .banner.live{background:#e5eef9;color:#24507d;border:1px solid #c3d8ef}
@@ -312,7 +314,7 @@
   .friend .ft b{font-size:15px;display:block}
   .friend .ft small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .friend .fa{display:flex;flex-direction:column;gap:6px;flex:none}
-  .ghin{font-size:11px;font-weight:700;background:var(--sand);color:#6b5a2e;border-radius:6px;padding:1px 6px;margin-left:4px}
+  .ghin{font-size:11px;font-weight:700;background:var(--sand);color:#5c4a1f;border-radius:6px;padding:1px 6px;margin-left:4px}
   /* scorecard */
   .card.scard{padding:0;overflow:hidden}
   .sc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px 8px}
@@ -352,7 +354,7 @@
   .sc tr.bb td.hw{text-decoration:underline;text-underline-offset:2px}
   .sc tr.gap td{height:6px;background:#f3f7f5;border-bottom:0}
   .sc tr.msec td{height:22px;background:#f3f7f5;font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;text-align:left}
-  .sc tr.mr td{height:26px;font-size:11px;font-weight:800;color:#7c8a83}
+  .sc tr.mr td{height:26px;font-size:11px;font-weight:800;color:#56665e}
   .sc tr.mr .nm{font-size:11.5px}
   .sc tr.mr.press .nm{padding-left:10px;font-weight:600;color:var(--muted)}
   .sc tr.mr td.up{color:var(--g700)} .sc tr.mr td.dn{color:#2f5d8a}
@@ -380,7 +382,7 @@
   .filters{display:grid;gap:8px;margin-bottom:12px}
   .chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
   .chips .lab{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-right:2px}
-  .fchip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700;color:var(--g800)}
+  .fchip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;min-height:44px;font-size:12.5px;font-weight:700;color:var(--g800)}
   .fchip.on{background:var(--g700);border-color:var(--g700);color:#fff}
   details.idea{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;border:1px solid rgba(15,61,46,.05);overflow:hidden}
   details.idea.isrec{border:1.5px solid #e2c766}
@@ -402,10 +404,10 @@
   .idea .body dd{margin:2px 0 0}
   .idea .whyrec{background:#fffaf0;border:1px solid #f3e2b3;color:#5c4700;border-radius:10px;padding:8px 10px;margin-top:4px;font-size:12.5px}
   .idea .src{margin-top:10px;font-size:12px;display:flex;flex-wrap:wrap;gap:4px 10px}
-  .idea .src a{color:var(--g700);font-weight:700}
+  .idea .src a{color:var(--g700);font-weight:700;display:inline-flex;align-items:center;min-height:44px}
   .strip{margin-top:12px}
   .strip h3{font-size:14px;margin:0 2px 8px;display:flex;justify-content:space-between;align-items:center}
-  .strip h3 button{border:0;background:none;color:var(--g700);font-weight:800;font-size:12.5px}
+  .strip h3 button{border:0;background:none;color:var(--g700);font-weight:800;font-size:12.5px;min-height:44px}
   .strip-row{display:grid;grid-auto-flow:column;grid-auto-columns:78%;gap:8px;overflow-x:auto;padding-bottom:4px;scroll-snap-type:x mandatory}
   .scard{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:10px 12px;border:1.5px solid #e2c766;scroll-snap-align:start;cursor:pointer;text-align:left}
   .scard b{font-size:14.5px;display:block}
@@ -413,8 +415,8 @@
   nav.tabs button{font-size:10.5px}
   nav.tabs .ic{width:46px}
   /* ---- v12: accounts / groups / live ---- */
-  .acctbtn{margin-left:auto;height:34px;min-width:34px;padding:0 12px;border-radius:999px;border:0;background:rgba(255,255,255,.16);color:#fff;font:inherit;font-weight:700;font-size:13px;cursor:pointer;position:relative;flex:none}
-  .acctbtn.in{padding:0;width:34px;background:none}
+  .acctbtn{margin-left:auto;height:44px;min-width:44px;padding:0 12px;border-radius:999px;border:0;background:rgba(255,255,255,.16);color:#fff;font:inherit;font-weight:700;font-size:13px;cursor:pointer;position:relative;flex:none}
+  .acctbtn.in{padding:0;width:44px;background:none}
   #acctBtn + #shareBtn{margin-left:8px}
   .acct-av{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#f2d36b;color:#0f3d2e;font-weight:800;font-size:13px}
   .acct-av.big{width:44px;height:44px;font-size:16px;flex:none}
@@ -538,16 +540,56 @@
   .welcome span{font-size:13px;color:var(--muted)}
   .saved{margin-top:10px}
   .saved .lab{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:0 2px 6px}
-  .pickchip{border:0;cursor:pointer;font-size:13px;padding:6px 11px}
+  .pickchip{border:0;cursor:pointer;font-size:13px;padding:6px 12px;min-height:44px}
   .suslot{margin-bottom:8px}
   .slotrow{display:flex;gap:8px;align-items:center}
   .slotrow select.in{flex:1 1 auto;width:auto;min-width:0}
   .slotrow input.in.chin,.chin{width:64px;flex:0 0 64px;text-align:center;font-weight:800;padding:10px 4px}
-  .chin.ph{display:grid;place-items:center;height:44px;color:#b5c2bb;font-size:12px;border:1px dashed var(--line);border-radius:12px}
+  .chin.ph{display:grid;place-items:center;height:44px;color:var(--muted);font-size:12px;border:1px dashed var(--line);border-radius:12px}
   .pick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .pickbtn{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px;text-align:left;font:inherit;cursor:pointer}
   .pickbtn span{flex:1;min-width:0;font-weight:700;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .pickbtn small{color:var(--muted);font-size:11.5px}
+  .pickbtn{min-height:48px}
+  .pt-btns .btn{min-width:44px}
+  .fchip{min-width:44px}
+  /* ---- v13: legal, a11y, offline, courses, members, delete account ---- */
+  .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .legal{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:0 10px}
+  .legal a{display:inline-flex;align-items:center;min-height:44px;padding:0 8px;color:var(--g700);font-weight:700;font-size:12.5px}
+  .legal-note{font-size:12px!important;text-align:center;margin:14px 0 0!important}
+  .gseg button{font-size:13px;padding:6px 4px;line-height:1.15}
+  .disclaim{font-size:12.5px;color:var(--muted);text-align:center;margin:-2px 8px 12px;line-height:1.4}
+  .updbar{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top));z-index:70;width:min(92vw,440px);min-height:48px;border:0;border-radius:14px;
+    background:#f2d36b;color:#2d2300;font:inherit;font-weight:800;font-size:14.5px;box-shadow:0 8px 24px rgba(0,0,0,.25);padding:10px 14px;cursor:pointer}
+  .money-in.pts input{padding-left:40px}
+  .crs{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .crs:last-of-type{border-bottom:0}
+  .crs .ct{flex:1;min-width:0}
+  .crs .ct b{display:block;font-size:15px}
+  .crs .ct small{display:block;color:var(--muted);font-size:12.5px;margin-top:1px}
+  .tee-row{display:grid;grid-template-columns:1fr 96px 44px;gap:6px;margin-bottom:6px;align-items:center}
+  .tee-row .btn{padding:0}
+  .ce-holes{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+  .ce-holes.one{grid-template-columns:1fr}
+  .ce-head,.ce-h{display:grid;grid-template-columns:30px 1fr 1fr;gap:6px;align-items:center}
+  .ce-head{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;text-align:center;margin-bottom:2px}
+  .ce-h{margin-bottom:6px}
+  .ce-h .hn{font-weight:800;color:var(--g800);font-size:14px;text-align:center}
+  .ce-h select.in,.ce-h input.in{padding:8px 4px;text-align:center;font-weight:700;text-align-last:center}
+  .ce-h .bad{border-color:#b3261e!important;box-shadow:0 0 0 2px rgba(179,38,30,.18)}
+  .ce-tot{font-size:12.5px;color:var(--muted);margin:6px 2px 0}
+  .memrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .memrow:last-child{border-bottom:0}
+  .memrow .mt{flex:1;min-width:0}
+  .memrow .mt b{display:block}
+  .memrow .mt small{color:var(--muted);font-size:12px}
+  .danger-zone{margin-top:14px;padding-top:6px;border-top:1px solid var(--line)}
+  .owncard{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0}
+  .owncard b{display:block}
+  .owncard small{display:block;color:var(--muted);font-size:12.5px;margin-bottom:6px}
+  .chkrow{display:flex;align-items:center;gap:10px;min-height:44px;font-size:14px;cursor:pointer}
+  .chkrow input{width:22px;height:22px;flex:none;accent-color:var(--g700)}
 </style>
 </head>
 <body>
@@ -590,7 +632,7 @@
         </div>
         <div class="toggle">
           <div><b>Balance by handicap</b><small>Even out average course handicap across groups</small></div>
-          <label class="switch"><input type="checkbox" id="balance"><span></span></label>
+          <label class="switch"><input type="checkbox" id="balance" aria-label="Balance by handicap"><span></span></label>
         </div>
         <div class="row">
           <button class="btn block" id="shuffleBtn">
@@ -654,7 +696,7 @@
     <!-- GAMES -->
     <section class="view" id="view-games">
       <div class="page-title">
-        <div><h2>Games</h2><p>Live hole-by-hole scoring &amp; bets</p></div>
+        <div><h2>Games</h2><p>Live hole-by-hole scoring &amp; side games</p></div>
         <div class="pt-btns"><button class="btn ghost sm" id="gHistBtn" aria-label="Saved rounds history">📒 History</button><button class="btn ghost sm" id="gIdeasBtn" aria-label="Game ideas">💡 Ideas</button><button class="btn ghost sm" id="gSettingsBtn" aria-label="Game settings">⚙︎</button></div>
       </div>
       <div id="gameRoot"></div>
@@ -674,8 +716,8 @@
     </section>
   </main>
   <footer class="foot">
-    Saved on this phone only · not shared or synced with other players<br>
-    <button id="resetBtn">Clear all data</button>
+    Saved on this phone unless you sign in to sync with your group.
+    <div class="legal"><a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a><a href="terms.html" target="_blank" rel="noopener">Terms of Use</a><button id="resetBtn">Clear all data</button></div>
   </footer>
 
   <nav class="tabs" aria-label="Main">
@@ -702,6 +744,7 @@
   </nav>
   <div class="sheet-bg" id="sheetBg"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div id="srLive" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 </div>
 
 <script>
@@ -710,7 +753,7 @@
 var KEY = 'fairwayClub.prototype.v1';
 
 /* ---------- Data (no sample data: everything is entered by the user) ---------- */
-var DATA_VER = 2; // v2: sample data removed; player handicaps are COURSE handicaps (whole numbers, from GHIN)
+var DATA_VER = 2; // v2: sample data removed; player handicaps are COURSE handicaps (whole numbers)
 var COURSES = [ {id:'qcc', name:'Quidnessett CC', par:72} ];   // for tee times + posted scores (par 72 from every tee)
 var AV_COLORS = ['#1d6b4a','#2f7d8c','#7a5c2e','#4b6b2a','#8a3f3f','#3e5a8a','#6b4a86','#2a6b62','#9a6a12','#556270','#a0522d','#3b7a57'];
 
@@ -721,7 +764,7 @@ function parseISO(s){ var a=s.split('-'); return new Date(+a[0],+a[1]-1,+a[2]); 
 function uid(){ return Math.random().toString(36).slice(2,9); }
 
 function emptyState(){
-  return { v:1, dv:DATA_VER, teeTimes:[], signups:{}, pairings:{}, rounds:[], friends:[], game:null, saved:[],
+  return { v:1, dv:DATA_VER, teeTimes:[], signups:{}, pairings:{}, rounds:[], friends:[], game:null, saved:[], courses:[],
     ui:{tab:'games', pairTT:null, balance:true, lbMode:'net', gameView:'score', histMigrated:1} };
 }
 /* One-time cleanup for phones that loaded the earlier prototype: remove ONLY the built-in sample data. */
@@ -758,18 +801,26 @@ function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e
 var $ = function(s){ return document.querySelector(s); };
 function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function player(id){ var fs=state.friends||[]; for(var i=0;i<fs.length;i++) if(fs[i].id===id) return fs[i]; return null; }
-function course(id){ for(var i=0;i<COURSES.length;i++) if(COURSES[i].id===id) return COURSES[i]; return COURSES[0]; }
+/* tee times + posted scores: built-in courses plus the user's own (a 9-hole course counts as par x2 for an 18-hole round) */
+function allCourses(){ return COURSES.concat((state.courses||[]).map(function(cc){ return {id:'cc:'+cc.id, name:cc.name, par:ccPar18(cc), custom:true}; })); }
+function course(id){ var cs=allCourses(); for(var i=0;i<cs.length;i++) if(cs[i].id===id) return cs[i];
+  var recs=(state.teeTimes||[]).concat(state.rounds||[]);
+  for(var j=0;j<recs.length;j++) if(recs[j].course===id && recs[j].cname) return {id:id, name:recs[j].cname, par:+recs[j].cpar||72, custom:true};
+  return COURSES[0]; }
+function courseOptHtml(sel){ return allCourses().map(function(c){ return '<option value="'+esc(c.id)+'"'+(c.id===sel?' selected':'')+'>'+esc(c.name)+' · Par '+c.par+'</option>'; }).join(''); }
+function courseStamp(rec){ var c=course(rec.course); if(c.custom){ rec.cname=c.name; rec.cpar=c.par; } return rec; }
+function refreshCourseSelects(){ var s=$('#sfCourse'); if(s){ var v=s.value; s.innerHTML=courseOptHtml(v); if(!s.value) s.selectedIndex=0; } }
 function initials(n){ return String(n).trim().split(/\s+/).map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase(); }
 function avColor(id){ return colorForKey('F:'+id); }
 function avatar(id,cls){ var p=player(id)||{name:'?'}; return '<span class="av '+(cls||'')+'" style="background:'+avColor(id)+'">'+esc(initials(p.name))+'</span>'; }
-/* Course handicap: whole number from GHIN; plus handicaps stored as negatives (+2 -> -2). */
+/* Course handicap: whole number; plus handicaps stored as negatives (+2 -> -2). */
 function chNum(p){ return (!p || p.hcp==='' || p.hcp==null || isNaN(+p.hcp)) ? 0 : +p.hcp; }
 function fmtCH(v){ if(v==='' || v==null || isNaN(+v)) return '—'; v=+v; return v<0 ? '+'+(-v) : String(v); }
 function parseCH(s){
   s=String(s==null?'':s).replace(/\s+/g,'');
-  if(s==='') return {err:'Enter a course handicap (from GHIN).'};
+  if(s==='') return {err:'Enter a course handicap.'};
   var m=/^([+\-])?(\d{1,2})$/.exec(s);
-  if(!m) return {err: /[.,]/.test(s) ? 'Use the whole-number course handicap from GHIN (not the decimal index).' : 'Course handicap must be a whole number, e.g. 12 (or +2 for a plus handicap).'};
+  if(!m) return {err: /[.,]/.test(s) ? 'Use the whole-number course handicap (not the decimal handicap index).' : 'Course handicap must be a whole number, e.g. 12 (or +2 for a plus handicap).'};
   var n=+m[2];
   if(m[1]){ if(n>10) return {err:'Plus handicaps go up to +10.'}; return {v: n===0?0:-n}; }
   if(n>72) return {err:'Course handicap must be 72 or less.'};
@@ -799,7 +850,7 @@ function quickAddHtml(px, btnLabel){
   return '<div class="qa" id="'+px+'Box">'+
     '<div class="fgrid">'+
       '<div class="full"><label class="fl" for="'+px+'Name">Name</label><input class="in" id="'+px+'Name" placeholder="e.g. Chris Taylor" autocomplete="off" autocapitalize="words" enterkeyhint="next"></div>'+
-      '<div><label class="fl" for="'+px+'Ch">Course handicap (from GHIN)</label><input class="in" id="'+px+'Ch" inputmode="tel" autocomplete="off" placeholder="e.g. 12 or +2" enterkeyhint="done"></div>'+
+      '<div><label class="fl" for="'+px+'Ch">Course handicap</label><input class="in" id="'+px+'Ch" inputmode="tel" autocomplete="off" placeholder="e.g. 12 or +2" enterkeyhint="done"></div>'+
       '<div style="display:flex;align-items:flex-end"><button type="button" class="btn block" id="'+px+'Add" data-act="'+px+'Add">'+(btnLabel||'+ Add player')+'</button></div>'+
     '</div>'+
     '<div class="err" id="'+px+'Err" style="margin-top:6px"></div>'+
@@ -864,7 +915,7 @@ function ttForm(){
     '<form id="ttForm" class="fgrid" novalidate>'+
       '<div><label class="fl" for="ttDate">Date</label><input class="in" type="date" id="ttDate" value="'+iso(addDays(new Date(),1))+'"></div>'+
       '<div><label class="fl" for="ttTime">Time</label><input class="in" type="time" id="ttTime" value="08:00"></div>'+
-      '<div class="full"><label class="fl" for="ttCourse">Course</label><select class="in" id="ttCourse">'+COURSES.map(function(c){ return '<option value="'+c.id+'">'+esc(c.name)+' · Par '+c.par+'</option>'; }).join('')+'</select></div>'+
+      '<div class="full"><label class="fl" for="ttCourse">Course</label><select class="in" id="ttCourse">'+courseOptHtml()+'</select></div>'+
       '<div class="full"><label class="fl" for="ttCap">Players</label><select class="in" id="ttCap"><option value="4">4 · one group</option><option value="8">8 · two groups</option><option value="12">12 · three groups</option></select></div>'+
       '<div class="full err" id="ttErr"></div>'+
       '<div class="sheet-actions full"><button type="button" class="btn ghost" data-close>Cancel</button><button type="submit" class="btn" id="ttSave">Add tee time</button></div>'+
@@ -874,7 +925,7 @@ function ttForm(){
     var date=$('#ttDate').value, time=$('#ttTime').value, cap=+$('#ttCap').value;
     if(!date){ $('#ttErr').textContent='Choose a date.'; return; }
     if(!/^\d{2}:\d{2}$/.test(time)){ $('#ttErr').textContent='Choose a time.'; return; }
-    var t={id:'t'+uid(), date:date, time:time, course:$('#ttCourse').value, cap:cap};
+    var t=courseStamp({id:'t'+uid(), date:date, time:time, course:$('#ttCourse').value, cap:cap});
     state.teeTimes.push(t); state.signups[t.id]=new Array(cap).fill(null); state.ui.pairTT=t.id;
     save(); closeSheet(); renderTeeTimes(); toast('Tee time added · '+fmtDate(date)+' '+fmtTime(time));
   };
@@ -1149,11 +1200,11 @@ function seasonStats(){
 function renderSeason(){
   var el=$('#seasonCard'); if(!el) return;
   var st=seasonStats(), n=(state.saved||[]).length;
-  el.innerHTML='<h3 class="sec">Season money <span class="chip">'+n+' saved round'+(n===1?'':'s')+'</span><button class="btn ghost sm" id="seasonHist" style="margin-left:auto">📒 History →</button></h3>'+
-    (st.length?'<div class="ss-row head"><span>Player</span><span class="num">Rds</span><span class="num">Money</span><span class="num">Gross</span><span class="num">Net</span></div>'+st.map(function(x){
+  el.innerHTML='<h3 class="sec">'+(PTS()?'Season points':'Season money')+' <span class="chip">'+n+' saved round'+(n===1?'':'s')+'</span><button class="btn ghost sm" id="seasonHist" style="margin-left:auto">📒 History →</button></h3>'+
+    (st.length?'<div class="ss-row head"><span>Player</span><span class="num">Rds</span><span class="num">'+(PTS()?'Points':'Money')+'</span><span class="num">Gross</span><span class="num">Net</span></div>'+st.map(function(x){
       return '<div class="ss-row" data-season="'+esc(x.id||x.name)+'"><span class="nm"><b>'+esc(x.name)+'</b></span><span class="num">'+x.rounds+'</span><span class="num '+mcls(x.money)+'"><b>'+smoney(x.money)+'</b></span><span class="num">'+(x.avgG==null?'—':x.avgG.toFixed(1))+'</span><span class="num">'+(x.avgN==null?'—':x.avgN.toFixed(1))+'</span></div>';
-    }).join('')+'<p class="muted" style="font-size:11.5px;margin:8px 2px 0">Money = sum of saved settlements. Gross/Net = 18-hole averages (net = gross − handicap).</p>'
-    :'<div class="muted" style="font-size:13px">Save your rounds (Games → Settle → 💾 Save round) to track season money and scoring averages here.</div>');
+    }).join('')+'<p class="muted" style="font-size:11.5px;margin:8px 2px 0">'+(PTS()?'Points':'Money')+' = sum of saved settlements. Gross/Net = 18-hole averages (net = gross − handicap).</p>'
+    :'<div class="muted" style="font-size:13px">Save your rounds (Games → Settle → 💾 Save round) to track season totals and scoring averages here.</div>');
   var hb=$('#seasonHist'); if(hb) hb.onclick=function(){ openHistory(); };
 }
 function renderRecent(){
@@ -1181,7 +1232,7 @@ function refreshScoreForm(){
   if(has) updatePreview();
 }
 function initForm(){
-  $('#sfCourse').innerHTML = COURSES.map(function(c){ return '<option value="'+c.id+'">'+esc(c.name)+' · Par '+c.par+'</option>'; }).join('');
+  $('#sfCourse').innerHTML = courseOptHtml();
   $('#sfDate').value = iso(new Date());
   $('#sfDate').max = iso(new Date());
   refreshScoreForm();
@@ -1208,7 +1259,7 @@ $('#scoreForm').addEventListener('submit',function(e){
   $('#sfErr').textContent='';
   var mode=state.ui.lbMode;
   var before = standings(mode).filter(function(s){return s.n;}).map(function(s){return s.p.id;}).indexOf(pid);
-  state.rounds.push({id:uid(), pid:pid, course:cid, date:date, gross:g, ts:Date.now()});
+  state.rounds.push(courseStamp({id:uid(), pid:pid, course:cid, date:date, gross:g, ts:Date.now()}));
   save();
   var after = standings(mode).filter(function(s){return s.n;}).map(function(s){return s.p.id;}).indexOf(pid);
   flashPid = pid; renderLeaderboard();
@@ -1235,18 +1286,31 @@ function go(tab, noHash){
 document.querySelector('nav.tabs').addEventListener('click',function(e){ var b=e.target.closest('button'); if(b) go(b.getAttribute('data-tab')); });
 window.addEventListener('hashchange',function(){ go(location.hash.slice(1), true); });
 $('#resetBtn').addEventListener('click',function(){
-  openSheet('<h3>Clear all data?</h3><p>This deletes everything saved on this phone: players, tee times, pairings, posted scores, the current round'+((state.saved||[]).length?' and <b>'+state.saved.length+' saved round'+(state.saved.length===1?'':'s')+'</b> (export a backup in History first)':'')+'. Your bet settings are kept. This can’t be undone.'+(CL.user?' You’ll be signed out; your cloud data stays in your account/group.':'')+'</p>'+
+  openSheet('<h3>Clear all data?</h3><p>This deletes everything saved on this phone: players, tee times, pairings, posted scores, the current round'+((state.saved||[]).length?' and <b>'+state.saved.length+' saved round'+(state.saved.length===1?'':'s')+'</b> (export a backup in History first)':'')+'. Your game settings are kept. This can’t be undone.'+(CL.user?' You’ll be signed out; your cloud data stays in your account/group.':'')+'</p>'+
     '<div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn danger" id="clrYes">Clear all data</button></div>');
   $('#clrYes').onclick=function(){ if(CL.user) cloudSignOut(); cloudForgetLocal(); state=emptyState(); ensureGameState(); save(); closeSheet(); renderAll(); initForm(); go('games'); toast('All data cleared'); };
 });
 
 /* =====================================================================
-   v2: SHEET, SHARE, FRIENDS, GAMES (betting)
+   v2: SHEET, SHARE, FRIENDS, GAMES (side games)
    ===================================================================== */
 var sheetBg = $('#sheetBg'), sheetEl = $('#sheet');
 var onSheetClose=null;
-function openSheet(html){ onSheetClose=null; sheetEl.innerHTML = '<div class="grab"></div>'+html; sheetBg.classList.add('show'); sheetEl.scrollTop=0; }
-function closeSheet(){ sheetBg.classList.remove('show'); sheetEl.innerHTML=''; if(onSheetClose){ var f=onSheetClose; onSheetClose=null; f(); } }
+var sheetReturn=null;
+function openSheet(html){ onSheetClose=null; if(!sheetBg.classList.contains('show')) sheetReturn=document.activeElement;
+  sheetEl.innerHTML = '<div class="grab"></div>'+html; sheetBg.classList.add('show'); sheetEl.scrollTop=0;
+  var h=sheetEl.querySelector('h3'); if(h){ h.id='sheetTitle'; sheetEl.setAttribute('aria-labelledby','sheetTitle'); } else sheetEl.removeAttribute('aria-labelledby');
+  sheetEl.setAttribute('tabindex','-1'); try{ sheetEl.focus({preventScroll:true}); }catch(e){} }
+function closeSheet(){ sheetBg.classList.remove('show'); sheetEl.innerHTML=''; if(onSheetClose){ var f=onSheetClose; onSheetClose=null; f(); }
+  if(!sheetBg.classList.contains('show') && sheetReturn && document.contains(sheetReturn)){ try{ sheetReturn.focus({preventScroll:true}); }catch(e){} } }
+/* screen-reader announcements for score and settlement changes (the views re-render, so a persistent live region is used) */
+var announceT=null;
+function announce(msg){ var el=$('#srLive'); if(!el||!msg) return; clearTimeout(announceT); el.textContent=''; announceT=setTimeout(function(){ el.textContent=msg; },80); }
+function scoreAnnounce(g,k,h){
+  try{ var R=computeGame(g), hd=R.holes[h], p=gp(g,k), v=g.scores[k][h], parts=[first(p.name)+' '+(v==null?'cleared':v)+' on hole '+(h+1)];
+    if(hd.complete){ var w=hd.res>0?'A':hd.res<0?'B':null; parts.push(w?sideLabel(g,R,w)+(R.teams?' win':' wins')+' the hole':'Hole halved'); }
+    parts.push('Running totals: '+R.all.map(function(x){ return first(gp(g,x).name)+' '+smoney(R.net[x]); }).join(', '));
+    announce(parts.join('. ')); }catch(e){} }
 sheetBg.addEventListener('click',function(e){ if(e.target===sheetBg) closeSheet(); });
 document.addEventListener('keydown',function(e){ if(e.key==='Escape' && sheetBg.classList.contains('show')) closeSheet(); });
 sheetEl.addEventListener('click',function(e){ var b=e.target.closest('[data-close]'); if(b) closeSheet(); });
@@ -1262,7 +1326,12 @@ function showShare(){
 }
 $('#shareBtn').addEventListener('click',showShare);
 
-function money(x){ var r=Math.round(x*100)/100, a=Math.abs(r); var s = (Math.abs(a-Math.round(a))>0.001) ? a.toFixed(2) : Math.round(a).toLocaleString('en-US'); return '$'+s; }
+/* amounts are shown as dollars or as points (display only — the math is identical) */
+function PTS(){ return !!(state && state.ui && state.ui.pts); }
+function money(x){ var r=Math.round(x*100)/100, a=Math.abs(r), frac=Math.abs(a-Math.round(a))>0.001;
+  if(PTS()) return (frac?String(+a.toFixed(2)):Math.round(a).toLocaleString('en-US'))+(a===1?' pt':' pts');
+  return '$'+(frac?a.toFixed(2):Math.round(a).toLocaleString('en-US')); }
+function moneyIn(inner){ return '<div class="money-in'+(PTS()?' pts':'')+'"><span aria-hidden="true">'+(PTS()?'pts':'$')+'</span>'+inner+'</div>'; }
 function smoney(x){ var r=Math.round(x*100)/100; return (r>0?'+':r<0?'−':'')+money(r); }
 function mcls(x){ return x>0.004?'pos':x<-0.004?'neg':''; }
 function colorForKey(k){ var h=0; for(var i=0;i<k.length;i++) h=(h*31+k.charCodeAt(i))>>>0; return AV_COLORS[h%AV_COLORS.length]; }
@@ -1278,14 +1347,14 @@ function renderFriends(){
   var q=($('#friendSearch').value||'').trim().toLowerCase();
   var list=sortedPlayers();
   var shown=list.filter(function(f){ return !q || [f.name,f.ghin,f.phone,f.email].join(' ').toLowerCase().indexOf(q)>=0 || (q.replace(/\D/g,'') && (f.phone||'').replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0); });
-  $('#friendSub').textContent = state.friends.length ? state.friends.length+' saved · course handicaps from GHIN' : 'Save your group once, reuse every round';
+  $('#friendSub').textContent = state.friends.length ? state.friends.length+' saved · course handicaps' : 'Save your group once, reuse every round';
   $('#friendSearch').parentNode.style.display = state.friends.length>3 ? '' : 'none';
-  if(!state.friends.length){ $('#friendList').innerHTML='<div class="card empty"><div class="big">👋</div><b>Add your players to start</b><br>Just a name and their course handicap from GHIN. Players you add in Games are saved here automatically.<br><br><button class="btn" data-fact="new">+ Add player</button></div>'; return; }
+  if(!state.friends.length){ $('#friendList').innerHTML='<div class="card empty"><div class="big">👋</div><b>Add your players to start</b><br>Just a name and their course handicap. Players you add in Games are saved here automatically.<br><br><button class="btn" data-fact="new">+ Add player</button></div>'; return; }
   if(!shown.length){ $('#friendList').innerHTML='<div class="card empty"><div class="big">🔍</div>No players match “'+esc(q)+'”.</div>'; return; }
   $('#friendList').innerHTML = shown.map(function(f){
     var contact=[f.phone,f.email].filter(Boolean).map(esc).join(' · ');
     return '<div class="card friend" data-fid="'+f.id+'">'+gAv({key:'F:'+f.id,name:f.name})+
-      '<div class="ft"><b>'+esc(f.name)+(f.uid?' <span class="chip mem" title="Signed-in group member">member</span>':'')+'</b><small>Course hcp <b class="chv">'+fmtCH(f.hcp)+'</b>'+(f.chCheck?' <span class="chip warn" title="Saved before course handicaps — update from GHIN">check</span>':'')+(f.ghin?'<span class="ghin">GHIN '+esc(f.ghin)+'</span>':'')+'</small>'+(contact?'<small>'+contact+'</small>':'')+'</div>'+
+      '<div class="ft"><b>'+esc(f.name)+(f.uid?' <span class="chip mem" title="Signed-in group member">member</span>':'')+'</b><small>Course hcp <b class="chv">'+fmtCH(f.hcp)+'</b>'+(f.chCheck?' <span class="chip warn" title="Saved before course handicaps — please re-check">check</span>':'')+(f.ghin?'<span class="ghin">ID '+esc(f.ghin)+'</span>':'')+'</small>'+(contact?'<small>'+contact+'</small>':'')+'</div>'+
       '<div class="fa"><button class="btn ghost sm" data-fact="edit" data-fid="'+f.id+'">Edit</button><button class="btn sm" data-fact="use" data-fid="'+f.id+'">+ Round</button></div></div>';
   }).join('');
 }
@@ -1318,15 +1387,14 @@ function friendForm(f){
   openSheet('<h3>'+(isNew?'Add player':'Edit player')+'</h3>'+
     '<form id="fForm" class="fgrid" novalidate>'+
       '<div class="full"><label class="fl" for="fName">Name *</label><input class="in" id="fName" value="'+esc(f.name)+'" placeholder="e.g. Sam Rivera" autocomplete="off" autocapitalize="words"></div>'+
-      '<div class="full"><label class="fl" for="fHcp">Course handicap (from GHIN)</label><input class="in" id="fHcp" inputmode="tel" autocomplete="off" value="'+esc(fmtCH(f.hcp)==='—'?'':fmtCH(f.hcp))+'" placeholder="Whole number, e.g. 12 · plus hcp: +2"><small class="muted" style="display:block;margin-top:4px;font-size:11.5px">Use the course handicap GHIN shows for the tees you’re playing — it’s used as-is for strokes.</small></div>'+
+      '<div class="full"><label class="fl" for="fHcp">Course handicap</label><input class="in" id="fHcp" inputmode="tel" autocomplete="off" value="'+esc(fmtCH(f.hcp)==='—'?'':fmtCH(f.hcp))+'" placeholder="Whole number, e.g. 12 · plus hcp: +2"><small class="muted" style="display:block;margin-top:4px;font-size:11.5px">Use the course handicap for the tees you’re playing (from your handicap app or the club’s chart) — it’s used as-is for strokes.</small></div>'+
       '<div class="full sec-t" style="margin-top:2px">Optional</div>'+
-      '<div><label class="fl" for="fGhin">GHIN number</label><input class="in" id="fGhin" inputmode="numeric" value="'+esc(f.ghin||'')+'" placeholder="optional"></div>'+
+      '<div><label class="fl" for="fGhin">Handicap ID (optional)</label><input class="in" id="fGhin" autocomplete="off" maxlength="20" value="'+esc(f.ghin||'')+'" placeholder="optional"></div>'+
       '<div><label class="fl" for="fPhone">Phone</label><input class="in" id="fPhone" type="tel" value="'+esc(f.phone||'')+'" placeholder="optional"></div>'+
       '<div class="full"><label class="fl" for="fEmail">Email</label><input class="in" id="fEmail" type="email" value="'+esc(f.email||'')+'" placeholder="optional"></div>'+
       '<div class="full err" id="fErr"></div>'+
       '<div class="sheet-actions full" style="margin-top:4px"><button type="button" class="btn ghost" data-close>Cancel</button><button type="submit" class="btn">'+(isNew?'Add player':'Save changes')+'</button>'+
       (isNew?'':'<button type="button" class="btn danger full" id="fDel">Delete player</button>')+'</div>'+
-      '<p class="full muted" style="font-size:11.5px;margin:0">GHIN lookup isn’t connected (it needs USGA partner access) — copy the course handicap from the GHIN app.</p>'+
     '</form>');
   if(!isNew) $('#fDel').onclick=function(){
     openSheet('<h3>Delete '+esc(f.name)+'?</h3><p>This removes them from your saved players and any tee times. A round already in progress keeps their name and handicap.</p>'+
@@ -1335,11 +1403,11 @@ function friendForm(f){
   };
   $('#fForm').onsubmit=function(e){
     e.preventDefault();
-    var name=$('#fName').value.trim(), hcpS=$('#fHcp').value.trim(), ghin=$('#fGhin').value.replace(/\s|-/g,''), phone=$('#fPhone').value.trim(), email=$('#fEmail').value.trim();
+    var name=$('#fName').value.trim(), hcpS=$('#fHcp').value.trim(), ghin=$('#fGhin').value.trim(), phone=$('#fPhone').value.trim(), email=$('#fEmail').value.trim();
     var err='', ch='';
     if(!name) err='Name is required.';
     else if(hcpS!==''){ var r=parseCH(hcpS); if(r.err) err=r.err; else ch=r.v; }
-    if(!err && ghin && !/^\d{6,10}$/.test(ghin)) err='GHIN number should be 6–10 digits.';
+    if(!err && ghin && !/^[A-Za-z0-9][A-Za-z0-9 -]{0,19}$/.test(ghin)) err='Handicap ID: letters, numbers and dashes only (up to 20).';
     if(!err && email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) err='Please enter a valid email address.';
     if(!err && isNew && findPlayerByName(name)) err=name+' is already saved — edit them instead.';
     if(!err && !isNew){ var dup=findPlayerByName(name); if(dup && dup.id!==f.id) err='Another player is already called '+name+'.'; }
@@ -1372,7 +1440,7 @@ function saveDefaults(s){ try{ localStorage.setItem(GKEY, JSON.stringify(s)); lo
 /* ---- Game presets (Games setup picker, in this order). Saved settings from before presets existed = East Greenwich Nassau. ---- */
 var PRESETS=[
   {id:'closeout', name:'Close Out', def:Object.assign({},STANDARD,{front:20,back:20,overall:0,autoPress:false,pressAmount:20,greenieAmt:5,sandyAmt:5,pulleyAmt:5,birdieAmt:10,eagleAmt:50,greenieOn:false,sandyOn:false,pulleyOn:false,birdieOn:false,eagleOn:false,preset:'closeout',format:'closeout',junkOn:false,manualPress:false}),
-   blurb:'Front & back 9 matches · a new bet starts whenever one is closed out · no overall, no presses'},
+   blurb:'Front & back 9 matches · a new match starts whenever one is closed out · no overall, no presses'},
   {id:'egn', name:'East Greenwich Nassau', def:STANDARD,
    blurb:'auto press at 2 down · greenies, sandies, birdies & eagles'},
   {id:'nassau', name:'Nassau', def:Object.assign({},STANDARD,{front:20,back:20,overall:20,autoPress:false,pressAmount:20,greenieAmt:5,sandyAmt:5,pulleyAmt:5,birdieAmt:10,eagleAmt:50,greenieOn:false,sandyOn:false,pulleyOn:false,birdieOn:false,eagleOn:false,preset:'nassau',format:'nassau',junkOn:false,manualPress:true}),
@@ -1429,8 +1497,21 @@ var QCC=[ // Quidnessett Country Club, North Kingstown RI. Par + per-tee handica
 ].map(function(t){ var y=t.yds.reduce(function(a,b){return a+b;},0); return {id:t.id, real:true, group:'Quidnessett CC · North Kingstown, RI', name:'Quidnessett CC', tees:t.tee+' tees · '+y.toLocaleString('en-US')+' yds', tee:t.tee,
   par:[4,3,5,4,3,4,4,4,5, 4,5,3,4,5,4,3,4,4], hcp:t.hcp, yds:t.yds, src:QCC_SRC}; });
 var DEFAULT_GCOURSE='qcc-white';
-var GCOURSES=QCC;
-function gcourse(id){ return GCOURSES.filter(function(c){return c.id===id;})[0]||gcourse(DEFAULT_GCOURSE); }
+var GCOURSES=QCC;   // built-in courses (Quidnessett); the user's own courses live in state.courses
+/* custom course: {id, name, holes:9|18, par:[N], si:[N], tees:[{id,name,yds|null}], updatedAt}.
+   A 9-hole course is played twice for an 18-hole round: par repeats; stroke index s becomes 2s-1 on the front and 2s on the back. */
+function sumArr(a){ return (a||[]).reduce(function(x,y){ return x+(+y||0); },0); }
+function ccPar18(cc){ var p=sumArr(cc.par); return cc.holes===9?p*2:p; }
+function expandCourse(cc,t){
+  var nine=cc.holes===9, par=nine?cc.par.concat(cc.par):cc.par.slice(),
+      hcp=nine?cc.si.map(function(s){ return 2*s-1; }).concat(cc.si.map(function(s){ return 2*s; })):cc.si.slice();
+  return {id:'cc:'+cc.id+':'+t.id, real:false, custom:true, cid:cc.id, holes:cc.holes, group:'Your courses', name:cc.name, tee:t.name,
+    tees:t.name+' tees'+(t.yds?' · '+(+t.yds).toLocaleString('en-US')+' yds':'')+(nine?' · 9 holes ×2':''), par:par.map(Number), hcp:hcp.map(Number), yds:null, src:'custom'};
+}
+function customGCourses(){ var o=[]; (state&&state.courses||[]).forEach(function(cc){ (cc.tees||[]).forEach(function(t){ o.push(expandCourse(cc,t)); }); }); return o; }
+function allGCourses(){ return GCOURSES.concat(customGCourses()); }
+function gcourse(id){ var all=allGCourses(); return all.filter(function(c){return c.id===id;})[0]||all.filter(function(c){return c.id===DEFAULT_GCOURSE;})[0]; }
+function gameCourse(g){ return (g && g.courseDef) || gcourse(g && g.course); }
 function ensureGameState(){
   if(!state.friends) state.friends=[];
   if(state.game===undefined) state.game=null;
@@ -1440,7 +1521,8 @@ function ensureGameState(){
   if(!state.gameSetup) state.gameSetup={mode:'teams', keys:[null,null,null,null], useHandicap:true, course:DEFAULT_GCOURSE, qccDefault:1};
   if(!state.gameSetup.preset) state.gameSetup.preset='closeout';   // new rounds always default to $20 Close Out
   if(!state.gameSetup.qccDefault){ state.gameSetup.course=DEFAULT_GCOURSE; state.gameSetup.qccDefault=1; }
-  if(!GCOURSES.some(function(c){return c.id===state.gameSetup.course;})) state.gameSetup.course=DEFAULT_GCOURSE;
+  if(!state.courses) state.courses=[];
+  if(!allGCourses().some(function(c){return c.id===state.gameSetup.course;})) state.gameSetup.course=DEFAULT_GCOURSE;
   while(state.gameSetup.keys.length<4) state.gameSetup.keys.push(null);
   if(!state.ui.gameView) state.ui.gameView='score';
 }
@@ -1448,7 +1530,7 @@ ensureGameState();
 
 /* ---------- Games: core math (pure) ---------- */
 function computeGame(g){
-  var S=g.settings, C=gcourse(g.course), P=g.players, teams=g.mode==='teams';
+  var S=g.settings, C=gameCourse(g), P=g.players, teams=g.mode==='teams';
   var A=teams?[P[0].key,P[1].key]:[P[0].key], B=teams?[P[2].key,P[3].key]:[P[1].key], all=A.concat(B);
   var ch={}, rec={};
   all.forEach(function(k){ var p=P.filter(function(x){return x.key===k;})[0]; ch[k]=g.useHandicap?Math.round(p.hcp*(+S.allowance)/100):0; });
@@ -1605,8 +1687,10 @@ function newGame(su){
   var players=su.keys.slice(0,su.mode==='teams'?4:2).map(keyInfo);
   var scores={}; players.forEach(function(p){ scores[p.key]=new Array(18).fill(null); });
   var S=su===state.gameSetup?setupSettings():su.preset?loadPreset(su.preset):loadDefaults();
-  return {id:uid(), date:iso(new Date()), course:su.course, mode:su.mode, useHandicap:!!su.useHandicap, players:players,
+  var G={id:uid(), date:iso(new Date()), course:su.course, mode:su.mode, useHandicap:!!su.useHandicap, players:players,
     settings:S, presses:[], scores:scores, greenies:new Array(18).fill(null), sandies:Array.apply(null,Array(18)).map(function(){return [];}), pulleys:Array.apply(null,Array(18)).map(function(){return [];}), hole:0};
+  var C=gcourse(su.course); if(C && C.custom && C.id===su.course) G.courseDef=JSON.parse(JSON.stringify(C));   // snapshot: edits/deletes never change this round
+  return G;
 }
 
 /* ---------- Games: rendering ---------- */
@@ -1616,7 +1700,7 @@ function playerOptions(sel, taken){
 }
 function settingsChips(S){
   var CO=S.format==='closeout', jk=anyJunk(S), c=[];
-  if(CO){ c.push('Front '+money(S.front)+' · Back '+money(S.back)); c.push('New '+money(S.front)+(+S.back!==+S.front?'/'+money(S.back):'')+' bet after each close-out'); c.push('No overall · no presses'); }
+  if(CO){ c.push('Front '+money(S.front)+' · Back '+money(S.back)); c.push('New '+money(S.front)+(+S.back!==+S.front?'/'+money(S.back):'')+' match after each close-out'); c.push('No overall · no presses'); }
   else {
     c.push('Nassau '+money(S.front)+'/'+money(S.back)+'/'+money(S.overall));
     c.push(S.autoPress?'Auto press '+money(S.pressAmount)+' @ '+S.pressTrigger+' down':'No auto press');
@@ -1631,9 +1715,9 @@ function junkPickerHtml(S){
   var su=state.gameSetup, jx=su.jx||{};
   return '<div class="jsec-h">Junk <small>'+(S.junkUnits==='perTeam'?'each opposing player pays one winning partner':'paid by each other player')+'</small></div><div class="jpick" id="junkPick">'+JUNK.map(function(j){
     var on=jOn(S,j.id), amt=+S[j.id+'Amt'], x=jx[j.id]||{}, custom=!!x.custom||j.amts.indexOf(amt)<0;
-    var amts=on?'<div class="stakes jamts">'+j.amts.map(function(v){ var a=!custom&&v===amt; return '<button class="stakeb'+(a?' on':'')+'" data-act="jamt" data-ji="'+j.id+'" data-v="'+v+'" aria-pressed="'+a+'">$'+v+'</button>'; }).join('')+
+    var amts=on?'<div class="stakes jamts">'+j.amts.map(function(v){ var a=!custom&&v===amt; return '<button class="stakeb'+(a?' on':'')+'" data-act="jamt" data-ji="'+j.id+'" data-v="'+v+'" aria-pressed="'+a+'">'+money(v)+'</button>'; }).join('')+
       '<button class="stakeb'+(custom?' on':'')+'" data-act="jcustom" data-ji="'+j.id+'" aria-pressed="'+custom+'">'+(custom?money(amt):'Custom')+'</button></div>'+
-      (custom?'<div class="money-in" style="margin-top:8px;max-width:170px"><span>$</span><input class="in jcust" data-jc="'+j.id+'" type="number" min="1" step="1" inputmode="decimal" value="'+amt+'" aria-label="Custom '+j.one+' amount"></div>':'')+
+      (custom?'<div style="margin-top:8px;max-width:170px">'+moneyIn('<input class="in jcust" data-jc="'+j.id+'" type="number" min="1" step="1" inputmode="decimal" value="'+amt+'" aria-label="Custom '+j.one+' amount">')+'</div>':'')+
       (j.id==='greenie'?'<div class="stakes jholes" id="greenieHoles">'+[['all','All holes'],['par3','Par 3s only']].map(function(o){ var a=(S.greenieHoles==='par3'?'par3':'all')===o[0]; return '<button class="stakeb'+(a?' on':'')+'" data-act="jholes" data-v="'+o[0]+'" aria-pressed="'+a+'">'+o[1]+'</button>'; }).join('')+'</div>':''):'';
     return '<div class="jitem'+(on?' on':'')+'" data-ji="'+j.id+'"><div class="jtop"><span class="jt"><label class="fl jh">'+j.name+(on?' · '+money(amt)+' each'+(j.id==='greenie'&&S.greenieHoles==='par3'?' · par 3s':''):'')+(j.isNew?' <em>New</em>':'')+'</label><small>'+j.ico+' '+esc(junkHint(S,j.id))+'</small></span>'+
       '<span class="yn" role="group" aria-label="'+j.name+'"><button class="ynb yes'+(on?' on':'')+'" data-act="jyn" data-ji="'+j.id+'" data-v="1" aria-pressed="'+on+'">Yes</button><button class="ynb no'+(on?'':' on')+'" data-act="jyn" data-ji="'+j.id+'" data-v="0" aria-pressed="'+!on+'">No</button></span></div>'+amts+'</div>';
@@ -1648,23 +1732,134 @@ function presetPickerHtml(){
     return '<button class="ppick'+(on?' on':'')+'" data-act="preset" data-preset-pick="'+P.id+'" aria-pressed="'+on+'"><span class="ppn">'+(on?'✓':i+1)+'</span><span class="ppt"><b>'+esc(title)+(i===0?' <em>Default</em>':'')+'</b><small>'+esc(sub)+'</small></span></button>';
   }).join('');
   var custom=su.stakeCustom || STAKES.indexOf(st)<0, f=m>0?st/m:1;
-  var chips=STAKES.map(function(v){ var on=!custom&&v===st; return '<button class="stakeb'+(on?' on':'')+'" data-act="stake" data-v="'+v+'" aria-pressed="'+on+'">$'+v+'</button>'; }).join('')+
+  var chips=STAKES.map(function(v){ var on=!custom&&v===st; return '<button class="stakeb'+(on?' on':'')+'" data-act="stake" data-v="'+v+'" aria-pressed="'+on+'">'+money(v)+'</button>'; }).join('')+
     '<button class="stakeb'+(custom?' on':'')+'" data-act="stakeCustom" aria-pressed="'+custom+'">Custom</button>';
   var fx=Math.round(f*100)/100;
   return '<div style="margin-top:14px"><label class="fl">Game</label><div class="ppicks" id="presetPick">'+cards+'</div>'+
-    '<label class="fl" style="margin-top:10px">Stakes · '+(S.format==='closeout'?'each bet':'main bet (front/back/overall)')+'</label><div class="stakes" id="stakePick">'+chips+'</div>'+
-    (custom?'<div class="money-in" style="margin-top:8px;max-width:170px"><span>$</span><input class="in" id="suStake" type="number" min="1" step="1" inputmode="decimal" value="'+st+'" aria-label="Custom stake"></div>':'')+
-    '<div class="muted" id="stakeNote" style="font-size:12px;margin:6px 2px 0">'+(fx===1?'Preset amounts':'×'+fx+' — bets'+(S.format==='closeout'?'':' & presses')+' scaled')+' · junk is set below, not by stakes</div>'+
+    '<label class="fl" style="margin-top:10px">Stakes · '+(S.format==='closeout'?'each match':'main match (front/back/overall)')+'</label><div class="stakes" id="stakePick">'+chips+'</div>'+
+    (custom?'<div style="margin-top:8px;max-width:170px">'+moneyIn('<input class="in" id="suStake" type="number" min="1" step="1" inputmode="decimal" value="'+st+'" aria-label="Custom stake">')+'</div>':'')+
+    '<div class="muted" id="stakeNote" style="font-size:12px;margin:6px 2px 0">'+(fx===1?'Preset amounts':'×'+fx+' — matches'+(S.format==='closeout'?'':' & presses')+' scaled')+' · junk is set below, not by stakes</div>'+
     junkPickerHtml(S)+
-    '<div style="margin-top:10px"><label class="fl">Bets for this round</label>'+settingsChips(S)+'</div></div>';
+    '<div style="margin-top:10px"><label class="fl">Side games for this round</label>'+settingsChips(S)+'</div></div>';
 }
 function courseOptions(cur){
+  var cus=customGCourses();
   return '<optgroup label="Quidnessett CC · North Kingstown, RI">'+GCOURSES.map(function(c){
-    return '<option value="'+c.id+'"'+(c.id===cur?' selected':'')+'>Quidnessett · '+esc(c.tee)+' · '+esc(c.tees.split(' · ')[1])+' · Par '+c.par.reduce(function(a,b){return a+b;},0)+'</option>'; }).join('')+'</optgroup>';
+    return '<option value="'+c.id+'"'+(c.id===cur?' selected':'')+'>'+(c.real?'Quidnessett · '+esc(c.tee)+' · '+esc(c.tees.split(' · ')[1]):esc(c.name+' · '+c.tee))+' · Par '+c.par.reduce(function(a,b){return a+b;},0)+'</option>'; }).join('')+'</optgroup>'+
+    (cus.length?'<optgroup label="Your courses">'+cus.map(function(c){
+      return '<option value="'+esc(c.id)+'"'+(c.id===cur?' selected':'')+'>'+esc(c.name)+' · '+esc(c.tee)+(c.holes===9?' · 9 holes ×2':'')+' · Par '+sumArr(c.par)+'</option>'; }).join('')+'</optgroup>':'');
 }
 function courseInfo(id){
   var c=gcourse(id);
+  if(c.custom) return 'Your course'+(c.holes===9?' · 9 holes played twice (odd stroke indexes on the front, even on the back)':' · 18 holes')+'. Strokes fall on the hardest holes first by stroke index.';
   return 'Strokes fall on the '+esc(c.tee)+' tees’ hardest holes first (hole handicaps from the club’s 2026 scorecard).';
+}
+/* ---------- Build-your-own courses ---------- */
+var CE=null, CE_BACK=null;
+function ccById(id){ return (state.courses||[]).filter(function(c){ return c.id===id; })[0]||null; }
+function ccSort(){ state.courses.sort(function(a,b){ return String(a.name).localeCompare(String(b.name)); }); }
+function cloudSpaceNote(){ try{ if(CL&&CL.user&&CL.space) return 'Synced to '+esc(spaceName(CL.space))+(CL.coursesOff?' when the cloud allows it':'')+'.'; }catch(e){} return 'Saved on this phone (sign in to sync with your group).'; }
+function openCourses(){
+  var cs=state.courses||[];
+  openSheet('<h3>Courses</h3><p class="muted" style="font-size:13px;margin-top:-2px">Add your own course with tees, par and stroke index. '+cloudSpaceNote()+'</p>'+
+    '<div id="cmList"><div class="crs"><div class="ct"><b>Quidnessett CC</b><small>Built in · 18 holes · par 72 · '+GCOURSES.filter(function(c){return c.real;}).length+' tees</small></div><span class="chip">Built in</span></div>'+
+    cs.map(function(cc){ return '<div class="crs"><div class="ct"><b>'+esc(cc.name)+'</b><small>'+cc.holes+' holes · par '+sumArr(cc.par)+(cc.holes===9?' (×2 = '+ccPar18(cc)+')':'')+' · '+cc.tees.map(function(t){ return esc(t.name); }).join(', ')+'</small></div>'+
+      '<button class="btn ghost sm" data-ce="'+esc(cc.id)+'" aria-label="Edit '+esc(cc.name)+'">Edit</button></div>'; }).join('')+'</div>'+
+    (cs.length?'':'<p class="muted" style="font-size:13px">No courses of your own yet.</p>')+
+    '<div class="sheet-actions"><button class="btn full" id="cmAdd">+ Add a course</button><button class="btn ghost full" data-close>Done</button></div>');
+  [].forEach.call(sheetEl.querySelectorAll('[data-ce]'),function(b){ b.onclick=function(){ courseEditor(b.getAttribute('data-ce')); }; });
+  $('#cmAdd').onclick=function(){ courseEditor(null); };
+}
+function courseEditor(id){
+  var src=id&&ccById(id);
+  CE=src?JSON.parse(JSON.stringify(src)):{id:null, name:'', holes:18, par:new Array(18).fill(4), si:new Array(18).fill(''), tees:[{id:'t'+uid(), name:'', yds:null}]};
+  renderCE(true);
+}
+function ceHtml(){
+  var n=CE.holes, pars=[3,4,5,6];
+  function hole(h){ return '<div class="ce-h"><span class="hn" aria-hidden="true">'+(h+1)+'</span>'+
+    '<select class="in" data-par="'+h+'" aria-label="Hole '+(h+1)+' par">'+pars.map(function(p){ return '<option'+(+CE.par[h]===p?' selected':'')+'>'+p+'</option>'; }).join('')+'</select>'+
+    '<input class="in" data-si="'+h+'" inputmode="numeric" maxlength="2" autocomplete="off" value="'+esc(CE.si[h]==null?'':CE.si[h])+'" aria-label="Hole '+(h+1)+' stroke index"></div>'; }
+  function col(a,b){ var s='<div><div class="ce-head" aria-hidden="true"><span>#</span><span>Par</span><span>SI</span></div>'; for(var h=a;h<b;h++) s+=hole(h); return s+'</div>'; }
+  return '<h3>'+(CE.id?'Edit course':'New course')+'</h3><form id="ceForm" novalidate>'+
+    '<label class="fl" for="ceName">Course name</label><input class="in" id="ceName" maxlength="60" autocomplete="off" placeholder="e.g. Seaside Links" value="'+esc(CE.name)+'">'+
+    '<div class="fl" id="ceHolesL" style="margin-top:12px">Holes</div><div class="seg" role="group" aria-labelledby="ceHolesL"><button type="button" data-ceh="9" class="'+(n===9?'on':'')+'" aria-pressed="'+(n===9)+'">9 holes</button><button type="button" data-ceh="18" class="'+(n===18?'on':'')+'" aria-pressed="'+(n===18)+'">18 holes</button></div>'+
+    (n===9?'<p class="muted" style="font-size:12px;margin:6px 2px 0">A 9-hole course is played twice for an 18-hole match. Stroke index 1–9 here; the front nine gets the odd strokes and the replay the even ones.</p>':'')+
+    '<div class="fl" style="margin-top:12px">Tees <span style="font-weight:600;text-transform:none">(yards optional)</span></div><div id="ceTees">'+CE.tees.map(function(t,i){ return '<div class="tee-row">'+
+      '<input class="in" data-tn="'+i+'" maxlength="30" autocomplete="off" placeholder="Tee name, e.g. White" aria-label="Tee '+(i+1)+' name" value="'+esc(t.name)+'">'+
+      '<input class="in" data-ty="'+i+'" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="Yards" aria-label="Tee '+(i+1)+' total yards (optional)" value="'+esc(t.yds==null?'':t.yds)+'">'+
+      '<button type="button" class="btn ghost" data-trm="'+i+'" aria-label="Remove tee '+(i+1)+'"'+(CE.tees.length<2?' disabled':'')+'>✕</button></div>'; }).join('')+'</div>'+
+    '<button type="button" class="btn ghost sm" id="ceAddTee"'+(CE.tees.length>=6?' disabled':'')+'>+ Add tee</button>'+
+    '<div class="fl" style="margin-top:14px">Par and stroke index <span style="font-weight:600;text-transform:none">(SI 1 = hardest hole)</span></div>'+
+    '<div class="ce-holes'+(n===9?' one':'')+'">'+(n===9?col(0,9):col(0,9)+col(9,18))+'</div>'+
+    '<div class="ce-tot" id="ceTot" aria-live="polite">'+ceTotals()+'</div>'+
+    '<div class="err" id="ceErr" role="alert"></div>'+
+    '<div class="sheet-actions"><button type="submit" class="btn full" id="ceSave">Save course</button><button type="button" class="btn ghost full" id="ceCancel">Cancel</button>'+
+    (CE.id?'<button type="button" class="btn danger full" id="ceDel">Delete course</button>':'')+'</div></form>';
+}
+function ceTotals(){ var n=CE.holes, p=CE.par.map(Number);
+  if(n===9) return 'Par '+sumArr(p)+' · played twice = par '+sumArr(p)*2;
+  return 'Par '+sumArr(p.slice(0,9))+' out · '+sumArr(p.slice(9))+' in · '+sumArr(p)+' total'; }
+function readCE(){
+  if(!$('#ceForm')) return;
+  CE.name=$('#ceName').value;
+  CE.tees=CE.tees.map(function(t,i){ var nm=sheetEl.querySelector('[data-tn="'+i+'"]'), yd=sheetEl.querySelector('[data-ty="'+i+'"]'); return {id:t.id, name:nm?nm.value:t.name, yds:yd?yd.value:t.yds}; });
+  for(var h=0;h<CE.holes;h++){ var ps=sheetEl.querySelector('[data-par="'+h+'"]'), si=sheetEl.querySelector('[data-si="'+h+'"]'); if(ps) CE.par[h]=+ps.value; if(si) CE.si[h]=si.value.trim(); }
+}
+function renderCE(top){
+  var st=sheetEl.scrollTop; openSheet(ceHtml()); if(!top) sheetEl.scrollTop=st;
+  onSheetClose=function(){ CE=null; };
+  var f=$('#ceForm');
+  f.addEventListener('submit',function(e){ e.preventDefault(); readCE(); saveCE(); });
+  [].forEach.call(f.querySelectorAll('[data-ceh]'),function(b){ b.onclick=function(){ readCE(); var n=+b.getAttribute('data-ceh'); if(n===CE.holes) return;
+    if(n===9){ CE.par=CE.par.slice(0,9); CE.si=CE.si.slice(0,9); } else { CE.par=CE.par.concat(new Array(9).fill(4)); CE.si=CE.si.concat(new Array(9).fill('')); }
+    CE.holes=n; renderCE(); }; });
+  [].forEach.call(f.querySelectorAll('[data-trm]'),function(b){ b.onclick=function(){ readCE(); CE.tees.splice(+b.getAttribute('data-trm'),1); renderCE(); }; });
+  $('#ceAddTee').onclick=function(){ readCE(); CE.tees.push({id:'t'+uid(), name:'', yds:null}); renderCE(); var ins=sheetEl.querySelectorAll('[data-tn]'); if(ins.length) ins[ins.length-1].focus(); };
+  [].forEach.call(f.querySelectorAll('[data-par]'),function(s){ s.onchange=function(){ readCE(); $('#ceTot').textContent=ceTotals(); }; });
+  $('#ceCancel').onclick=function(){ CE=null; openCourses(); };
+  if($('#ceDel')) $('#ceDel').onclick=function(){ readCE(); deleteCourseConfirm(CE.id); };
+}
+function validateCE(){
+  var n=CE.holes, bad=[], err=null, name=String(CE.name||'').trim().replace(/\s+/g,' ');
+  function fail(msg,sel){ if(!err) err=msg; if(sel) bad.push(sel); }
+  if(!name) fail('Enter the course name.','#ceName');
+  else if(name.length>60) fail('Course name: 60 characters or fewer.','#ceName');
+  else if(/^quidnessett( cc| country club)?$/i.test(name) || (state.courses||[]).some(function(c){ return c.id!==CE.id && String(c.name).trim().toLowerCase()===name.toLowerCase(); })) fail('You already have a course called “'+name+'”.','#ceName');
+  var tees=[], seen={};
+  if(!CE.tees.length) fail('Add at least one tee.');
+  CE.tees.forEach(function(t,i){ var tn=String(t.name||'').trim(), ys=String(t.yds==null?'':t.yds).trim(), y=null;
+    if(!tn) fail('Tee '+(i+1)+': enter a name (e.g. White).','[data-tn="'+i+'"]');
+    else if(seen[tn.toLowerCase()]) fail('Two tees are called “'+tn+'”.','[data-tn="'+i+'"]');
+    seen[tn.toLowerCase()]=1;
+    if(ys){ if(!/^\d{3,4}$/.test(ys) || +ys<100) fail('Tee '+(i+1)+': yards should be a number from 100 to 9999 (or leave blank).','[data-ty="'+i+'"]'); else y=+ys; }
+    tees.push({id:t.id||('t'+uid()), name:tn.slice(0,30), yds:y}); });
+  var par=[], si=[], used={};
+  for(var h=0;h<n;h++){ var p=+CE.par[h]; if(!(p>=3&&p<=6&&p===Math.round(p))) fail('Hole '+(h+1)+': par must be 3–6.','[data-par="'+h+'"]'); par.push(p); }
+  for(h=0;h<n;h++){ var s=String(CE.si[h]==null?'':CE.si[h]).trim();
+    if(!s){ fail('Enter a stroke index for hole '+(h+1)+' (1–'+n+').','[data-si="'+h+'"]'); si.push(null); continue; }
+    if(!/^\d{1,2}$/.test(s) || +s<1 || +s>n){ fail('Hole '+(h+1)+': stroke index must be 1–'+n+'.','[data-si="'+h+'"]'); si.push(null); continue; }
+    s=+s; if(used[s]!=null){ fail('Stroke index '+s+' is on holes '+(used[s]+1)+' and '+(h+1)+' — use each number 1–'+n+' once.','[data-si="'+h+'"]'); bad.push('[data-si="'+used[s]+'"]'); } else used[s]=h;
+    si.push(s); }
+  return {err:err, bad:bad, course:{id:CE.id||('c'+uid()), name:name, holes:n, par:par, si:si, tees:tees, updatedAt:Date.now()}};
+}
+function saveCE(){
+  var v=validateCE();
+  [].forEach.call(sheetEl.querySelectorAll('.bad'),function(x){ x.classList.remove('bad'); x.removeAttribute('aria-invalid'); });
+  if(v.err){ v.bad.forEach(function(s){ var el=sheetEl.querySelector(s); if(el){ el.classList.add('bad'); el.setAttribute('aria-invalid','true'); } });
+    $('#ceErr').textContent=v.err; var first=v.bad.length&&sheetEl.querySelector(v.bad[0]); if(first){ try{ first.focus(); }catch(e){} } return false; }
+  var c=v.course, isNew=!CE.id, i=(state.courses||[]).map(function(x){ return x.id; }).indexOf(c.id);
+  if(i>=0) state.courses[i]=c; else state.courses.push(c);
+  ccSort();
+  if(isNew && !state.game) state.gameSetup.course='cc:'+c.id+':'+c.tees[0].id;
+  ensureGameState(); CE=null; save(); renderAll(); openCourses(); toast((isNew?'Added ':'Saved ')+c.name); return true;
+}
+function deleteCourseConfirm(id){
+  var cc=ccById(id); if(!cc) return; var grp=false; try{ grp=!!(CL&&CL.user&&CL.space&&CL.space!=='u'); }catch(e){}
+  openSheet('<h3>Delete '+esc(cc.name)+'?</h3><p>It’s removed from the course list'+(grp?' for everyone in <b>'+esc(spaceName(CL.space))+'</b>':'')+'. Saved rounds and any round in progress keep their scorecards.</p>'+
+    '<div class="sheet-actions"><button class="btn danger full" id="ccDelYes">Delete course</button><button class="btn ghost full" id="ccDelNo">Cancel</button></div>');
+  $('#ccDelNo').onclick=function(){ courseEditor(id); };
+  $('#ccDelYes').onclick=function(){ state.courses=state.courses.filter(function(c){ return c.id!==id; }); ensureGameState(); CE=null; save(); renderAll(); openCourses(); toast('Deleted '+cc.name); };
 }
 function setupHtml(){
   var su=state.gameSetup, teams=su.mode==='teams', S=setupSettings(), need=teams?4:2;
@@ -1674,22 +1869,22 @@ function setupHtml(){
     var k=keys[i], p=k&&keyInfo(k);
     return '<div class="suslot"><label class="fl" for="su'+i+'">'+lab+'</label><div class="slotrow">'+
       '<select class="in" id="su'+i+'" data-su="'+i+'">'+playerOptions(k, keys)+'</select>'+
-      (p?'<input class="in chin" data-ch="'+i+'" inputmode="tel" autocomplete="off" value="'+fmtCH(p.hcp)+'" aria-label="Course handicap for '+esc(p.name)+'" title="Course handicap (from GHIN)">':'<span class="chin ph">CH</span>')+
+      (p?'<input class="in chin" data-ch="'+i+'" inputmode="tel" autocomplete="off" value="'+fmtCH(p.hcp)+'" aria-label="Course handicap for '+esc(p.name)+'" title="Course handicap">':'<span class="chin ph">CH</span>')+
     '</div></div>';
   }
   var notIn=sortedPlayers().filter(function(f){ return keys.indexOf('F:'+f.id)<0; });
   var html='<div class="card">'+
     '<h3 class="sec">Set up a round <span class="chip">'+filled+'/'+need+' players</span></h3>'+
     '<div class="seg" style="margin-bottom:12px"><button data-act="mode" data-mode="singles" class="'+(teams?'':'on')+'">1 v 1 match</button><button data-act="mode" data-mode="teams" class="'+(teams?'on':'')+'">2 v 2 best ball</button></div>'+
-    (has?'':'<div class="welcome"><div class="big">👋</div><b>Add your players to start</b><span>Name + course handicap from GHIN. They’re saved for next time.</span></div>')+
+    (has?'':'<div class="welcome"><div class="big">👋</div><b>Add your players to start</b><span>Name + course handicap. They’re saved for next time.</span></div>')+
     quickAddHtml('qa', filled<need?'+ Add player':'+ Save player')+
     (notIn.length&&filled<need?'<div class="saved"><span class="lab">Saved players — tap to add</span><div class="tagchips">'+notIn.map(function(f){ return '<button class="chip pickchip" data-act="addkey" data-key="F:'+f.id+'">'+esc(f.name)+' · '+fmtCH(f.hcp)+'</button>'; }).join('')+'</div></div>':'')+
     (teams? '<div class="tlabel A" style="margin-top:14px">Team A</div>'+slot(0,'Player 1')+slot(1,'Player 2')+'<div class="tlabel B">Team B</div>'+slot(2,'Player 3')+slot(3,'Player 4')+
             (filled===4?'<div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost sm" style="flex:1" data-act="balteams">⚖️ Balance teams</button><button class="btn ghost sm" style="flex:1" data-act="swapteams">⇄ Swap 2 ↔ 3</button></div>':'')
            : '<div style="margin-top:14px">'+slot(0,'Side A')+slot(1,'Side B')+'</div>')+
-    '<p class="muted" style="font-size:11.5px;margin:6px 2px 0">CH = course handicap from GHIN, used as entered (plus handicap: +2). Strokes are given off the lowest CH.</p>'+
-    '<div style="margin-top:12px"><label class="fl" for="suCourse">Course · tees</label><select class="in" id="suCourse">'+courseOptions(su.course)+'</select><div class="muted" id="suCourseInfo" style="font-size:12px;margin:6px 2px 0">'+courseInfo(su.course)+'</div></div>'+
-    '<div class="toggle" style="margin-top:12px"><div><b>Handicap strokes</b><small>Net match play: '+(+S.allowance===100?'full':S.allowance+'% of')+' course handicap, strokes off the lowest player</small></div><label class="switch"><input type="checkbox" id="suHcp" '+(su.useHandicap?'checked':'')+'><span></span></label></div>'+
+    '<p class="muted" style="font-size:11.5px;margin:6px 2px 0">CH = course handicap, used as entered (plus handicap: +2). Strokes are given off the lowest CH.</p>'+
+    '<div style="margin-top:12px"><label class="fl" for="suCourse">Course · tees</label><select class="in" id="suCourse">'+courseOptions(su.course)+'</select><div class="muted" id="suCourseInfo" style="font-size:12px;margin:6px 2px 0">'+courseInfo(su.course)+'</div><button type="button" class="btn ghost sm" id="courseMgrBtn" data-act="courses" style="margin-top:8px">⛳ Add or edit courses</button></div>'+
+    '<div class="toggle" style="margin-top:12px"><div><b>Handicap strokes</b><small>Net match play: '+(+S.allowance===100?'full':S.allowance+'% of')+' course handicap, strokes off the lowest player</small></div><label class="switch"><input type="checkbox" id="suHcp" aria-label="Handicap strokes" '+(su.useHandicap?'checked':'')+'><span></span></label></div>'+
     presetPickerHtml()+
     '<div class="err" id="suErr" style="margin-top:8px"></div>'+
     '<div class="row" style="margin-top:10px"><button class="btn block" data-act="start"'+(filled<need?' disabled':'')+'>'+(filled<need?'Add '+(need-filled)+' more player'+(need-filled>1?'s':'')+' to start':'Start round')+'</button></div>'+
@@ -1720,15 +1915,15 @@ function renderGames(){
     '<div class="gh-s">'+esc(R.C.tees)+'<br><b class="gh-p">'+esc(presetTitle(g.settings))+'</b> · '+(R.teams?'2v2 best ball':'1v1 match play')+' · '+(g.useHandicap?'Net':'Gross')+' · '+(R.final?'Final':'Thru '+R.doneCount+' of 18')+'</div></div>'+
     '<button class="btn sm glass" data-act="newround">New round</button></div>'+
     '<div class="vs"><div class="side A"><b>'+(R.teams?'Team A':'Side A')+'</b>'+esc(sideLabel(g,R,'A'))+'</div><div class="vsx">VS</div><div class="side B"><b>'+(R.teams?'Team B':'Side B')+'</b>'+esc(sideLabel(g,R,'B'))+'</div></div></div>';
-  var seg='<div class="seg" style="margin:12px 0"><button data-gv="score" class="'+(v==='score'?'on':'')+'">Scoring</button><button data-gv="card" class="'+(v==='card'?'on':'')+'">Card</button><button data-gv="bets" class="'+(v==='bets'?'on':'')+'">Bets<span class="cnt">'+R.bets.length+'</span></button><button data-gv="settle" class="'+(v==='settle'?'on':'')+'">Settle</button></div>';
+  var seg='<div class="seg gseg" style="margin:12px 0"><button data-gv="score" class="'+(v==='score'?'on':'')+'" aria-pressed="'+(v==='score')+'">Scoring</button><button data-gv="card" class="'+(v==='card'?'on':'')+'" aria-pressed="'+(v==='card')+'">Card</button><button data-gv="bets" class="'+(v==='bets'?'on':'')+'" aria-pressed="'+(v==='bets')+'">Side games<span class="cnt">'+R.bets.length+'</span></button><button data-gv="settle" class="'+(v==='settle'?'on':'')+'" aria-pressed="'+(v==='settle')+'">Settle up</button></div>';
   root.innerHTML=head+liveBarHtml(g)+seg+(v==='bets'?betsHtml(g,R):v==='settle'?settleHtml(g,R):v==='card'?cardHtml(g,R):scoringHtml(g,R));
 }
 function scoringHtml(g,R){
   var h=g.hole, hd=R.holes[h], par=hd.par, S=g.settings, elig=S.greenieHoles==='all'||par===3;
-  var strip='<div class="hstrip"><span class="lab">OUT</span>';
+  var strip='<div class="hstrip" role="group" aria-label="Holes">';
   R.holes.forEach(function(x,i){
-    if(i===9) strip+='<span class="lab">IN</span>';
-    strip+='<button class="hc '+(i===h?'cur ':'')+(x.complete?(x.res>0?'wa':x.res<0?'wb':'wh'):'')+'" data-hole="'+i+'" aria-label="Hole '+(i+1)+'">'+(i+1)+'</button>';
+    var st=x.complete?(x.res>0?(R.teams?'Team A':'Side A')+' won':x.res<0?(R.teams?'Team B':'Side B')+' won':'halved'):'not scored';
+    strip+='<button class="hc '+(i===h?'cur ':'')+(i>=9?'in9 ':'')+(x.complete?(x.res>0?'wa':x.res<0?'wb':'wh'):'')+'" data-hole="'+i+'" aria-label="Hole '+(i+1)+', '+st+'"'+(i===h?' aria-current="true"':'')+'>'+(i+1)+'</button>';
   });
   strip+='</div>';
   function prow(k,side){
@@ -1758,13 +1953,13 @@ function scoringHtml(g,R){
     rows+res+'</div>';
   var pills=R.closeout?'<div class="pills two">'+['F','B'].map(function(s){
     var list=R.bets.filter(function(b){return b.seg===s;}), live=list.filter(function(b){return !b.co;}).slice(-1)[0]||list.slice(-1)[0], ss=shortStatus(g,R,live), nco=list.filter(function(b){return b.co;}).length;
-    return '<button class="pill" data-gv="bets"><div class="k">'+{F:'Front 9',B:'Back 9'}[s]+(live&&live.closeout?' · closeout '+live.num:'')+'</div><div class="v '+ss.c+'">'+ss.t+'</div><small>'+(list.length?list.length+' bet'+(list.length>1?'s':'')+(nco?' · '+nco+' closed out':''):'off')+'</small></button>';
+    return '<button class="pill" data-gv="bets"><div class="k">'+{F:'Front 9',B:'Back 9'}[s]+(live&&live.closeout?' · closeout '+live.num:'')+'</div><div class="v '+ss.c+'">'+ss.t+'</div><small>'+(list.length?list.length+' match'+(list.length>1?'es':'')+(nco?' · '+nco+' closed out':''):'off')+'</small></button>';
   }).join('')+'</div>'
   :'<div class="pills">'+['F','B','O'].map(function(s){
     var base=R.bets.filter(function(b){return b.seg===s&&!b.press;})[0], np=R.bets.filter(function(b){return b.seg===s&&b.press;}).length, ss=shortStatus(g,R,base);
     return '<button class="pill" data-gv="bets"><div class="k">'+{F:'Front 9',B:'Back 9',O:'Overall'}[s]+'</div><div class="v '+ss.c+'">'+ss.t+'</div><small>'+(np?np+' press'+(np>1?'es':''):'no presses')+'</small></button>';
   }).join('')+'</div>';
-  var mrow='<div class="card" style="padding:10px 12px"><h3 class="sec" style="margin-bottom:8px">Running money <span class="muted" style="font-size:11.5px;font-weight:600">'+(R.final?'final':'if it ended now')+'</span></h3><div class="mrow">'+
+  var mrow='<div class="card" style="padding:10px 12px"><h3 class="sec" style="margin-bottom:8px">Running totals <span class="muted" style="font-size:11.5px;font-weight:600">'+(R.final?'final':'if it ended now')+'</span></h3><div class="mrow">'+
     R.all.map(function(k){ var x=R.net[k]; return '<div class="mchip">'+esc(first(gp(g,k).name))+'<b class="'+mcls(x)+'">'+smoney(x)+'</b></div>'; }).join('')+'</div></div>';
   var navb='<div class="row" style="gap:8px;margin-bottom:12px"><button class="btn ghost" data-act="prev"'+(h===0?' disabled':'')+'>← '+(h===0?'Hole 1':'Hole '+h)+'</button><button class="btn" style="flex:1" data-act="next">'+(h===17?'Finish → Settle up':'Next: Hole '+(h+2)+' →')+'</button></div>';
   var done=R.final&&!isSaved(g)&&!liveRO(g)?'<div class="card savecard"><div class="sv-t">🏁 Round complete</div><button class="btn block big" data-act="saveRound">💾 '+(g.savedId&&savedById(g.savedId)?'Update saved round':'Save round')+'</button></div>':'';
@@ -1789,7 +1984,7 @@ function pressOptions(g,R){
 function pressHtml(g,R){
   var o=pressOptions(g,R); if(!o.length) return '';
   var NMs={F:'front',B:'back',O:'overall'};
-  return '<div class="card presscard"><h3 class="sec" style="margin-bottom:8px">Press <span class="muted" style="font-size:11.5px;font-weight:600">side that’s down · new '+money(g.settings.pressAmount)+' bet</span></h3>'+o.map(function(x){
+  return '<div class="card presscard"><h3 class="sec" style="margin-bottom:8px">Press <span class="muted" style="font-size:11.5px;font-weight:600">side that’s down · new '+money(g.settings.pressAmount)+' match</span></h3>'+o.map(function(x){
     return x.undo?'<button class="btn ghost block pressbtn" data-act="unpress" data-seg="'+x.seg+'" data-after="'+x.after+'">↩︎ Undo '+esc(sideLabel(g,R,x.side))+'’s '+NMs[x.seg]+' press (holes '+(x.after+2)+'–'+(x.end+1)+')</button>'
       :'<button class="btn block pressbtn" data-act="press" data-seg="'+x.seg+'" data-after="'+x.after+'" data-side="'+x.side+'">🔥 '+esc(sideLabel(g,R,x.side))+' press the '+NMs[x.seg]+' · '+x.down+' down · holes '+(x.after+2)+'–'+(x.end+1)+'</button>';
   }).join('')+'</div>';
@@ -1797,15 +1992,15 @@ function pressHtml(g,R){
 var RO=false;   // true while rendering a saved round (read-only)
 function betsHtml(g,R){
   var S=g.settings;
-  var toggle='<div class="card"><div class="toggle"><div><b>Handicap strokes</b><small>'+(g.useHandicap?'Net: strokes off the low player ('+S.allowance+'% allowance)':'Gross: no strokes')+'</small></div><label class="switch"><input type="checkbox" data-act="hcp" '+(g.useHandicap?'checked':'')+'><span></span></label></div>'+
+  var toggle='<div class="card"><div class="toggle"><div><b>Handicap strokes</b><small>'+(g.useHandicap?'Net: strokes off the low player ('+S.allowance+'% allowance)':'Gross: no strokes')+'</small></div><label class="switch"><input type="checkbox" data-act="hcp" aria-label="Handicap strokes" '+(g.useHandicap?'checked':'')+'><span></span></label></div>'+
     (g.useHandicap?'<div style="font-size:12.5px;margin-top:8px;line-height:1.5">'+R.all.map(function(k){ var hs=[]; for(var h=0;h<18;h++){ var s=R.strokes(k,h); if(s) hs.push((h+1)+(s>1?'×'+s:'')); } return '<b>'+esc(first(gp(g,k).name))+'</b> CH '+R.ch[k]+' → '+R.rec[k]+' stroke'+(R.rec[k]===1?'':'s')+(hs.length?' <span class="muted">(holes '+hs.join(', ')+')</span>':''); }).join('<br>')+'</div>':'')+'</div>';
   var segsHtml=(R.closeout?['F','B']:['F','B','O']).map(function(s){
     var list=R.bets.filter(function(b){return b.seg===s;});
     var title={F:'Front 9 · holes 1–9',B:'Back 9 · holes 10–18',O:'Overall · holes 1–18'}[s]+(R.closeout?' · close out':'');
-    if(!list.length) return '<div class="card"><h3 class="sec">'+title+' <span class="chip fin">Off</span></h3><div class="muted" style="font-size:13px">No bet ($0).</div></div>';
+    if(!list.length) return '<div class="card"><h3 class="sec">'+title+' <span class="chip fin">Off</span></h3><div class="muted" style="font-size:13px">Off for this round.</div></div>';
     return '<div class="card"><h3 class="sec">'+title+'</h3>'+list.map(function(b){
       var stc=b.co||b.closed?'<span class="chip fin">Closed out</span>':b.final?'<span class="chip fin">Final</span>':b.played?'<span class="chip live">Active</span>':'<span class="chip">Pending</span>';
-      var why=b.closeout?' · new bet: '+esc(b.parent)+' closed out after #'+(b.trigHole+1):b.press?(b.manual?' · manual: '+esc(sideLabel(g,R,b.downSide))+' pressed after #'+(b.trigHole+1):' · auto: '+esc(sideLabel(g,R,b.downSide))+' '+S.pressTrigger+' down in '+esc(b.parent)+' after #'+(b.trigHole+1)):'';
+      var why=b.closeout?' · new match: '+esc(b.parent)+' closed out after #'+(b.trigHole+1):b.press?(b.manual?' · manual: '+esc(sideLabel(g,R,b.downSide))+' pressed after #'+(b.trigHole+1):' · auto: '+esc(sideLabel(g,R,b.downSide))+' '+S.pressTrigger+' down in '+esc(b.parent)+' after #'+(b.trigHole+1)):'';
       return '<div class="bet'+(b.press||b.closeout?' press':'')+'" data-bet-id="'+b.id+'"><div class="bt"><b>'+esc(b.label)+' '+stc+'</b><small>'+money(b.amount)+' · '+holesTxt(b)+why+'</small></div>'+
         '<div class="bs"><span class="st '+(b.winner||'')+'">'+esc(betStatus(g,R,b))+'</span><small>'+(b.winner?(b.final||b.closed?'':'live · ')+money(b.amount)+' → '+esc(sideLabel(g,R,b.winner)):b.played?'push so far':'')+'</small></div></div>';
     }).join('')+'</div>';
@@ -1820,13 +2015,14 @@ function betsHtml(g,R){
   return toggle+segsHtml+(RO?'':pressHtml(g,R))+jh;
 }
 var CATS=['Match','Close-outs','Nassau','Presses','Greenies','Sandies','Pulleys','Birdies','Eagles'];
+var DISCLAIM='Fairway Club tracks side games only and never holds or moves money.';
 function settlementText(g,R){
   var S=g.settings, L=[];
   L.push('Fairway Club — round settlement');
   L.push(R.C.name+' · '+fmtDate(g.date)+' · '+(R.teams?'2v2 best ball':'1v1 match')+' · '+(g.useHandicap?'Net':'Gross'));
   L.push('Game: '+presetTitle(S)+(R.junkOn?' · junk: '+JUNK.filter(function(j){return R.jon[j.id];}).map(function(j){return j.name.toLowerCase()+' '+money(S[j.id+'Amt']);}).join(', '):' · junk off'));
   L.push(sideLabel(g,R,'A')+' vs '+sideLabel(g,R,'B'));
-  L.push(R.final?'FINAL (18/18 holes)':g.early?'FINISHED EARLY after '+R.doneCount+' of 18 holes (unfinished bets settled as they stood)':'LIVE — as if the round ended after '+R.doneCount+' of 18 holes');
+  L.push(R.final?'FINAL (18/18 holes)':g.early?'FINISHED EARLY after '+R.doneCount+' of 18 holes (unfinished matches settled as they stood)':'LIVE — as if the round ended after '+R.doneCount+' of 18 holes');
   L.push(''); L.push('MATCH');
   R.bets.slice().sort(function(a,b){ return 'FBO'.indexOf(a.seg)-'FBO'.indexOf(b.seg) || a.start-b.start; }).forEach(function(b){ L.push('• '+b.label+' ('+money(b.amount)+(b.press||b.closeout||R.closeout?', '+holesTxt(b):'')+'): '+betStatus(g,R,b)); });
   var jk=R.junk.filter(function(j){return j.ok;}).sort(function(a,b){return a.h-b.h;});
@@ -1834,26 +2030,28 @@ function settlementText(g,R){
   jk.forEach(function(j){ L.push('• #'+(j.h+1)+' '+j.type+' — '+gp(g,j.k).name+' ('+money(j.amt)+(S.junkUnits==='perTeam'&&R.teams?' per team: each opponent pays, each partner collects':' from each')+')'); });
   L.push(''); L.push('NET');
   R.all.slice().sort(function(a,b){return R.net[b]-R.net[a];}).forEach(function(k){ L.push('• '+gp(g,k).name+': '+smoney(R.net[k])); });
-  L.push(''); L.push('WHO PAYS WHOM');
+  L.push(''); L.push(PTS()?'WHO OWES WHOM':'WHO PAYS WHOM');
   if(!R.transfers.length) L.push('• All square — nobody owes anything');
-  R.transfers.forEach(function(t){ L.push('• '+gp(g,t.from).name+' pays '+gp(g,t.to).name+' '+money(t.amt)); });
+  R.transfers.forEach(function(t){ L.push('• '+gp(g,t.from).name+(PTS()?' owes ':' pays ')+gp(g,t.to).name+' '+money(t.amt)); });
+  L.push(''); L.push(DISCLAIM);
   return L.join('\n');
 }
 function settleHtml(g,R){
   var banner=R.final?'<div class="banner final">🏁<div>Final — round complete<small>All 18 holes scored · settle up below</small></div></div>'
-    :g.early?'<div class="banner final">🏁<div>Finished early<small>After '+R.doneCount+' of 18 holes · unfinished bets settled as they stood</small></div></div>'
-    :'<div class="banner live">⏱<div>Live settlement<small>As if the round ended after '+R.doneCount+' of 18 holes · in-progress bets go to the current leader</small></div></div>';
+    :g.early?'<div class="banner final">🏁<div>Finished early<small>After '+R.doneCount+' of 18 holes · unfinished matches settled as they stood</small></div></div>'
+    :'<div class="banner live">⏱<div>Live settlement<small>As if the round ended after '+R.doneCount+' of 18 holes · in-progress matches go to the current leader</small></div></div>';
   var sideOf=function(k){return R.A.indexOf(k)>=0?'A':'B';};
   var nets='<div class="netgrid">'+R.all.map(function(k){ var p=gp(g,k), x=R.net[k]; return '<div class="netcard '+sideOf(k)+'">'+gAv(p)+'<div class="t"><small>'+esc(p.name)+'</small><b class="'+mcls(x)+'">'+smoney(x)+'</b></div></div>'; }).join('')+'</div>';
   var sum=R.all.reduce(function(s,k){return s+R.net[k];},0);
-  var xf='<div class="card"><h3 class="sec">Who pays whom <span class="chip">'+R.transfers.length+' payment'+(R.transfers.length===1?'':'s')+'</span></h3>'+
+  var xf='<div class="card"><h3 class="sec">'+(PTS()?'Who owes whom':'Who pays whom')+' <span class="chip">'+R.transfers.length+' payment'+(R.transfers.length===1?'':'s')+'</span></h3>'+
     (R.transfers.length?R.transfers.map(function(t){ return '<div class="xfer">'+gAv(gp(g,t.from))+'<b>'+esc(first(gp(g,t.from).name))+'</b><span class="arrow">→</span>'+gAv(gp(g,t.to))+'<b>'+esc(first(gp(g,t.to).name))+'</b><span class="amt">'+money(t.amt)+'</span></div>'; }).join('')
       :'<div class="muted" style="font-size:13px">All square — nobody owes anything.</div>')+
-    '<div class="muted" style="font-size:11.5px;margin-top:6px" id="zeroCheck">Check: net totals sum to '+money(Math.abs(sum))+' '+(Math.abs(sum)<0.01?'✓':'⚠︎')+'</div></div>';
+    '<div class="muted" style="font-size:11.5px;margin-top:6px" id="zeroCheck">Check: net totals sum to '+money(Math.abs(sum))+' '+(Math.abs(sum)<0.01?'✓':'⚠︎')+'</div></div>'+
+    '<p class="disclaim" id="settleDisclaimer">'+DISCLAIM+'</p>';
   var bk='<div class="card"><h3 class="sec">Breakdown</h3><table class="bk"><thead><tr><th></th>'+R.all.map(function(k){return '<th>'+esc(first(gp(g,k).name))+'</th>';}).join('')+'</tr></thead><tbody>'+
     CATS.filter(function(c){ var rel=R.closeout?(c==='Match'||c==='Close-outs'):(c==='Nassau'||c==='Presses'); var ji=JUNK.filter(function(j){return j.cat===c;})[0]; if(ji) rel=R.jon[ji.id]; return rel || R.all.some(function(k){ return Math.abs(R.cats[k][c]||0)>0.004; }); }).map(function(c){ return '<tr><td>'+c+'</td>'+R.all.map(function(k){ var x=R.cats[k][c]||0; return '<td class="'+mcls(x)+'">'+(Math.abs(x)<0.004?'–':smoney(x))+'</td>'; }).join('')+'</tr>'; }).join('')+
     '<tr class="tot"><td>Net</td>'+R.all.map(function(k){ return '<td class="'+mcls(R.net[k])+'">'+smoney(R.net[k])+'</td>'; }).join('')+'</tr></tbody></table></div>';
-  var txt='<div class="card"><h3 class="sec">'+(R.final?'End-of-round summary':'Summary so far')+'</h3><pre class="sumtext" id="sumText">'+esc(settlementText(g,R))+'</pre>'+
+  var txt='<div class="card"><h3 class="sec">'+(R.final?'End-of-round summary':'Summary so far')+'</h3><pre class="sumtext" id="sumText" tabindex="0" aria-label="Round summary text">'+esc(settlementText(g,R))+'</pre>'+
     (RO?'':'<div class="row" style="margin-top:10px;gap:8px"><button class="btn" style="flex:1" data-act="copy">Copy settlement</button><button class="btn ghost" data-act="share">Share</button></div>')+'</div>';
   return (RO?'':saveCardHtml(g,R))+banner+nets+xf+bk+txt;
 }
@@ -1888,7 +2086,7 @@ function saveCardHtml(g,R){
   var rec=g.savedId&&savedById(g.savedId), sv=isSaved(g);
   if(sv) return '<div class="card savecard ok" id="saveCard"><div class="sv-t">✓ Saved to History</div><small>'+esc(fmtDate(g.date))+' · '+esc(presetTitle(g.settings))+(g.early?' · finished early ('+R.doneCount+' holes)':'')+'</small>'+
     '<div class="row" style="gap:8px;margin-top:10px"><button class="btn" style="flex:1" data-act="newAfterSave">Start new round</button><button class="btn ghost" data-act="histGo" data-hid="'+rec.id+'">View in History</button></div></div>';
-  if(R.final || rec) return '<div class="card savecard" id="saveCard"><button class="btn block big" data-act="saveRound">💾 '+(rec?'Update saved round':'Save round')+'</button><small>Keeps every score, junk tap, bet and the settlement in History'+(rec?' (you changed it after saving)':'')+'</small></div>';
+  if(R.final || rec) return '<div class="card savecard" id="saveCard"><button class="btn block big" data-act="saveRound">💾 '+(rec?'Update saved round':'Save round')+'</button><small>Keeps every score, junk tap, side game and the settlement in History'+(rec?' (you changed it after saving)':'')+'</small></div>';
   if(R.doneCount>0) return '<div class="card savecard soft" id="saveCard"><button class="btn ghost block" data-act="finishEarly">🏁 Finish round early &amp; save ('+R.doneCount+' of 18 holes)</button></div>';
   return '';
 }
@@ -1907,7 +2105,7 @@ function historyHtml(){
   var list=savedSorted();
   var items=list.length?list.map(function(r){ var m=r.sum;
     return '<button class="card hround" data-hid="'+r.id+'"><div class="hr-top"><b>'+esc(fmtDate(r.date))+'</b><span class="chip">'+(r.early?'Finished early · '+r.holes+' holes':'18 holes')+'</span></div>'+
-      '<div class="hr-c">'+esc(m.course)+(m.tee?' · '+esc(m.tee):'')+' · <b>'+esc(m.game)+'</b></div>'+
+      '<div class="hr-c">'+esc(m.course)+(m.tee?' · '+esc(m.tee):'')+' · <b>'+esc(r.game&&r.game.settings?presetTitle(r.game.settings):m.game)+'</b></div>'+
       '<div class="hr-t">'+esc(m.sides[0])+' <span class="muted">vs</span> '+esc(m.sides[1])+'</div>'+
       '<div class="hr-m">'+m.players.map(function(p){ return '<span class="mchip"><span>'+esc(first(p.name))+'</span><b class="'+mcls(p.money)+'">'+smoney(p.money)+'</b></span>'; }).join('')+'</div></button>';
   }).join(''):'<div class="card"><div class="empty"><div class="big">📒</div><b>No saved rounds yet</b><br>When a round is done, tap <b>💾 Save round</b> on Settle (or Card).</div></div>';
@@ -1925,13 +2123,13 @@ function savedRoundHtml(rec){
     '<div class="ghead"><div class="gh-t">'+esc(fmtDate(rec.date))+' · '+esc(R.C.name)+'</div><div class="gh-s">'+esc(R.C.tees)+'<br><b class="gh-p">'+esc(presetTitle(g.settings))+'</b> · '+(R.teams?'2v2 best ball':'1v1 match play')+' · '+(g.useHandicap?'Net':'Gross')+' · '+(R.final?'Final':'Finished early · '+R.doneCount+' holes')+'</div>'+
     '<div class="vs"><div class="side A"><b>'+(R.teams?'Team A':'Side A')+'</b>'+esc(sideLabel(g,R,'A'))+'</div><div class="vsx">VS</div><div class="side B"><b>'+(R.teams?'Team B':'Side B')+'</b>'+esc(sideLabel(g,R,'B'))+'</div></div></div>'+
     '<div class="muted ro-note">🔒 Saved round · read-only · saved '+esc(new Date(rec.savedAt).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}))+'</div>';
-  var seg='<div class="seg" style="margin:10px 0 12px"><button data-hv="card" class="'+(v==='card'?'on':'')+'">Card</button><button data-hv="bets" class="'+(v==='bets'?'on':'')+'">Bets<span class="cnt">'+R.bets.length+'</span></button><button data-hv="settle" class="'+(v==='settle'?'on':'')+'">Settle</button></div>';
+  var seg='<div class="seg gseg" style="margin:10px 0 12px"><button data-hv="card" class="'+(v==='card'?'on':'')+'" aria-pressed="'+(v==='card')+'">Card</button><button data-hv="bets" class="'+(v==='bets'?'on':'')+'" aria-pressed="'+(v==='bets')+'">Side games<span class="cnt">'+R.bets.length+'</span></button><button data-hv="settle" class="'+(v==='settle'?'on':'')+'" aria-pressed="'+(v==='settle')+'">Settle up</button></div>';
   RO=true; var body; try{ body=v==='bets'?betsHtml(g,R):v==='settle'?settleHtml(g,R):cardHtml(g,R); } finally { RO=false; }
   var acts='<div class="card"><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" style="flex:1" data-act="hCopy">Copy settlement</button><button class="btn ghost" style="flex:1" data-act="hReopen">✏️ Reopen to edit</button></div>'+
     '<button class="btn ghost block danger-t" style="margin-top:8px" data-act="hDel">🗑 Delete saved round</button></div>';
   return head+seg+'<div id="savedView">'+body+'</div>'+acts;
 }
-function backupObj(){ return {app:'Fairway Club', type:'fairway-club-rounds', version:1, exportedAt:new Date().toISOString(), rounds:state.saved||[], players:state.friends||[]}; }
+function backupObj(){ return {app:'Fairway Club', type:'fairway-club-rounds', version:1, exportedAt:new Date().toISOString(), rounds:state.saved||[], players:state.friends||[], courses:state.courses||[]}; }
 function exportRounds(){
   var txt=JSON.stringify(backupObj(),null,1), name='fairway-club-rounds-'+iso(new Date())+'.json';
   try{ var blob=new Blob([txt],{type:'application/json'}), url=URL.createObjectURL(blob), a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); },1500); toast('Backup downloaded · '+name); }
@@ -1942,6 +2140,8 @@ function importRounds(txt){
   if(!o || o.type!=='fairway-club-rounds' || !Array.isArray(o.rounds)){ toast('That isn’t a Fairway Club rounds backup'); return false; }
   var added=0, skipped=0, np=0;
   (o.players||[]).forEach(function(p){ if(p && p.id && p.name && !player(p.id) && !findPlayerByName(p.name)){ state.friends.push({id:p.id,name:p.name,hcp:p.hcp,ghin:p.ghin||'',phone:p.phone||'',email:p.email||''}); np++; } });
+  (o.courses||[]).forEach(function(c){ if(c && c.id && c.name && (c.holes===9||c.holes===18) && Array.isArray(c.par) && Array.isArray(c.si) && Array.isArray(c.tees) && c.tees.length && !ccById(c.id) && !(state.courses||[]).some(function(x){ return String(x.name).toLowerCase()===String(c.name).toLowerCase(); })) state.courses.push(c); });
+  ccSort();
   o.rounds.forEach(function(r){
     if(!r || !r.id || !r.game || !Array.isArray(r.game.players) || !r.game.scores){ skipped++; return; }
     if(savedById(r.id)){ skipped++; return; }
@@ -2043,7 +2243,7 @@ function cardHtml(g,R){
   var vis=R.bets.filter(function(b){ return cols.some(function(c){ return c.t==='h'&&c.h>=b.start&&c.h<=b.end; }); });
   var order={F:0,B:1,O:2};
   vis.sort(function(a,b){ return order[a.seg]-order[b.seg] || (a.press-b.press) || a.start-b.start; });
-  var msec='<tr class="msec"><td class="nm" style="font-size:10px;color:var(--muted)">'+(R.closeout?'Bets':'Nassau')+'</td><td colspan="'+cols.length+'" style="padding-left:6px">+ = '+esc(sideLabel(g,R,'A'))+' up · − = '+esc(sideLabel(g,R,'B'))+' up</td></tr>';
+  var msec='<tr class="msec"><td class="nm" style="font-size:10px;color:var(--muted)">'+(R.closeout?'Matches':'Nassau')+'</td><td colspan="'+cols.length+'" style="padding-left:6px">+ = '+esc(sideLabel(g,R,'A'))+' up · − = '+esc(sideLabel(g,R,'B'))+' up</td></tr>';
   var mrows=vis.map(function(b){
     var sub=b.press||b.closeout, short=b.closeout?'Closeout '+b.num:b.press?'↳ Press '+b.id.slice(1):b.segName.replace(' 18','');
     var resCol=b.seg==='F'?'out':b.seg==='B'?'in':'tot';
@@ -2068,7 +2268,7 @@ function cardHtml(g,R){
     '<span><span class="sn bird">3</span>Birdie</span><span><span class="sn eagle">2</span>Eagle+</span><span><span class="sn bog">5</span>Bogey</span><span><span class="sn dbl">6</span>Double+</span>'+
     '<span><i class="jd g"></i>Greenie</span><span><i class="jd s"></i>Sandy</span><span><i class="jd p"></i>Pulley</span><span><i class="jd s off"></i>not counted</span>'+
     (g.useHandicap?'<span><b style="color:#9aa8a0;font-size:11px">/</b>Handicap stroke</span>':'')+'<span><b style="text-decoration:underline;color:var(--g800)">4</b>Best ball won hole</span>'+
-    '<span><b style="color:#c9a227">▏</b>'+(R.closeout?'New bet starts (after a close-out)':'Press starts')+'</span></div>';
+    '<span><b style="color:#c9a227">▏</b>'+(R.closeout?'New match starts (after a close-out)':'Press starts')+'</span></div>';
   var top='<div class="sc-top"><div class="seg" id="cardNine"><button data-nine="front" class="'+(nine==='front'?'on':'')+'">Front 9</button><button data-nine="back" class="'+(nine==='back'?'on':'')+'">Back 9</button><button data-nine="all" class="'+(nine==='all'?'on':'')+'">All 18</button></div></div>';
   return (RO?'':saveCardHtml(g,R))+'<div class="card scard">'+top+table+legend+'</div>'+(RO?'':'<p class="muted" style="font-size:12px;margin:-4px 4px 12px">Tap any score to edit that hole in Scoring.</p>');
 }
@@ -2078,10 +2278,10 @@ var GD='Golf Digest — Golf Games Explained';
 var IDEAS=[
  {id:'nassau', name:'Nassau · Close Out', aka:'Your presets: $20 Close Out · East Greenwich Nassau · Nassau', types:['team','individual'], min:2, max:4, counts:[2,4], ideal:[2,4], diff:'Easy', scoring:true,
   one:'Three matches in one: front 9, back 9 and overall, with presses and junk on the side.',
-  how:'Match play 1v1 or 2v2 best ball. The front nine, back nine and full 18 are three separate bets. A side that goes 2 down can press (a new bet for the rest of that nine). Junk such as greenies, sandies, pulleys (a made putt longer than the flagstick) and birdies is tallied separately.',
-  money:'Each of the three matches pays the agreed amount; each press pays its own amount. Junk is settled on top. Close Out drops the overall and presses: when a nine’s bet is closed out, a new bet of the same amount starts on the holes left.',
+  how:'Match play 1v1 or 2v2 best ball. The front nine, back nine and full 18 are three separate matches. A side that goes 2 down can press (a new match for the rest of that nine). Junk such as greenies, sandies, pulleys (a made putt longer than the flagstick) and birdies is tallied separately.',
+  money:'Each of the three matches pays the agreed amount; each press pays its own amount. Junk is settled on top. Close Out drops the overall and presses: when a nine’s match is closed out, a new match of the same amount starts on the holes left.',
   stake:'$20 Close Out (default) · East Greenwich Nassau: $80-$80-$80, $40 auto press at 2 down, $10 greenies & sandies, $20 birdies, $100 eagles · Nassau: $20-$20-$20, manual press.',
-  why:'Simple, fair with handicaps, and three bets mean a bad nine never knocks you out.',
+  why:'Simple, fair with handicaps, and three matches mean a bad nine never knocks you out.',
   src:[{l:GD+': Nassau',u:'https://www.golfdigest.com/story/how-to-play-a-nassau-golf-gambling-game'}]},
  {id:'hammer', name:'Hammer', types:['team','individual'], min:2, max:4, counts:[2,4], ideal:[2,4], diff:'Medium', fixed2v2:true, oneVsOne:true, side:true, action:true, sameEngine:true,
   one:'Match play where either side can “hammer” to double the hole — and the hammer then passes to the other side.',
@@ -2089,8 +2289,8 @@ var IDEAS=[
   money:'Each hole is worth the base stake times every accepted hammer; the hole winner collects.',
   stake:'Start small because it compounds: $10 a hole → $20 → $40 → $80 on a double re-hammer.',
   why:'Huge pressure and trash talk on every shot; GOLF.com and Golf Digest both call it a favourite side game for match-play groups.',
-  fitT:'Plays right on top of your existing 2v2 best-ball teams — same matchups, one extra bet per hole.',
-  src:[{l:GD+': Hammer',u:'https://www.golfdigest.com/story/how-to-play-hammer-golf-game-explained'},{l:'GOLF.com: 5 golf betting games',u:'https://golf.com/lifestyle/5-best-golf-betting-games-according-gambler/'}]},
+  fitT:'Plays right on top of your existing 2v2 best-ball teams — same matchups, one extra game per hole.',
+  src:[{l:GD+': Hammer',u:'https://www.golfdigest.com/story/how-to-play-hammer-golf-game-explained'},{l:'GOLF.com: 5 popular side games',u:'https://golf.com/lifestyle/5-best-golf-betting-games-according-gambler/'}]},
  {id:'lowhigh', name:'Low Ball–High Ball', aka:'Low-High', types:['team'], min:4, max:4, ideal:[4], diff:'Easy', fixed2v2:true, sameEngine:true,
   one:'2v2 where each hole has two points: the better low ball and the better high ball.',
   how:'Two teams of two. On each hole compare the teams’ low balls (best score) for one point and their high balls (worse score) for a second point. Ties can be split, carried or voided — agree first. Optional extras: a point for low team total, double points for birdies.',
@@ -2102,11 +2302,11 @@ var IDEAS=[
  {id:'sixes', name:'Sixes', aka:'Hollywood · Round Robin', types:['team'], min:4, max:4, ideal:[4], diff:'Easy', rotating2v2:true, sameEngine:true,
   one:'Three six-hole best-ball matches — you partner with every player once.',
   how:'Foursome only. Holes 1–6: A+B vs C+D; holes 7–12: A+C vs B+D; holes 13–18: A+D vs B+C. Each six-hole segment is its own best-ball match (other formats like low total also work).',
-  money:'Each six-hole match is a separate wager paid by the losing pair to the winning pair.',
+  money:'Each six-hole match is settled separately: the losing pair owes the winning pair.',
   stake:'$40 per six-hole match (three matches a round).',
   why:'Breaks up fixed partnerships and keeps everyone friendly — and competitive — with everyone.',
   fitT:'Uses the same 2v2 best-ball scoring as your Nassau but rotates partners every six holes.',
-  src:[{l:GD+': Sixes',u:'https://www.golfdigest.com/story/how-to-play-sixes-golf-games-explained'},{l:'GolfTrips.com: Popular betting games',u:'https://www.golftrips.com/articles/popular-golf-betting-games'}]},
+  src:[{l:GD+': Sixes',u:'https://www.golfdigest.com/story/how-to-play-sixes-golf-games-explained'},{l:'GolfTrips.com: Popular golf games',u:'https://www.golftrips.com/articles/popular-golf-betting-games'}]},
  {id:'vegas', name:'Vegas', types:['team'], min:3, max:4, ideal:[4], diff:'Advanced', fixed2v2:true, action:true,
   one:'Team scores become two-digit numbers (a 4 and a 5 is 45); the difference is points.',
   how:'Two teams of two. Each team puts its lower score first to make a number (4 & 5 = 45). Subtract the lower team number from the higher — that’s the points won on the hole. A birdie flips the other team’s number (45 becomes 54), often doubled. A three-player version has the lone player’s score doubled (5 = 55).',
@@ -2130,7 +2330,7 @@ var IDEAS=[
   stake:'$10 a point; lone Wolf wins 2×, blind Wolf 3×.',
   why:'Strategy every hole and partners change constantly — a favourite “let’s change it up” game.',
   fitT:'Great change-up for a foursome, but partners change every hole instead of your fixed 2v2 teams.',
-  src:[{l:GD+': Wolf',u:'https://www.golfdigest.com/story/golf-game-wolf-betting-gambling-explained'},{l:'GOLF.com: 5 golf betting games',u:'https://golf.com/lifestyle/5-best-golf-betting-games-according-gambler/'}]},
+  src:[{l:GD+': Wolf',u:'https://www.golfdigest.com/story/golf-game-wolf-betting-gambling-explained'},{l:'GOLF.com: 5 popular side games',u:'https://golf.com/lifestyle/5-best-golf-betting-games-according-gambler/'}]},
  {id:'skins', name:'Skins', types:['individual'], min:3, max:16, ideal:[4], diff:'Easy', action:true,
   one:'Low score on a hole wins the skin outright; any tie carries it to the next hole.',
   how:'Everyone plays their own ball (net with handicaps). Win a hole outright and you take that hole’s skin. If two players tie for low, nobody wins and the skin carries over, building the pot. Optional: back-nine skins worth more, or “validation” (match your score on the next hole to keep it).',
@@ -2165,7 +2365,7 @@ var IDEAS=[
   src:[{l:GD+': Rabbit',u:'https://www.golfdigest.com/story/how-to-play-rabbit-golf-games-explained'}]},
  {id:'stableford', name:'Stableford', types:['individual'], min:2, max:16, ideal:[], diff:'Easy', oneVsOne:true,
   one:'Points for net score on each hole — highest total wins, and blow-up holes only cost zero.',
-  how:'Standard (R&A/USGA) points on net scores: double bogey or worse 0, bogey 1, par 2, birdie 3, eagle 4, albatross 5. Add up; most points wins. “Modified Stableford” changes the values (Tour events use negative points for bogeys).',
+  how:'Standard Stableford points on net scores: double bogey or worse 0, bogey 1, par 2, birdie 3, eagle 4, albatross 5. Add up; most points wins. “Modified Stableford” changes the values (Tour events use negative points for bogeys).',
   money:'Pay per point of difference, or a set pot to the leader.',
   stake:'$10 per point of difference.',
   why:'Forgiving for higher handicaps and keeps pace moving (pick up when you can’t score).',
@@ -2222,7 +2422,7 @@ function recommend(ctx){
       if(gm.oneVsOne){ s+=3; why.push('works head-to-head'); } else if(gm.side){ s+=2; why.push('side game on top of your Nassau'); }
     }
     if(gm.sameEngine){ s+=1; why.push('uses the best-ball scoring you already track'); }
-    if(ctx.hi>=50 && gm.action){ s+=1; why.push('enough action for your $'+ctx.lo+'–$'+ctx.hi+' stakes'); }
+    if(ctx.hi>=50 && gm.action){ s+=1; why.push('enough action for your '+money(ctx.lo)+'–'+money(ctx.hi)+' stakes'); }
     if(ctx.hasJunk && gm.junkOverlap){ s-=1; why.push('some overlap with your junk'); }
     if(gm.diff==='Advanced') s-=0.5;
     out.push({id:gm.id, score:s, why:why});
@@ -2251,8 +2451,8 @@ function ideasHtml(){
   var ctx=ideaCtx(), recs=recommend(ctx), recIds=recs.map(function(r){return r.id;}), open=state.ui.ideaOpen;
   var t=state.ui.ideaType||'all', p=state.ui.ideaPlayers||'any';
   var head='<div class="ideas-head"><button class="btn ghost sm" data-act="ideasBack">← '+(ctx.inRound?'Round':'Setup')+'</button><h3>Game ideas</h3><span class="chip">'+IDEAS.length+' games</span></div>'+
-    '<p class="muted" style="font-size:12.5px;margin:-2px 2px 10px">Popular golf betting games, summarised from Golf Digest, GOLF.com and other golf sites (links on each card). Only Nassau + junk is scored in the app for now.</p>';
-  var rec='<div class="rec" id="recBox"><h4>⭐ Recommended for your group</h4><div class="ctx">Based on your setup: '+ctx.players+' players · '+(ctx.teams?'2v2 best ball':'1v1 match')+' · '+esc(ctx.game)+(ctx.hasJunk?' + junk':'')+' · $'+ctx.lo+'–$'+ctx.hi+' units</div>'+
+    '<p class="muted" style="font-size:12.5px;margin:-2px 2px 10px">Popular golf side games, summarised from Golf Digest, GOLF.com and other golf sites (links on each card). Only Nassau + junk is scored in the app for now.</p>';
+  var rec='<div class="rec" id="recBox"><h4>⭐ Recommended for your group</h4><div class="ctx">Based on your setup: '+ctx.players+' players · '+(ctx.teams?'2v2 best ball':'1v1 match')+' · '+esc(ctx.game)+(ctx.hasJunk?' + junk':'')+' · '+money(ctx.lo)+'–'+money(ctx.hi)+' units</div>'+
     (recs.length?'<ol>'+recs.map(function(r,i){ var gm=idea(r.id); return '<li data-idea="'+gm.id+'"><b><span class="rk">'+(i+1)+'</span>'+esc(gm.name)+'</b><small>'+esc(ctx.teams&&gm.fitT?gm.fitT:gm.one)+'</small><small style="opacity:.75">Why: '+esc(r.why.join(' · '))+'</small></li>'; }).join('')+'</ol>':'<div class="ctx">No strong matches for this setup.</div>')+'</div>';
   function fc(kind,val,label,cur){ return '<button class="fchip'+(cur===val?' on':'')+'" data-f="'+kind+'" data-v="'+val+'">'+label+'</button>'; }
   var filters='<div class="filters"><div class="chips"><span class="lab">Type</span>'+fc('type','all','All',t)+fc('type','individual','Individual',t)+fc('type','team','Team',t)+'</div>'+
@@ -2268,7 +2468,7 @@ function ideasHtml(){
         (gm.scoring?'<span class="chip avail">✓ Scoring in app</span>':'<span class="chip soon">Scoring coming soon</span>')+'</div>'+
       '<div class="one">'+esc(gm.one)+'</div></summary>'+
       '<div class="body">'+(r?'<div class="whyrec"><b>Why it fits:</b> '+esc(ctx.teams&&gm.fitT?gm.fitT+' ':'')+'('+esc(r.why.join(' · '))+')</div>':'')+
-      '<dl><dt>How to play</dt><dd>'+esc(gm.how)+'</dd><dt>How the money works</dt><dd>'+esc(gm.money)+'</dd><dt>Typical stake</dt><dd>'+esc(gm.stake)+'</dd><dt>Why groups like it</dt><dd>'+esc(gm.why)+'</dd></dl>'+
+      '<dl><dt>How to play</dt><dd>'+esc(gm.how)+'</dd><dt>How it settles</dt><dd>'+esc(gm.money)+'</dd><dt>Typical stake</dt><dd>'+esc(gm.stake)+'</dd><dt>Why groups like it</dt><dd>'+esc(gm.why)+'</dd></dl>'+
       '<div class="src">Source:'+gm.src.map(function(s){ return ' <a href="'+esc(s.u)+'" target="_blank" rel="noopener noreferrer">'+esc(s.l)+' ↗</a>'; }).join('')+'</div></div></details>';
   }).join('');
   return head+rec+filters+'<div id="ideaList">'+(cards||'<div class="card empty"><div class="big">🔍</div>No games match these filters.</div>')+'</div>'+
@@ -2307,8 +2507,9 @@ gameRoot.addEventListener('click',function(e){
   }
   if(liveGuard(act)) return;
   if(act==='mode'){ su.mode=b.getAttribute('data-mode'); save(); renderGames(); return; }
+  if(act==='courses'){ openCourses(); return; }
   if(act==='preset'){ var pid=b.getAttribute('data-preset-pick'); if(su.preset!==pid){ su.preset=pid; su.stake=null; su.jx=null; su.stakeCustom=false; } save(); renderGames(); toast(presetTitle(setupSettings())+' selected'); return; }
-  if(act==='stake'){ su.stake=+b.getAttribute('data-v'); su.stakeCustom=false; save(); renderGames(); var S2=setupSettings(); toast(presetTitle(S2)+' · '+(S2.format==='closeout'?money(S2.front)+' per bet':'all amounts scaled')); return; }
+  if(act==='stake'){ su.stake=+b.getAttribute('data-v'); su.stakeCustom=false; save(); renderGames(); var S2=setupSettings(); toast(presetTitle(S2)+' · '+(S2.format==='closeout'?money(S2.front)+' per match':'all amounts scaled')); return; }
   if(act==='jholes'){ su.jx=su.jx||{}; su.jx.greenie=Object.assign(su.jx.greenie||{},{holes:b.getAttribute('data-v')}); save(); renderGames(); toast(b.getAttribute('data-v')==='par3'?'Greenies on par 3s only':'Greenies on every hole'); return; }
   if(act==='jyn'||act==='jamt'||act==='jcustom'){
     var ji=b.getAttribute('data-ji'), jj=JUNK.filter(function(x){return x.id===ji;})[0]; su.jx=su.jx||{}; var jx=su.jx[ji]=su.jx[ji]||{};
@@ -2330,17 +2531,17 @@ gameRoot.addEventListener('click',function(e){
     liveStartIfGroup(state.game); save(); renderGames(); toast(presetTitle(state.game.settings)+' — good luck!'+(state.game.live?' · live for '+state.game.live.gn:'')); return;
   }
   if(!g) return;
-  var h=g.hole, k=b.getAttribute('data-k'), par=gcourse(g.course).par[h];
+  var h=g.hole, k=b.getAttribute('data-k'), par=gameCourse(g).par[h];
   if(act==='inc'||act==='dec'){
     var v=g.scores[k][h];
     if(act==='inc') v=v==null?par:Math.min(15,v+1); else v=v==null?par-1:(v-1<1?null:v-1);
-    g.scores[k][h]=v; save(); renderGames(); return;
+    g.scores[k][h]=v; save(); renderGames(); scoreAnnounce(g,k,h); return;
   }
-  if(act==='press'){ g.presses=g.presses||[]; g.presses.push({seg:b.getAttribute('data-seg'),after:+b.getAttribute('data-after'),side:b.getAttribute('data-side')}); save(); renderGames(); toast('Press on — new '+money(g.settings.pressAmount)+' bet'); return; }
+  if(act==='press'){ g.presses=g.presses||[]; g.presses.push({seg:b.getAttribute('data-seg'),after:+b.getAttribute('data-after'),side:b.getAttribute('data-side')}); save(); renderGames(); toast('Press on — new '+money(g.settings.pressAmount)+' match'); return; }
   if(act==='unpress'){ var sg=b.getAttribute('data-seg'), af=+b.getAttribute('data-after'); g.presses=(g.presses||[]).filter(function(p){ return !(p.seg===sg&&p.after===af); }); save(); renderGames(); toast('Press removed'); return; }
-  if(act==='greenie'){ g.greenies[h]=g.greenies[h]===k?null:k; save(); renderGames(); return; }
-  if(act==='pulley'){ g.pulleys=g.pulleys||Array.apply(null,Array(18)).map(function(){return [];}); var pa=g.pulleys[h]||(g.pulleys[h]=[]), pi=pa.indexOf(k); if(pi>=0) pa.splice(pi,1); else pa.push(k); save(); renderGames(); return; }
-  if(act==='sandy'){ var a=g.sandies[h]||(g.sandies[h]=[]), i=a.indexOf(k); if(i>=0) a.splice(i,1); else a.push(k); save(); renderGames(); return; }
+  if(act==='greenie'){ g.greenies[h]=g.greenies[h]===k?null:k; save(); renderGames(); announce('Greenie '+(g.greenies[h]===k?'on':'off')+' for '+gp(g,k).name+', hole '+(h+1)); return; }
+  if(act==='pulley'){ g.pulleys=g.pulleys||Array.apply(null,Array(18)).map(function(){return [];}); var pa=g.pulleys[h]||(g.pulleys[h]=[]), pi=pa.indexOf(k); if(pi>=0) pa.splice(pi,1); else pa.push(k); save(); renderGames(); announce('Pulley '+(pi>=0?'off':'on')+' for '+gp(g,k).name+', hole '+(h+1)); return; }
+  if(act==='sandy'){ var a=g.sandies[h]||(g.sandies[h]=[]), i=a.indexOf(k); if(i>=0) a.splice(i,1); else a.push(k); save(); renderGames(); announce('Sandy '+(i>=0?'off':'on')+' for '+gp(g,k).name+', hole '+(h+1)); return; }
   if(act==='prev'){ if(h>0){ g.hole--; save(); renderGames(); } return; }
   if(act==='next1'){ if(h<17){ g.hole++; save(); renderGames(); } return; }
   if(act==='next'){ if(h<17){ g.hole++; save(); renderGames(); } else { state.ui.gameView='settle'; save(); renderGames(); window.scrollTo(0,0); } return; }
@@ -2349,7 +2550,7 @@ gameRoot.addEventListener('click',function(e){
   if(act==='saveRound'){ if(!computeGame(g).final && !g.savedId){ act='finishEarly'; } else { doSave(); return; } }
   if(act==='finishEarly'){
     var Rf=computeGame(g);
-    openSheet('<h3>Finish the round early?</h3><p>Save it after <b>'+Rf.doneCount+' of 18 holes</b>. Bets that aren’t finished settle as they stand now (the side ahead wins; all-square pushes). You can reopen it from History later.</p>'+
+    openSheet('<h3>Finish the round early?</h3><p>Save it after <b>'+Rf.doneCount+' of 18 holes</b>. Matches that aren’t finished settle as they stand now (the side ahead wins; all-square pushes). You can reopen it from History later.</p>'+
       '<div class="sheet-actions"><button class="btn full" id="feYes">🏁 Finish &amp; save round</button><button class="btn ghost" data-close>Keep playing</button></div>');
     $('#feYes').onclick=function(){ closeSheet(); doSave(); };
     return;
@@ -2360,7 +2561,7 @@ gameRoot.addEventListener('click',function(e){
     if(!hasScores(g) || isSaved(g)){
       openSheet('<h3>Start a new round?</h3><p>'+(isSaved(g)?'This round is saved in History.':'No scores have been entered yet.')+'</p><div class="sheet-actions"><button class="btn ghost" data-close>Keep playing</button><button class="btn danger" id="nrYes">Start new round</button></div>');
     } else {
-      openSheet('<h3>This round isn’t saved</h3><p>Starting a new round clears this one’s scores and bets. Save it to History first?</p><div class="sheet-actions"><button class="btn full" id="nrSave">💾 Save &amp; start new</button><button class="btn danger" id="nrYes">Discard round</button><button class="btn ghost" data-close>Keep playing</button></div>');
+      openSheet('<h3>This round isn’t saved</h3><p>Starting a new round clears this one’s scores and side games. Save it to History first?</p><div class="sheet-actions"><button class="btn full" id="nrSave">💾 Save &amp; start new</button><button class="btn danger" id="nrYes">Discard round</button><button class="btn ghost" data-close>Keep playing</button></div>');
       $('#nrSave').onclick=function(){ saveCurrentRound(); state.game=null; state.ui.gameView='score'; save(); closeSheet(); renderGames(); toast('Saved to History · ready for a new round'); };
     }
     $('#nrYes').onclick=function(){ state.game=null; save(); closeSheet(); renderGames(); toast('Round cleared'); };
@@ -2381,8 +2582,8 @@ gameRoot.addEventListener('change',function(e){
   }
   if(t.id==='suCourse'){ su.course=t.value; save(); var ci=$('#suCourseInfo'); if(ci) ci.innerHTML=courseInfo(su.course); return; }
   if(t.id==='suHcp'){ su.useHandicap=t.checked; save(); return; }
-  if(t.hasAttribute('data-jc')){ var jc=t.getAttribute('data-jc'), jv=+t.value; if(!(jv>0&&jv<=100000)){ toast('Enter an amount of $1 or more'); renderGames(); return; } su.jx=su.jx||{}; su.jx[jc]=Object.assign(su.jx[jc]||{},{amt:Math.round(jv*100)/100,custom:true}); save(); renderGames(); return; }
-  if(t.id==='suStake'){ var sv=+t.value; if(!(sv>0&&sv<=100000)){ toast('Enter a stake of $1 or more'); renderGames(); return; } su.stake=Math.round(sv*100)/100; su.stakeCustom=true; save(); renderGames(); toast(presetTitle(setupSettings())); return; }
+  if(t.hasAttribute('data-jc')){ var jc=t.getAttribute('data-jc'), jv=+t.value; if(!(jv>0&&jv<=100000)){ toast('Enter an amount of 1 or more'); renderGames(); return; } su.jx=su.jx||{}; su.jx[jc]=Object.assign(su.jx[jc]||{},{amt:Math.round(jv*100)/100,custom:true}); save(); renderGames(); return; }
+  if(t.id==='suStake'){ var sv=+t.value; if(!(sv>0&&sv<=100000)){ toast('Enter a stake of 1 or more'); renderGames(); return; } su.stake=Math.round(sv*100)/100; su.stakeCustom=true; save(); renderGames(); toast(presetTitle(setupSettings())); return; }
   if(t.getAttribute('data-act')==='hcp' && state.game && liveGuard('hcp')){ t.checked=!t.checked; return; }
   if(t.getAttribute('data-act')==='hcp' && state.game){ state.game.useHandicap=t.checked; save(); renderGames(); toast(t.checked?'Handicap strokes on (net)':'Handicap strokes off (gross)'); }
 });
@@ -2391,29 +2592,38 @@ gameRoot.addEventListener('change',function(e){
 function openSettings(){
   if(state.game && liveRO(state.game)){ liveGuard('settings'); return; }
   var g=state.game, S=g?g.settings:setupSettings(), pid=S.preset||'egn', P=presetById(pid), CO=S.format==='closeout';
-  function mf(id,lab,val,hide){ return '<div'+(hide?' hidden':'')+'><label class="fl" for="gs_'+id+'">'+lab+'</label><div class="money-in"><span>$</span><input class="in" id="gs_'+id+'" type="number" min="0" step="1" inputmode="decimal" value="'+val+'"></div></div>'; }
-  function sw(id,lab,sub,on,hide){ return '<div class="toggle full"'+(hide?' hidden':'')+'><div><b>'+lab+'</b><small>'+sub+'</small></div><label class="switch"><input type="checkbox" id="gs_'+id+'" '+(on?'checked':'')+'><span></span></label></div>'; }
+  function mf(id,lab,val,hide){ return '<div'+(hide?' hidden':'')+'><label class="fl" for="gs_'+id+'">'+lab+'</label>'+moneyIn('<input class="in" id="gs_'+id+'" type="number" min="0" step="1" inputmode="decimal" value="'+val+'">')+'</div>'; }
+  function sw(id,lab,sub,on,hide){ return '<div class="toggle full"'+(hide?' hidden':'')+'><div><b id="gsl_'+id+'">'+lab+'</b><small>'+sub+'</small></div><label class="switch"><input type="checkbox" id="gs_'+id+'" aria-labelledby="gsl_'+id+'" '+(on?'checked':'')+'><span></span></label></div>'; }
   function sl(id,lab,opts,val){ return '<div><label class="fl" for="gs_'+id+'">'+lab+'</label><select class="in" id="gs_'+id+'">'+opts.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===val?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select></div>'; }
-  var desc={closeout:'$20 Close Out: $20 front-9 and back-9 matches (2v2 best ball or 1v1). When a bet is closed out (a side is up by more holes than are left in that nine), a new bet for the same amount starts on the holes left; this repeats. A bet that ends on the last hole of the nine starts nothing new. No overall, no presses; halved bets push. Junk off by default.',
-    egn:'East Greenwich Nassau: $80 Nassau (front/back/overall), auto press $40 at 2 down, greenies $10 every hole, sandies $10, birdies $20, eagles $100. Match bets per player; junk paid per team (each opposing player pays the amount and each partner on the winning team collects it).',
-    nassau:'Nassau: $20 front, back and overall. No auto press — the side that’s down can tap Press during play for a new bet on the rest of that nine. Junk off by default.'}[P.id];
+  function descFor(){ var m$=money; return {closeout:m$(20)+' Close Out: '+m$(20)+' front-9 and back-9 matches (2v2 best ball or 1v1). When a match is closed out (a side is up by more holes than are left in that nine), a new match for the same amount starts on the holes left; this repeats. A match that ends on the last hole of the nine starts nothing new. No overall, no presses; halved matches push. Junk off by default.',
+    egn:'East Greenwich Nassau: '+m$(80)+' Nassau (front/back/overall), auto press '+m$(40)+' at 2 down, greenies '+m$(10)+' every hole, sandies '+m$(10)+', birdies '+m$(20)+', eagles '+m$(100)+'. Matches settle per player; junk per team (each opposing player owes the amount and each partner on the winning team collects it).',
+    nassau:'Nassau: '+m$(20)+' front, back and overall. No auto press — the side that’s down can tap Press during play for a new match on the rest of that nine. Junk off by default.'}[P.id]; }
+  var desc=descFor();
   openSheet('<h3>Game settings · '+esc(presetTitle(S))+'</h3><p>'+(g?'Changes apply to this round right away and are saved as your '+esc(P.name)+' preset.':'For the round you’re setting up; saved as your '+esc(P.name)+' preset. New rounds still start on $20 Close Out unless you pick another game.')+'</p>'+
     '<form id="gsForm" novalidate>'+
-    '<div class="sec-t">'+(CO?'Close out bets':'Nassau')+'</div><div class="fgrid">'+mf('front',CO?'Front 9 bet':'Front 9',S.front)+mf('back',CO?'Back 9 bet':'Back 9',S.back)+mf('overall','Overall 18',S.overall,CO)+
+    '<div class="sec-t">Display</div><div class="seg" role="group" aria-label="Show amounts as" id="unitSeg"><button type="button" data-unit="usd" class="'+(PTS()?'':'on')+'" aria-pressed="'+!PTS()+'">$ Dollars</button><button type="button" data-unit="pts" class="'+(PTS()?'on':'')+'" aria-pressed="'+PTS()+'">Points</button></div>'+
+    '<p class="muted" style="font-size:12px;margin:6px 2px 0">Show every amount as dollars or as points (pts). Display only — the scoring math is the same.</p>'+
+    '<div class="sec-t">'+(CO?'Close out matches':'Nassau')+'</div><div class="fgrid">'+mf('front',CO?'Front 9 match':'Front 9',S.front)+mf('back',CO?'Back 9 match':'Back 9',S.back)+mf('overall','Overall 18',S.overall,CO)+
       sl('matchUnits','Units',[['perPlayer','Per player'],['perTeam','Per team']],S.matchUnits)+'</div>'+
-      (CO?'<p class="muted" style="font-size:12px;margin:8px 2px 0">Each new bet after a close-out is worth the same as that nine’s bet.</p>':'')+
+      (CO?'<p class="muted" style="font-size:12px;margin:8px 2px 0">Each new match after a close-out is worth the same as that nine’s match.</p>':'')+
     '<div class="sec-t"'+(CO?' hidden':'')+'>Presses</div><div class="fgrid"'+(CO?' hidden':'')+'>'+sw('autoPress','Auto press','New press when a side goes N down; runs to end of that nine',S.autoPress)+
       mf('pressAmount','Press amount',S.pressAmount)+'<div><label class="fl" for="gs_pressTrigger">Trigger (holes down)</label><input class="in" id="gs_pressTrigger" type="number" min="1" max="9" step="1" value="'+S.pressTrigger+'"></div>'+
       sw('pressOverall','Press the overall too','Overall presses run to hole 18',S.pressOverall)+
-      sw('manualPress','Manual press button','The side that’s down can press during play (new bet at the press amount for the rest of that nine)',S.manualPress)+'</div>'+
+      sw('manualPress','Manual press button','The side that’s down can press during play (new match at the press amount for the rest of that nine)',S.manualPress)+'</div>'+
     '<div class="sec-t">Junk</div><div class="fgrid">'+JUNK.map(function(j){ return sw(j.id+'On',j.ico+' '+j.name,junkHint(S,j.id),jOn(S,j.id))+mf(j.id+'Amt',j.one+' amount',S[j.id+'Amt'])+(j.id==='greenie'?sl('greenieHoles','Greenies on',[['all','Every hole'],['par3','Par 3s only']],S.greenieHoles):'<div></div>'); }).join('')+
       sl('junkUnits','Junk units (2v2)',[['perTeam','Per team'],['perPlayer','Per player']],S.junkUnits)+
       sl('junkScoring','Birdies/eagles on',[['gross','Gross (natural)'],['net','Net scores']],S.junkScoring)+
       '<div><label class="fl" for="gs_allowance">Handicap allowance</label><div class="money-in"><input class="in" id="gs_allowance" type="number" min="0" max="100" step="5" value="'+S.allowance+'" style="padding-left:12px"></div></div></div>'+
     '<div class="err" id="gsErr" style="margin-top:10px"></div>'+
     '<div class="sheet-actions"><button type="submit" class="btn full" id="gsSave">Save settings</button><button type="button" class="btn ghost" id="gsStd">Restore '+esc(P.name)+' preset</button><button type="button" class="btn ghost" data-close>Cancel</button></div>'+
-    '<p style="font-size:12px;margin-top:10px">'+desc+'</p>'+
+    '<p style="font-size:12px;margin-top:10px" id="gsDesc">'+desc+'</p>'+
     '</form>');
+  [].forEach.call(sheetEl.querySelectorAll('[data-unit]'),function(b){ b.onclick=function(){
+    state.ui.pts=b.getAttribute('data-unit')==='pts'; save();
+    [].forEach.call(sheetEl.querySelectorAll('[data-unit]'),function(x){ var on=(x.getAttribute('data-unit')==='pts')===PTS(); x.classList.toggle('on',on); x.setAttribute('aria-pressed',String(on)); });
+    [].forEach.call(sheetEl.querySelectorAll('.money-in'),function(mi){ if(!mi.querySelector('#gs_allowance')){ mi.classList.toggle('pts',PTS()); var sp=mi.querySelector('span'); if(sp) sp.textContent=PTS()?'pts':'$'; } });
+    var dp=$('#gsDesc'); if(dp) dp.innerHTML=descFor();
+    renderAll(); toast(PTS()?'Amounts shown as points':'Amounts shown in dollars'); }; });
   $('#gsStd').onclick=function(){
     resetPreset(P.id);
     if(g){ g.settings=loadPreset(P.id); } else { var su=state.gameSetup; su.stake=null; su.jx=null; su.stakeCustom=false; }
@@ -2422,7 +2632,7 @@ function openSettings(){
   $('#gsForm').onsubmit=function(e){
     e.preventDefault();
     var s={}, err='';
-    ['front','back','overall','pressAmount','greenieAmt','sandyAmt','pulleyAmt','birdieAmt','eagleAmt'].forEach(function(id){ var v=$('#gs_'+id).value.trim(); var n=v===''?0:+v; if(isNaN(n)||n<0||n>100000) err='Amounts must be $0 or more.'; s[id]=Math.round(n*100)/100; });
+    ['front','back','overall','pressAmount','greenieAmt','sandyAmt','pulleyAmt','birdieAmt','eagleAmt'].forEach(function(id){ var v=$('#gs_'+id).value.trim(); var n=v===''?0:+v; if(isNaN(n)||n<0||n>100000) err='Amounts must be 0 or more.'; s[id]=Math.round(n*100)/100; });
     s.pressTrigger=parseInt($('#gs_pressTrigger').value,10); if(!(s.pressTrigger>=1&&s.pressTrigger<=9)) err=err||'Press trigger must be between 1 and 9 holes down.';
     s.allowance=+$('#gs_allowance').value; if(isNaN(s.allowance)||s.allowance<0||s.allowance>100) err=err||'Handicap allowance must be 0–100%.';
     ['matchUnits','greenieHoles','junkUnits','junkScoring'].forEach(function(id){ s[id]=$('#gs_'+id).value; });
@@ -2448,7 +2658,8 @@ gameRoot.addEventListener('toggle',function(e){ var d=e.target; if(d.tagName==='
 var FB_CONFIG={apiKey:'AIzaSyAyXEmZKNfc55OYNDVbi7iZX_b8ibPzbPA', authDomain:'fairway-club-ea5f1.firebaseapp.com', projectId:'fairway-club-ea5f1',
   storageBucket:'fairway-club-ea5f1.firebasestorage.app', messagingSenderId:'671039044605', appId:'1:671039044605:web:321d78002f76da0de0b794'};
 var FB_CDN='https://www.gstatic.com/firebasejs/12.19.0/';
-var CKEY='fairwayClub.cloud.v1', SYNC_KEYS=['friends','rounds','teeTimes','scores','settings'];
+var CKEY='fairwayClub.cloud.v1', SYNC_KEYS=['friends','rounds','teeTimes','scores','settings','courses'];
+function syncKeys(){ return CL.coursesOff?SYNC_KEYS.filter(function(c){ return c!=='courses'; }):SYNC_KEYS; }
 var CL={user:null, profile:null, groups:{}, space:null, unsubs:[], gUnsub:null, synced:{}, remote:{}, got:{}, ready:false, stored:false,
   pushT:null, applying:false, liveList:[], liveUnsub:null, liveId:null, livePushT:null, lastLiveJson:null, lastRemoteHole:null, applyingLive:false, endLive:false, authKnown:false, loading:null};
 function cget(){ try{ return JSON.parse(localStorage.getItem(CKEY))||{}; }catch(e){ return {}; } }
@@ -2466,6 +2677,8 @@ function sheetDone(){ onSheetClose=null; closeSheet(); }
 /* ---------- SDK loading ---------- */
 function loadFirebase(){
   if(CL.loading) return CL.loading;
+  // a failed module import is remembered by the browser for this page; once back online, a reload is the only clean retry
+  if(CL.loadFailed && navigator.onLine){ toast('Reconnecting…'); setTimeout(function(){ location.reload(); },600); return new Promise(function(){}); }
   CL.loading=Promise.all(['firebase-app.js','firebase-auth.js','firebase-firestore.js'].map(function(f){ return import(FB_CDN+f); })).then(function(m){
     var A=m[0], U=m[1], F=m[2]; CL.U=U; CL.F=F;
     var app=A.initializeApp(FB_CONFIG), emu=localStorage.getItem('fairwayClub.emu');
@@ -2477,7 +2690,7 @@ function loadFirebase(){
     U.onAuthStateChanged(auth,onAuth);
     return CL;
   });
-  CL.loading.catch(function(e){ CL.loading=null; try{ console.warn('[cloud] load failed',e); }catch(x){} renderAccount(); toast('Can’t reach the sign-in service right now — the app still works offline.'); });
+  CL.loading.catch(function(e){ CL.loading=null; CL.loadFailed=true; try{ console.warn('[cloud] load failed',e); }catch(x){} renderAccount(); toast('Can’t reach the sign-in service right now — the app still works offline.'); });
   renderAccount();
   return CL.loading;
 }
@@ -2535,6 +2748,7 @@ function profileSheet(first){
 }
 
 /* ---------- sign-in UI ---------- */
+var LEGAL_LINKS='<div class="legal" id="legalLinks"><a href="terms.html" target="_blank" rel="noopener">Terms of Use</a><a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a></div>';
 function openAuth(why){
   loadFirebase();
   var mode='in', standalone=navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
@@ -2549,7 +2763,8 @@ function openAuth(why){
       '<label class="fl" for="auEmail"'+(mode==='up'?' style="margin-top:8px"':'')+'>Email</label><input class="in" id="auEmail" type="email" autocomplete="email" inputmode="email">'+
       '<label class="fl" for="auPass" style="margin-top:8px">Password</label><input class="in" id="auPass" type="password" autocomplete="'+(mode==='up'?'new-password':'current-password')+'" placeholder="'+(mode==='up'?'At least 6 characters':'')+'">'+
       '<div class="err" id="auErr"></div>'+
-      '<div class="sheet-actions"><button class="btn full" id="auGo">'+(mode==='up'?'Create account':'Sign in')+'</button>'+(mode==='in'?'<button class="btn ghost full" id="auReset">Forgot password?</button>':'')+'</div>';
+      '<div class="sheet-actions"><button class="btn full" id="auGo">'+(mode==='up'?'Create account':'Sign in')+'</button>'+(mode==='in'?'<button class="btn ghost full" id="auReset">Forgot password?</button>':'')+'</div>'+
+      '<p class="muted legal-note">By continuing you agree to the Terms of Use and Privacy Policy. Tracking side-game money is for adults 18+.</p>'+LEGAL_LINKS;
   }
   function bind(){
     sheetEl.querySelectorAll('[data-am]').forEach(function(b){ b.onclick=function(){ var em=$('#auEmail').value; mode=b.getAttribute('data-am'); openSheet(html()); bind(); $('#auEmail').value=em; }; });
@@ -2606,9 +2821,12 @@ function openAccount(){
   openSheet('<h3>Account</h3><div class="acct-id"><span class="acct-av big">'+esc(initials(myName()))+'</span><div><b>'+esc(myName())+'</b><small>'+esc(CL.user.email||'')+(CL.profile&&CL.profile.hcp!=null?' · CH '+esc(CL.profile.hcp):'')+'</small></div></div>'+
     '<p class="muted" id="syncLine" style="font-size:12.5px;margin:8px 0 4px">'+esc(syncStatus())+'</p>'+
     '<label class="fl">Sync players, rounds &amp; tee times with</label><div class="splist">'+sp+'</div>'+
-    (g?'<div class="row" style="gap:8px;margin-top:10px"><button class="btn" style="flex:1" id="acInvite">✉︎ Invite to '+esc(g.name)+'</button>'+(g.ownerId!==myUid()?'<button class="btn ghost" id="acLeave">Leave</button>':'')+'</div>':'')+
+    (g?'<div class="row" style="gap:8px;margin-top:10px"><button class="btn" style="flex:1" id="acInvite">✉︎ Invite to '+esc(g.name)+'</button><button class="btn ghost" id="acMembers">Members</button>'+(g.ownerId!==myUid()?'<button class="btn ghost" id="acLeave">Leave</button>':'')+'</div>':'')+
     '<button class="btn ghost block" style="margin-top:8px" id="acNewGroup">+ Create a group</button>'+
-    '<div class="sheet-actions"><button class="btn ghost" id="acProfile">Edit profile</button><button class="btn ghost" id="acOut">Sign out</button></div>');
+    '<div class="sheet-actions"><button class="btn ghost" id="acProfile">Edit profile</button><button class="btn ghost" id="acOut">Sign out</button></div>'+
+    LEGAL_LINKS+'<div class="danger-zone"><button class="btn danger block" id="acDelete">Delete account…</button></div>');
+  $('#acDelete').onclick=function(){ deleteAccountFlow(); };
+  var mb=$('#acMembers'); if(mb) mb.onclick=function(){ membersSheet(g.id); };
   sheetEl.querySelectorAll('[data-space]').forEach(function(b){ b.onclick=function(){ var k=b.getAttribute('data-space'); sheetDone(); if(k!==CL.space) switchSpace(k).then(function(){ toast('Now syncing with '+spaceName(k)); }); }; });
   $('#acNewGroup').onclick=function(){ groupSheet(); };
   $('#acProfile').onclick=function(){ sheetDone(); profileSheet(false); };
@@ -2619,6 +2837,161 @@ function openAccount(){
     $('#lvYes').onclick=function(){ var F=CL.F, o={members:F.arrayRemove(myUid())}; o['memberInfo.'+myUid()]=F.deleteField(); sheetDone();
       stashSpace(); detachSpace(); F.updateDoc(F.doc(CL.db,'groups',g.id),o).then(function(){ delete CL.groups[g.id]; return switchSpace('u'); }).then(function(){ toast('You left '+g.name); }).catch(cloudErr); };
   };
+}
+/* ---------- group members (owner can remove) ---------- */
+function memberName(g,u){ var i=(g.memberInfo||{})[u]||{}; return i.name||'Member'; }
+function membersSheet(gid){
+  var g=CL.groups[gid]; if(!g){ toast('That group isn’t available'); return; } var me=myUid(), owner=g.ownerId===me;
+  openSheet('<h3>Members of '+esc(g.name)+'</h3><div id="memList">'+(g.members||[]).map(function(u){ var i=(g.memberInfo||{})[u]||{};
+    return '<div class="memrow"><span class="acct-av" aria-hidden="true">'+esc(initials(i.name||'?'))+'</span><div class="mt"><b>'+esc(i.name||'Member')+(u===me?' (you)':'')+'</b><small>'+(u===g.ownerId?'Owner':'Member')+(i.hcp!=null?' · CH '+esc(i.hcp):'')+'</small></div>'+
+      (owner&&u!==me?'<button class="btn ghost sm" data-rm="'+esc(u)+'" aria-label="Remove '+esc(i.name||'member')+'">Remove</button>':'')+'</div>'; }).join('')+'</div>'+
+    (owner?'<p class="muted" style="font-size:12.5px;margin-top:8px">As the owner you can remove members. Their name stays on past scorecards.</p><div class="danger-zone"><button class="btn danger block" id="grDel">Delete this group…</button></div>':'')+
+    '<div class="sheet-actions"><button class="btn ghost full" id="memBack">Back</button></div>');
+  $('#memBack').onclick=function(){ openAccount(); };
+  [].forEach.call(sheetEl.querySelectorAll('[data-rm]'),function(b){ b.onclick=function(){ removeMemberSheet(gid,b.getAttribute('data-rm')); }; });
+  var gd=$('#grDel'); if(gd) gd.onclick=function(){ deleteGroupSheet(gid); };
+}
+function removeMemberSheet(gid,u){
+  var g=CL.groups[gid]; if(!g) return; var nm=memberName(g,u);
+  openSheet('<h3>Remove '+esc(nm)+'?</h3><p>'+esc(nm)+' will stop seeing '+esc(g.name)+'’s players, rounds and live scores.</p>'+
+    '<label class="chkrow"><input type="checkbox" id="rmNewLink" checked> Make a new invite link so the old one can’t be used to rejoin</label>'+
+    '<div class="err" id="rmErr" role="alert"></div><div class="sheet-actions"><button class="btn ghost" id="rmNo">Cancel</button><button class="btn danger" id="rmYes">Remove</button></div>');
+  $('#rmNo').onclick=function(){ membersSheet(gid); };
+  $('#rmYes').onclick=function(){
+    var F=CL.F, b=F.writeBatch(CL.db), o={members:F.arrayRemove(u)}, rot=$('#rmNewLink').checked, code=rot?mkCode():null, old=g.inviteCode;
+    o['memberInfo.'+u]=F.deleteField(); if(rot) o.inviteCode=code;
+    b.update(F.doc(CL.db,'groups',gid),o);
+    if(rot){ b.set(F.doc(CL.db,'invites',code),{gid:gid, groupName:g.name, ownerId:myUid(), createdAt:F.serverTimestamp()}); if(old) b.delete(F.doc(CL.db,'invites',old)); }
+    $('#rmYes').disabled=true;
+    withTimeout(b.commit()).then(function(){ g.members=(g.members||[]).filter(function(x){ return x!==u; }); if(g.memberInfo) delete g.memberInfo[u]; if(rot) g.inviteCode=code;
+      membersSheet(gid); toast(nm+' removed'+(rot?' · new invite link made':'')); })
+      .catch(function(e){ var x=$('#rmErr'); if(x){ x.textContent=e&&e.code==='unavailable'||e&&e.code==='deadline-exceeded'?'You need a connection to remove a member.':(e&&e.message||String(e)); $('#rmYes').disabled=false; } else cloudErr(e); });
+  };
+}
+function deleteGroupSheet(gid){
+  var g=CL.groups[gid]; if(!g) return;
+  openSheet('<h3>Delete '+esc(g.name)+'?</h3><div class="info warn">This deletes the group’s players, saved rounds, tee times, posted scores, courses and live rounds <b>for every member</b>. It can’t be undone. This phone keeps its own copy.</div>'+
+    '<div class="err" id="gdErr" role="alert"></div><div class="sheet-actions"><button class="btn ghost" id="gdNo">Cancel</button><button class="btn danger" id="gdYes">Delete group</button></div>');
+  $('#gdNo').onclick=function(){ membersSheet(gid); };
+  $('#gdYes').onclick=function(){ $('#gdYes').disabled=true; $('#gdYes').textContent='Deleting…';
+    var active=CL.space==='g:'+gid; if(active){ flushPush(); stashSpace(); detachSpace(); }
+    deleteGroupData(g).then(function(){ delete CL.groups[gid]; sheetDone(); toast(g.name+' deleted'); if(active) return switchSpace('u'); })
+      .catch(function(e){ var x=$('#gdErr'); if(x){ x.textContent='Couldn’t delete the group: '+(e&&e.message||e); } else cloudErr(e); if(active) switchSpace('g:'+gid); }); };
+}
+/* ---------- delete account ---------- */
+function withTimeout(p,ms){ var t; return Promise.race([p,new Promise(function(_,rej){ t=setTimeout(function(){ rej({code:'deadline-exceeded',message:'Timed out — check your connection and try again.'}); },ms||25000); })]).then(function(v){ clearTimeout(t); return v; },function(e){ clearTimeout(t); throw e; }); }
+function delDocs(refs){ var F=CL.F, ch=Promise.resolve();
+  for(var i=0;i<refs.length;i+=100){ (function(part){ ch=ch.then(function(){ var b=F.writeBatch(CL.db); part.forEach(function(r){ b.delete(r); }); return withTimeout(b.commit()); }); })(refs.slice(i,i+100)); }
+  return ch; }
+function collRefs(path){ var F=CL.F; return withTimeout(F.getDocsFromServer(F.collection.apply(null,[CL.db].concat(path)))).then(function(s){ return s.docs.map(function(d){ return d.ref; }); },
+  function(e){ if(e&&e.code==='permission-denied') return []; throw e; }); }
+var USER_COLLS=['friends','rounds','teeTimes','scores','settings','courses'];
+function deleteGroupData(g){
+  var F=CL.F, refs=[];
+  return USER_COLLS.concat(['live']).reduce(function(p,c){ return p.then(function(){ return collRefs(['groups',g.id,c]).then(function(r){ refs=refs.concat(r); }); }); },Promise.resolve())
+    .then(function(){ return delDocs(refs); })
+    .then(function(){ return g.inviteCode?withTimeout(F.deleteDoc(F.doc(CL.db,'invites',g.inviteCode))).catch(function(){}):null; })
+    .then(function(){ return withTimeout(F.deleteDoc(F.doc(CL.db,'groups',g.id))); });
+}
+function cleanupMemberData(g){   // before leaving a group: remove what points at me (live rounds I started, scorekeeping, my uid/email on the shared player list)
+  var F=CL.F, me=myUid(), b=F.writeBatch(CL.db), n=0;
+  return withTimeout(F.getDocsFromServer(F.collection(CL.db,'groups',g.id,'live'))).then(function(s){
+    s.docs.forEach(function(d){ var x=d.data();
+      if(x.createdBy===me || (x.scorekeeper===me && (g.members||[]).indexOf(x.createdBy)<0)){ b.delete(d.ref); n++; }
+      else if(x.scorekeeper===me){ b.update(d.ref,{scorekeeper:x.createdBy, scorekeeperName:x.createdByName||'', updatedAt:F.serverTimestamp(), updatedBy:me}); n++; } });
+    return withTimeout(F.getDocsFromServer(F.query(F.collection(CL.db,'groups',g.id,'friends'),F.where('uid','==',me))));
+  }).then(function(s){ s.docs.forEach(function(d){ b.update(d.ref,{uid:F.deleteField(), email:''}); n++; }); return n?withTimeout(b.commit()):null; });
+}
+function deletePersonal(me){
+  var F=CL.F, refs=[];
+  return USER_COLLS.reduce(function(p,c){ return p.then(function(){ return collRefs(['users',me,c]).then(function(r){ refs=refs.concat(r); }); }); },Promise.resolve())
+    .then(function(){ return delDocs(refs); }).then(function(){ return withTimeout(F.deleteDoc(F.doc(CL.db,'users',me))); });
+}
+function needReauth(){ var t=Date.parse(CL.user&&CL.user.metadata&&CL.user.metadata.lastSignInTime||''); return !!CL.forceReauth || !(t>0) || Date.now()-t>4*60*1000; }
+function reauthSheet(next,why){
+  var U=CL.U, u=CL.user, pr=(u.providerData||[]).map(function(p){ return p.providerId; }), gg=pr.indexOf('google.com')>=0, pw=pr.indexOf('password')>=0||!gg;
+  openSheet('<h3>Confirm it’s you</h3><p>'+(why||'For your security, sign in again before deleting your account.')+'</p>'+
+    (gg?'<button class="btn block gbtn" id="raGoogle"><span class="g">G</span> Continue with Google</button>':'')+
+    (pw?(gg?'<div class="or"><span>or</span></div>':'')+'<label class="fl" for="raPass">Password for '+esc(u.email||'')+'</label><input class="in" id="raPass" type="password" autocomplete="current-password">':'')+
+    '<div class="err" id="raErr" role="alert"></div><div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button>'+(pw?'<button class="btn danger" id="raGo">Confirm</button>':'')+'</div>');
+  var err=function(e){ var x=$('#raErr'); if(x) x.textContent=typeof e==='string'?e:authMsg(e); };
+  var ok=function(){ CL.forceReauth=false; next(); };
+  var gb=$('#raGoogle'); if(gb) gb.onclick=function(){ U.reauthenticateWithPopup(u,new U.GoogleAuthProvider()).then(ok,err); };
+  var go=$('#raGo'); if(go) go.onclick=function(){ var p=$('#raPass').value; if(!p){ err('Enter your password.'); return; } go.disabled=true;
+    U.reauthenticateWithCredential(u,U.EmailAuthProvider.credential(u.email,p)).then(ok,function(e){ go.disabled=false; err(e); }); };
+}
+function deleteAccountFlow(){
+  if(!CL.user) return;
+  if(!navigator.onLine){ toast('You need a connection to delete your account'); return; }
+  var me=myUid(), all=Object.keys(CL.groups).map(function(id){ return CL.groups[id]; }), own=all.filter(function(g){ return g.ownerId===me; }), other=all.filter(function(g){ return g.ownerId!==me; });
+  var ownHtml=own.map(function(g){ var others=(g.members||[]).filter(function(u){ return u!==me; });
+    return '<div class="owncard"><b>'+esc(g.name)+'</b><small>You own this group · '+(g.members||[]).length+' member'+((g.members||[]).length===1?'':'s')+'</small><label class="fl" for="dg_'+esc(g.id)+'">What happens to it</label>'+
+      '<select class="in" id="dg_'+esc(g.id)+'" data-dg="'+esc(g.id)+'">'+others.map(function(u){ return '<option value="to:'+esc(u)+'">Hand it over to '+esc(memberName(g,u))+'</option>'; }).join('')+
+      '<option value="delete"'+(others.length?'':' selected')+'>Delete the group and everything in it</option></select></div>'; }).join('');
+  openSheet('<h3>Delete your account?</h3><p>This permanently deletes your Fairway Club account. It can’t be undone.</p>'+
+    '<ul class="uplist"><li>Your sign-in ('+esc(CL.user.email||'')+') and profile</li><li>Your personal cloud data: players, saved rounds, tee times, posted scores, courses and settings</li>'+
+    (other.length?'<li>You leave '+other.map(function(g){ return '<b>'+esc(g.name)+'</b>'; }).join(', ')+'. Your link to their player list and live rounds you started are removed; rounds the group saved stay with the group.</li>':'')+'</ul>'+
+    (own.length?'<div class="info warn">You own '+(own.length===1?'a group':own.length+' groups')+'. Hand '+(own.length===1?'it':'each one')+' to another member, or delete '+(own.length===1?'it':'them')+' — deleting removes the group’s players, rounds, tee times, scores and courses <b>for everyone</b>.</div>'+ownHtml:'')+
+    '<label class="chkrow"><input type="checkbox" id="delLocal"> Also erase all Fairway Club data on this phone</label>'+
+    '<p class="muted" style="font-size:12.5px;margin:0 0 8px">If unchecked, this phone keeps working offline with its own copy.</p>'+
+    '<label class="fl" for="delType">Type DELETE to confirm</label><input class="in" id="delType" autocomplete="off" autocapitalize="characters" spellcheck="false">'+
+    '<div class="err" id="delErr" role="alert"></div><div class="sheet-actions"><button class="btn ghost" data-close>Cancel</button><button class="btn danger" id="delGo" disabled>Delete account</button></div>');
+  var t=$('#delType'), go=$('#delGo');
+  t.oninput=function(){ go.disabled=t.value.trim().toUpperCase()!=='DELETE'; };
+  go.onclick=function(){
+    if(t.value.trim().toUpperCase()!=='DELETE') return;
+    if(!navigator.onLine){ $('#delErr').textContent='You need a connection to delete your account.'; return; }
+    var plan={eraseLocal:$('#delLocal').checked, groups:[]};
+    own.forEach(function(g){ var v=(sheetEl.querySelector('[data-dg="'+g.id+'"]')||{}).value||'delete'; plan.groups.push(v==='delete'?{g:g, action:'delete'}:{g:g, action:'transfer', to:v.slice(3)}); });
+    other.forEach(function(g){ plan.groups.push({g:g, action:'leave'}); });
+    var run=function(){ runDelete(plan); };
+    if(needReauth()) reauthSheet(run); else run();
+  };
+}
+function runDelete(plan){
+  var F=CL.F, me=myUid(), user=CL.user;
+  openSheet('<h3>Deleting your account…</h3><p id="delStep" aria-live="polite">Starting…</p><div class="err" id="delErr" role="alert"></div>');
+  var step=function(s){ var e=$('#delStep'); if(e) e.textContent=s; };
+  try{ flushPush(); flushLive(); }catch(e){}
+  CL.deleting=true; detachSpace(); if(CL.gUnsub){ try{ CL.gUnsub(); }catch(e){} CL.gUnsub=null; } liveStop();   // stop listening so the deletes don't touch this phone's copy
+  var ch=Promise.resolve();
+  plan.groups.forEach(function(p){ ch=ch.then(function(){
+    if(p.action==='delete'){ step('Deleting group '+p.g.name+'…'); return deleteGroupData(p.g); }
+    step((p.action==='transfer'?'Handing over ':'Leaving ')+p.g.name+'…');
+    return cleanupMemberData(p.g).then(function(){ var o={members:F.arrayRemove(me)}; if(p.action==='transfer') o.ownerId=p.to; o['memberInfo.'+me]=F.deleteField();
+      return withTimeout(F.updateDoc(F.doc(CL.db,'groups',p.g.id),o)); });
+  }); });
+  ch.then(function(){ step('Deleting your personal data…'); return deletePersonal(me); })
+    .then(function(){ step('Removing your sign-in…'); return deleteAuthUser(user); })
+    .then(function(){ finishDeleted(plan,me); })
+    .catch(function(e){ CL.deleting=false; try{ console.warn('[delete]',e); }catch(x){}
+      openSheet('<h3>Account not fully deleted</h3><p>'+esc(e&&e.code==='cancelled'?e.message:'Something went wrong: '+(e&&e.message||e)+'. Anything already deleted stays deleted — try again to finish.')+'</p>'+
+        '<div class="sheet-actions"><button class="btn ghost" data-close>Close</button><button class="btn danger" id="delRetry">Try again</button></div>');
+      $('#delRetry').onclick=function(){ deleteAccountFlow(); };
+      if(CL.user) watchGroups().then(function(){ return chooseSpace(); }).catch(function(){}); });
+}
+function deleteAuthUser(user){
+  var U=CL.U, attempt=function(){ if(CL.fakeRecent){ CL.fakeRecent=false; return Promise.reject({code:'auth/requires-recent-login'}); } return U.deleteUser(CL.user||user); };
+  return attempt().catch(function(e){
+    if(!(e && e.code==='auth/requires-recent-login')) throw e;
+    return new Promise(function(res,rej){
+      reauthSheet(function(){ openSheet('<h3>Deleting your account…</h3><p id="delStep" aria-live="polite">Removing your sign-in…</p>'); attempt().then(res,rej); },
+        'Your data is deleted. Sign in once more to finish removing your sign-in.');
+      onSheetCloseSet(function(){ rej({code:'cancelled', message:'Cancelled — your data is deleted but your sign-in still exists. Open Account → Delete account to finish.'}); });
+    });
+  });
+}
+function finishDeleted(plan,me){
+  CL.deleting=false; CL.user=null; CL.profile=null; CL.groups={}; CL.space=null;
+  try{ cloudForgetLocal(); }catch(e){}
+  cset({wanted:false, activeSpace:null, pendingJoin:null, pendingRedirect:false, dismissPrompt:true});
+  (state.friends||[]).forEach(function(f){ if(f.uid===me) delete f.uid; });
+  if(state.game && state.game.live) delete state.game.live;
+  try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){}
+  if(plan.eraseLocal){ try{ Object.keys(localStorage).forEach(function(k){ if(k.indexOf('fairwayClub.')===0 && k!=='fairwayClub.emu') localStorage.removeItem(k); }); }catch(e){} }
+  try{ localStorage.setItem('fairwayClub.deleted',plan.eraseLocal?'erased':'kept'); }catch(e){}
+  var F=CL.F;
+  Promise.resolve().then(function(){ return F.terminate(CL.db); }).then(function(){ return F.clearIndexedDbPersistence(CL.db); }).catch(function(){}).then(function(){ location.reload(); });
 }
 function mkCode(){ var a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', r=new Uint8Array(8), s=''; crypto.getRandomValues(r); for(var i=0;i<8;i++) s+=a[r[i]%a.length]; return s; }
 function inviteUrl(code){ return location.origin+location.pathname+'?join='+code; }
@@ -2706,8 +3079,13 @@ var SYNC={
       tts.sort(function(a,b){ return (a.date+a.time).localeCompare(b.date+b.time); }); state.teeTimes=tts; state.signups=su; state.pairings=pr; } },
   scores:{ local:function(){ var m={}; state.rounds.forEach(function(r){ m[r.id]=blob(r.id,r,r.date); }); return m; }, canon:blobCanon,
     apply:function(m){ state.rounds=Object.keys(m).map(function(id){ return JSON.parse(m[id].json); }); } },
-  settings:{ local:function(){ return {presets:{json:JSON.stringify({g:localStorage.getItem(GKEY), p:localStorage.getItem(PKEY)})}}; }, canon:function(d){ return {json:d.json}; },
-    apply:function(m){ var d=m.presets; if(!d) return; var o=JSON.parse(d.json); try{ if(o.g) localStorage.setItem(GKEY,o.g); else localStorage.removeItem(GKEY); if(o.p) localStorage.setItem(PKEY,o.p); else localStorage.removeItem(PKEY); localStorage.setItem(GVER_KEY,String(GVER)); }catch(e){} } }
+  // presets: only a phone that HAS saved defaults sends a doc (an empty phone used to push {g:null,p:null} and wipe everyone's presets);
+  // a deleted remote doc is honoured locally so it isn't re-uploaded
+  settings:{ local:function(){ var g=localStorage.getItem(GKEY), p=localStorage.getItem(PKEY); return (g||p)?{presets:{json:JSON.stringify({g:g, p:p})}}:{}; }, canon:function(d){ return {json:d.json}; },
+    apply:function(m){ var d=m.presets, o={}; try{ o=d?JSON.parse(d.json)||{}:{}; }catch(e){ o={}; }
+      try{ if(o.g) localStorage.setItem(GKEY,o.g); else localStorage.removeItem(GKEY); if(o.p) localStorage.setItem(PKEY,o.p); else localStorage.removeItem(PKEY); if(d) localStorage.setItem(GVER_KEY,String(GVER)); }catch(e){} } },
+  courses:{ local:function(){ var m={}; (state.courses||[]).forEach(function(c){ m[c.id]=blob(c.id,c,''); }); return m; }, canon:blobCanon,
+    apply:function(m){ state.courses=Object.keys(m).map(function(id){ return JSON.parse(m[id].json); }); ccSort(); ensureGameState(); } }
 };
 function localMap(c){ var m=SYNC[c].local(), o={}; Object.keys(m).forEach(function(id){ o[id]=JSON.stringify(m[id]); }); return o; }
 function hashes(m){ var o={}; Object.keys(m).forEach(function(id){ o[id]=hsh(m[id]); }); return o; }
@@ -2719,10 +3097,11 @@ function storeSynced(){ try{ localStorage.setItem(skey(),JSON.stringify(CL.synce
 function basePath(){ return CL.space==='u'?['users',myUid()]:['groups',CL.space.slice(2)]; }
 function cref(c,id){ var F=CL.F, p=[CL.db].concat(basePath(),[c]); if(id!=null) p.push(id); return id!=null?F.doc.apply(null,p):F.collection.apply(null,p); }
 function stashSpace(){ if(!CL.space||!CL.ready||!CL.user) return; flushPush();
-  try{ localStorage.setItem(dkey(),JSON.stringify({friends:state.friends, saved:state.saved, teeTimes:state.teeTimes, signups:state.signups, pairings:state.pairings, rounds:state.rounds, g:localStorage.getItem(GKEY), p:localStorage.getItem(PKEY)})); }catch(e){} }
+  try{ localStorage.setItem(dkey(),JSON.stringify({friends:state.friends, saved:state.saved, teeTimes:state.teeTimes, signups:state.signups, pairings:state.pairings, rounds:state.rounds, courses:state.courses||[], g:localStorage.getItem(GKEY), p:localStorage.getItem(PKEY)})); }catch(e){} }
 function unstash(k){ var d=null; try{ d=JSON.parse(localStorage.getItem(dkey(k))); }catch(e){} if(!d||!localStorage.getItem(skey(k))) return false;
   state.friends=d.friends||[]; state.saved=d.saved||[]; state.teeTimes=d.teeTimes||[]; state.signups=d.signups||{}; state.pairings=d.pairings||{}; state.rounds=d.rounds||[];
-  try{ if(d.g) localStorage.setItem(GKEY,d.g); if(d.p) localStorage.setItem(PKEY,d.p); }catch(e){} return true; }
+  if(d.courses && !CL.coursesOff) state.courses=d.courses;
+  try{ if(d.g) localStorage.setItem(GKEY,d.g); else localStorage.removeItem(GKEY); if(d.p) localStorage.setItem(PKEY,d.p); else localStorage.removeItem(PKEY); }catch(e){} return true; }
 function detachSpace(){ CL.unsubs.forEach(function(u){ try{ u(); }catch(e){} }); CL.unsubs=[]; clearTimeout(CL.pushT); CL.pushT=null; CL.ready=false; CL.space=null; CL.liveList=[]; }
 function switchSpace(k){
   if(CL.space===k && CL.ready) return Promise.resolve();
@@ -2731,11 +3110,15 @@ function switchSpace(k){
   return attachSpace(k);
 }
 function attachSpace(k){
-  var F=CL.F; detachSpace(); CL.space=k; CL.got={}; CL.remote={}; CL.stored=!!localStorage.getItem(skey(k));
+  var F=CL.F; detachSpace(); CL.space=k; CL.got={}; CL.remote={}; CL.coursesOff=false; CL.stored=!!localStorage.getItem(skey(k));
   return new Promise(function(res){
     CL.readyRes=res;
     SYNC_KEYS.forEach(function(c){
-      CL.unsubs.push(F.onSnapshot(cref(c),{includeMetadataChanges:false},function(s){ onSnap(c,s); },function(e){ cloudErr(e); }));
+      CL.unsubs.push(F.onSnapshot(cref(c),{includeMetadataChanges:false},function(s){ onSnap(c,s); },function(e){
+        // courses need the newer cloud rules: if they aren't published yet, keep courses on this phone only (never wipe them)
+        if(c==='courses' && e && e.code==='permission-denied'){ CL.coursesOff=true; try{ console.warn('[cloud] courses not allowed by rules — kept on this phone'); }catch(x){}
+          if(!CL.ready && syncKeys().every(function(x){ return CL.got[x]; })) firstSync(); return; }
+        cloudErr(e); }));
     });
     if(k!=='u') CL.unsubs.push(F.onSnapshot(F.query(F.collection(CL.db,'groups',k.slice(2),'live'),F.where('status','==','live')),function(s){
       CL.liveList=s.docs.map(function(d){ return Object.assign({id:d.id},d.data()); }); if(!state.game || state.ui.history || state.ui.ideas) renderGames(); },function(e){ cloudErr(e); }));
@@ -2745,7 +3128,8 @@ function attachSpace(k){
 function onSnap(c,s){
   var rm={}; s.forEach(function(d){ try{ rm[d.id]=JSON.stringify(SYNC[c].canon(d.data())); }catch(e){} });
   CL.remote[c]=rm;
-  if(!CL.ready){ if(s.metadata.fromCache && !CL.stored) return; CL.got[c]=1; if(SYNC_KEYS.every(function(x){ return CL.got[x]; })) firstSync(); return; }
+  if(c==='courses' && CL.coursesOff) return;
+  if(!CL.ready){ if(s.metadata.fromCache && !CL.stored) return; CL.got[c]=1; if(syncKeys().every(function(x){ return CL.got[x]; })) firstSync(); return; }
   mergeRemote(c,rm);
 }
 function mergeRemote(c,rm){
@@ -2757,22 +3141,38 @@ function mergeRemote(c,rm){
   if(!sameMap(out,cur)){ CL.applying=true; SYNC[c].apply(parseMap(out)); save(); CL.applying=false; renderAll(); }
   pushSoon();
 }
-function pushSoon(){ if(!CL.ready||!CL.user) return; clearTimeout(CL.pushT); CL.pushT=setTimeout(pushNow,450); }
+function pushSoon(){ if(!CL.ready||!CL.user) return; clearTimeout(CL.pushT);
+  var wait=CL.pushHold?30000-(Date.now()-CL.pushHold):0; if(wait<=0) CL.pushHold=0;   // back off for 30 s after a rejected write
+  CL.pushT=setTimeout(pushNow,Math.max(450,wait)); }
 function flushPush(){ if(CL.pushT){ clearTimeout(CL.pushT); CL.pushT=null; pushNow(); } }
 function pushNow(){
   CL.pushT=null; if(!CL.ready||!CL.user||!CL.space) return;
-  var F=CL.F, ops=[], me=myUid();
-  SYNC_KEYS.forEach(function(c){ var cur=localMap(c), base=CL.synced[c]||(CL.synced[c]={});
+  var F=CL.F, ops=[], me=myUid(), prev={}, snap={};
+  syncKeys().forEach(function(c){ var cur=localMap(c), base=CL.synced[c]||(CL.synced[c]={}); prev[c]=Object.assign({},base); snap[c]=cur;
     Object.keys(cur).forEach(function(id){ var h=hsh(cur[id]); if(h!==base[id]){ ops.push([c,id,Object.assign(JSON.parse(cur[id]),{updatedAt:F.serverTimestamp(), by:me})]); base[id]=h; } });
     Object.keys(base).forEach(function(id){ if(!(id in cur)){ ops.push([c,id,null]); delete base[id]; } });
   });
   if(!ops.length) return; storeSynced();
-  for(var i=0;i<ops.length;i+=400){ var b=F.writeBatch(CL.db); ops.slice(i,i+400).forEach(function(o){ if(o[2]) b.set(cref(o[0],o[1]),o[2]); else b.delete(cref(o[0],o[1])); });
-    b.commit().catch(function(e){ cloudErr(e); SYNC_KEYS.forEach(function(c){ CL.synced[c]=hashes(CL.remote[c]||{}); }); storeSynced(); }); }
+  // courses go in their own batch: if the cloud rules don't allow them yet, everything else still syncs
+  [ops.filter(function(o){ return o[0]!=='courses'; }), ops.filter(function(o){ return o[0]==='courses'; })].forEach(function(list){
+    for(var i=0;i<list.length;i+=400){ var part=list.slice(i,i+400), b=F.writeBatch(CL.db); part.forEach(function(o){ if(o[2]) b.set(cref(o[0],o[1]),o[2]); else b.delete(cref(o[0],o[1])); });
+      (function(part){ b.commit().catch(function(e){ pushFailed(e,part,prev,snap); }); })(part); } });
+}
+/* A rejected write is rolled back by Firestore, and the rollback looks like a remote delete. Put back anything it removed from this
+   phone, reset the sync base so those items are retried later, and back off (courses: switch to phone-only when not allowed yet). */
+function pushFailed(e,part,prev,snap){
+  var cs={}; part.forEach(function(o){ cs[o[0]]=1; });
+  if(Object.keys(cs).length===1 && cs.courses && e && e.code==='permission-denied'){ CL.coursesOff=true; try{ console.warn('[cloud] courses not allowed by rules — kept on this phone'); }catch(x){} }
+  else { cloudErr(e); CL.pushHold=Date.now(); }
+  var changed=false;
+  Object.keys(cs).forEach(function(c){ CL.synced[c]=prev[c]||{}; var cur=localMap(c), out=Object.assign({},cur), add=false;
+    part.forEach(function(o){ if(o[0]===c && o[2] && !(o[1] in cur) && snap[c] && snap[c][o[1]]){ out[o[1]]=snap[c][o[1]]; add=true; } });
+    if(add){ CL.applying=true; SYNC[c].apply(parseMap(out)); changed=true; } });
+  storeSynced(); if(changed){ save(); CL.applying=false; renderAll(); } else CL.applying=false;
 }
 function roundSigOf(r){ var g=r.game||{}; return [r.date, g.course, (g.players||[]).map(function(p){ return String(p.name).toLowerCase()+':'+((g.scores||{})[p.key]||[]).join('.'); }).sort().join(',')].join('|'); }
 function dedupePlan(){
-  var R=CL.remote, idMap={}, add={friends:[],rounds:[],teeTimes:[],scores:[],settings:[]}, dup=0;
+  var R=CL.remote, idMap={}, add={friends:[],rounds:[],teeTimes:[],scores:[],settings:[],courses:[]}, dup=0;
   var rf={}; Object.keys(R.friends).forEach(function(id){ var f=JSON.parse(R.friends[id]); rf[String(f.name).trim().toLowerCase()]=id; });
   state.friends.forEach(function(f){ if(R.friends[f.id]){ dup++; return; } var m=rf[String(f.name).trim().toLowerCase()]; if(m){ idMap[f.id]=m; dup++; } else add.friends.push(f.id); });
   var rs={}; Object.keys(R.rounds).forEach(function(id){ try{ rs[roundSigOf(JSON.parse(JSON.parse(R.rounds[id]).json))]=1; }catch(e){} });
@@ -2782,7 +3182,9 @@ function dedupePlan(){
   var ss={}; Object.keys(R.scores).forEach(function(id){ try{ var x=JSON.parse(JSON.parse(R.scores[id]).json); ss[x.pid+'|'+x.date+'|'+x.gross]=1; }catch(e){} });
   state.rounds.forEach(function(x){ if(R.scores[x.id]||ss[(idMap[x.pid]||x.pid)+'|'+x.date+'|'+x.gross]) dup++; else add.scores.push(x.id); });
   if(!Object.keys(R.settings).length && (localStorage.getItem(GKEY)||localStorage.getItem(PKEY))) add.settings.push('presets');
-  return {idMap:idMap, add:add, dup:dup, total:add.friends.length+add.rounds.length+add.teeTimes.length+add.scores.length};
+  if(!CL.coursesOff){ var rc={}; Object.keys(R.courses||{}).forEach(function(id){ try{ rc[String(JSON.parse(JSON.parse(R.courses[id]).json).name).trim().toLowerCase()]=1; }catch(e){} });
+    (state.courses||[]).forEach(function(c){ if((R.courses||{})[c.id]||rc[String(c.name).trim().toLowerCase()]) dup++; else add.courses.push(c.id); }); }
+  return {idMap:idMap, add:add, dup:dup, total:add.friends.length+add.rounds.length+add.teeTimes.length+add.scores.length+add.courses.length};
 }
 function remapIds(idMap){
   var ks=Object.keys(idMap); if(!ks.length) return;
@@ -2791,12 +3193,12 @@ function remapIds(idMap){
   state=JSON.parse(s); state.friends=fr.filter(function(f){ return !idMap[f.id]; });
 }
 function firstSync(){
-  if(CL.stored){ try{ CL.synced=JSON.parse(localStorage.getItem(skey()))||{}; }catch(e){ CL.synced={}; } CL.ready=true; SYNC_KEYS.forEach(function(c){ mergeRemote(c,CL.remote[c]); }); afterReady(); return; }
+  if(CL.stored){ try{ CL.synced=JSON.parse(localStorage.getItem(skey()))||{}; }catch(e){ CL.synced={}; } CL.ready=true; syncKeys().forEach(function(c){ mergeRemote(c,CL.remote[c]||{}); }); afterReady(); return; }
   var plan=dedupePlan();
   var go=function(upload){
     if(!upload && plan.total){ try{ localStorage.setItem('fairwayClub.localBackup.v1',JSON.stringify({at:new Date().toISOString(), state:state, g:localStorage.getItem(GKEY), p:localStorage.getItem(PKEY)})); }catch(e){} }
     remapIds(plan.idMap); CL.applying=true; CL.synced={};
-    SYNC_KEYS.forEach(function(c){ var rm=CL.remote[c], out={}, cur=localMap(c); Object.keys(rm).forEach(function(id){ out[id]=rm[id]; });
+    syncKeys().forEach(function(c){ var rm=CL.remote[c]||{}, out={}, cur=localMap(c); Object.keys(rm).forEach(function(id){ out[id]=rm[id]; });
       if(upload||c==='settings') plan.add[c].forEach(function(id){ if(cur[id]) out[id]=cur[id]; });
       SYNC[c].apply(parseMap(out)); CL.synced[c]=hashes(rm); });
     save(); CL.applying=false; CL.ready=true; storeSynced(); pushNow(); afterReady(); renderAll();
@@ -2806,7 +3208,7 @@ function firstSync(){
   var a=plan.add, li=function(n,w){ return n?'<li><b>'+n+'</b> '+w+(n===1?'':'s')+'</li>':''; };
   var show=function(){
     openSheet('<h3>Upload this phone’s data?</h3><p>Copy what’s on this phone into <b>'+esc(spaceName(CL.space))+'</b> so it’s backed up'+(CL.space==='u'?'':' and shared with the group')+':</p><ul class="uplist">'+
-      li(a.friends.length,'player')+li(a.rounds.length,'saved round')+li(a.teeTimes.length,'tee time')+li(a.scores.length,'posted score')+'</ul>'+
+      li(a.friends.length,'player')+li(a.rounds.length,'saved round')+li(a.teeTimes.length,'tee time')+li(a.scores.length,'posted score')+li(a.courses.length,'course')+'</ul>'+
       (plan.dup?'<p class="muted" style="font-size:12.5px">'+plan.dup+' item'+(plan.dup===1?' is':'s are')+' already in the cloud and will be skipped (no duplicates).</p>':'')+
       '<div class="sheet-actions"><button class="btn full" id="upYes">⬆︎ Upload to '+esc(spaceName(CL.space))+'</button><button class="btn ghost full" id="upNo">Not now — just use the cloud data</button></div>'+
       '<p class="muted" style="font-size:11.5px">“Not now” keeps a backup copy of this phone’s data.</p>');
@@ -2826,7 +3228,7 @@ function ensureMe(){
   save(); renderAll();
 }
 function cloudOnSave(){
-  if(typeof CL==='undefined'||!CL||!CL.user) return;
+  if(typeof CL==='undefined'||!CL||!CL.user||CL.deleting) return;
   if(!CL.applying && CL.ready) pushSoon();
   liveOnSave();
 }
@@ -2866,6 +3268,7 @@ function onLiveDoc(s){
   CL.lastRemoteHole=d.hole;
   if(g.live.ended) liveStop();
   state.game=ng; CL.applyingLive=true; save(); CL.applyingLive=false;
+  if(ng!==g){ try{ var LR=computeGame(ng); announce('Live update, thru '+LR.doneCount+'. '+LR.all.map(function(x){ return first(gp(ng,x).name)+' '+smoney(LR.net[x]); }).join(', ')); }catch(e){} }
   if(wasRO!==liveRO(ng) && !liveRO(ng) && g.live.k===myUid() && !g.live.ended) toast('You’re the scorekeeper now');
   renderGames();
 }
@@ -2949,22 +3352,47 @@ function signinPromptHtml(){
     '<div class="row" style="gap:8px"><button class="btn sm" data-act="signin">Sign in</button><button class="btn ghost sm" data-act="signinNo" aria-label="Not now">Not now</button></div></div>';
 }
 function cloudForgetLocal(){ try{ Object.keys(localStorage).forEach(function(k){ if(k.indexOf('fairwayClub.sync.')===0||k.indexOf('fairwayClub.spaceData.')===0) localStorage.removeItem(k); }); }catch(e){} cset({activeSpace:null}); }
+/* offline at launch: use the SDK only if the service worker already cached it, otherwise wait for signal */
+function bootLoad(){
+  if(navigator.onLine || !window.caches){ loadFirebase(); return; }
+  var later=function(){ window.removeEventListener('online',later); loadFirebase(); };
+  caches.match(FB_CDN+'firebase-firestore.js').then(function(r){ if(r) loadFirebase(); else window.addEventListener('online',later); },function(){ loadFirebase(); });
+}
 function cloudBoot(){
   var m=/[?&]join=([A-Za-z0-9]{6,16})/.exec(location.search);
   if(m){ cset({pendingJoin:m[1].toUpperCase()}); try{ history.replaceState(null,'',location.pathname+location.hash); }catch(e){} }
-  var c=cget(); if(c.wanted||c.pendingJoin||c.pendingRedirect) loadFirebase();
+  var c=cget(); if(c.wanted||c.pendingJoin||c.pendingRedirect) bootLoad();
   renderAccount();
   window.addEventListener('online',function(){ renderAccount(); renderGames(); });
   window.addEventListener('offline',function(){ renderAccount(); renderGames(); });
   document.addEventListener('visibilitychange',function(){ if(document.hidden && CL.user){ flushPush(); flushLive(); } });
   $('#acctBtn').addEventListener('click',function(){ if(CL.user) openAccount(); else openAuth(); });
+  var del=null; try{ del=localStorage.getItem('fairwayClub.deleted'); localStorage.removeItem('fairwayClub.deleted'); }catch(e){}
+  if(del) openSheet('<h3>Your account was deleted</h3><p>Your sign-in and cloud data are gone. '+(del==='erased'?'This phone’s Fairway Club data was erased too.':'This phone keeps its own copy and works offline without an account.')+'</p><div class="sheet-actions"><button class="btn full" data-close>OK</button></div>');
+}
+/* ---------- offline: service worker (cache-first app shell) + update prompt ---------- */
+function swBoot(){
+  if(!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return;
+  var tapped=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){ if(tapped) location.reload(); });
+  function offer(w){ if(!w || !navigator.serviceWorker.controller || $('#updBar')) return;
+    var b=document.createElement('button'); b.id='updBar'; b.className='updbar'; b.type='button'; b.textContent='New version available — tap to refresh';
+    b.onclick=function(){ tapped=true; b.disabled=true; b.textContent='Updating…'; try{ if(CL.user){ flushPush(); flushLive(); } }catch(e){}
+      setTimeout(function(){ w.postMessage({type:'SKIP_WAITING'}); },250); setTimeout(function(){ location.reload(); },4000); };
+    document.body.appendChild(b); }
+  navigator.serviceWorker.register('sw.js').then(function(reg){
+    if(reg.waiting) offer(reg.waiting);
+    reg.addEventListener('updatefound',function(){ var w=reg.installing; if(w) w.addEventListener('statechange',function(){ if(w.state==='installed') offer(w); }); });
+    document.addEventListener('visibilitychange',function(){ if(!document.hidden) reg.update().catch(function(){}); });
+  }).catch(function(e){ try{ console.warn('[sw]',e&&e.message||e); }catch(x){} });
 }
 
-function renderAll(){ renderTeeTimes(); renderPairings(); renderLeaderboard(); renderGames(); renderFriends(); }
+function renderAll(){ refreshCourseSelects(); renderTeeTimes(); renderPairings(); renderLeaderboard(); renderGames(); renderFriends(); }
 renderAll(); initForm();
 go(location.hash ? location.hash.slice(1) : state.ui.tab, true);
 historyMigration();
 cloudBoot();
+swBoot();
 })();
 </script>
 </body>

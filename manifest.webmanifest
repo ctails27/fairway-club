@@ -7,18 +7,31 @@
   "background_color": "#f3faf6",
   "theme_color": "#0f3d2e",
   "description": "Golf games & scoring: Nassau + junk, best ball, tee times, pairings, standings.",
+  "id": "./",
+  "orientation": "portrait",
+  "lang": "en",
+  "categories": [
+    "sports",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
