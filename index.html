@@ -1508,10 +1508,25 @@ function expandCourse(cc,t){
   return {id:'cc:'+cc.id+':'+t.id, real:false, custom:true, cid:cc.id, holes:cc.holes, group:'Your courses', name:cc.name, tee:t.name,
     tees:t.name+' tees'+(t.yds?' · '+(+t.yds).toLocaleString('en-US')+' yds':'')+(nine?' · 9 holes ×2':''), par:par.map(Number), hcp:hcp.map(Number), yds:null, src:'custom'};
 }
+/* never trust a course from the cloud / a backup / storage: a malformed doc (written outside the app) must not break the app for the group */
+function ccSane(c,forceId){
+  if(!c||typeof c!=='object') return null;
+  var id=String(forceId!=null?forceId:(c.id==null?'':c.id)), name=String(c.name==null?'':c.name).trim().slice(0,60), n=c.holes;
+  if(!/^[A-Za-z0-9_-]{1,40}$/.test(id) || !name || (n!==9&&n!==18) || !Array.isArray(c.par) || !Array.isArray(c.si) || !Array.isArray(c.tees) || c.par.length!==n || c.si.length!==n) return null;
+  var par=c.par.map(Number), si=c.si.map(Number), seen={};
+  if(!par.every(function(p){ return p>=3&&p<=6&&p===Math.round(p); })) return null;
+  if(!si.every(function(x){ var ok=x>=1&&x<=n&&x===Math.round(x)&&!seen[x]; seen[x]=1; return ok; })) return null;
+  var tees=[]; c.tees.forEach(function(t,i){ if(!t||typeof t!=='object') return; var tn=String(t.name==null?'':t.name).trim().slice(0,30), y=t.yds==null||t.yds===''?null:+t.yds;
+    if(!tn) return; if(y!=null && !(y>=100&&y<=9999)) y=null; tees.push({id:String(t.id||('t'+i)).slice(0,40), name:tn, yds:y}); });
+  if(!tees.length) return null;
+  var o={id:id, name:name, holes:n, par:par, si:si, tees:tees}; if('updatedAt' in c) o.updatedAt=+c.updatedAt||0; return o;
+}
+function cdefOk(d){ function nums(a,lo,hi){ return Array.isArray(a)&&a.length===18&&a.every(function(x){ return typeof x==='number'&&x>=lo&&x<=hi; }); }
+  return !!d && typeof d==='object' && typeof d.name==='string' && nums(d.par,3,6) && nums(d.hcp,1,18); }
 function customGCourses(){ var o=[]; (state&&state.courses||[]).forEach(function(cc){ (cc.tees||[]).forEach(function(t){ o.push(expandCourse(cc,t)); }); }); return o; }
 function allGCourses(){ return GCOURSES.concat(customGCourses()); }
 function gcourse(id){ var all=allGCourses(); return all.filter(function(c){return c.id===id;})[0]||all.filter(function(c){return c.id===DEFAULT_GCOURSE;})[0]; }
-function gameCourse(g){ return (g && g.courseDef) || gcourse(g && g.course); }
+function gameCourse(g){ return (g && cdefOk(g.courseDef) && g.courseDef) || gcourse(g && g.course); }
 function ensureGameState(){
   if(!state.friends) state.friends=[];
   if(state.game===undefined) state.game=null;
@@ -1521,7 +1536,8 @@ function ensureGameState(){
   if(!state.gameSetup) state.gameSetup={mode:'teams', keys:[null,null,null,null], useHandicap:true, course:DEFAULT_GCOURSE, qccDefault:1};
   if(!state.gameSetup.preset) state.gameSetup.preset='closeout';   // new rounds always default to $20 Close Out
   if(!state.gameSetup.qccDefault){ state.gameSetup.course=DEFAULT_GCOURSE; state.gameSetup.qccDefault=1; }
-  if(!state.courses) state.courses=[];
+  if(!Array.isArray(state.courses)) state.courses=[];
+  if(state.courses.some(function(c){ return !ccSane(c); })) state.courses=state.courses.filter(function(c){ return !!ccSane(c); });
   if(!allGCourses().some(function(c){return c.id===state.gameSetup.course;})) state.gameSetup.course=DEFAULT_GCOURSE;
   while(state.gameSetup.keys.length<4) state.gameSetup.keys.push(null);
   if(!state.ui.gameView) state.ui.gameView='score';
@@ -2140,7 +2156,7 @@ function importRounds(txt){
   if(!o || o.type!=='fairway-club-rounds' || !Array.isArray(o.rounds)){ toast('That isn’t a Fairway Club rounds backup'); return false; }
   var added=0, skipped=0, np=0;
   (o.players||[]).forEach(function(p){ if(p && p.id && p.name && !player(p.id) && !findPlayerByName(p.name)){ state.friends.push({id:p.id,name:p.name,hcp:p.hcp,ghin:p.ghin||'',phone:p.phone||'',email:p.email||''}); np++; } });
-  (o.courses||[]).forEach(function(c){ if(c && c.id && c.name && (c.holes===9||c.holes===18) && Array.isArray(c.par) && Array.isArray(c.si) && Array.isArray(c.tees) && c.tees.length && !ccById(c.id) && !(state.courses||[]).some(function(x){ return String(x.name).toLowerCase()===String(c.name).toLowerCase(); })) state.courses.push(c); });
+  (Array.isArray(o.courses)?o.courses:[]).forEach(function(c){ c=ccSane(c); if(c && !ccById(c.id) && !(state.courses||[]).some(function(x){ return String(x.name).toLowerCase()===String(c.name).toLowerCase(); })) state.courses.push(c); });
   ccSort();
   o.rounds.forEach(function(r){
     if(!r || !r.id || !r.game || !Array.isArray(r.game.players) || !r.game.scores){ skipped++; return; }
@@ -3085,7 +3101,7 @@ var SYNC={
     apply:function(m){ var d=m.presets, o={}; try{ o=d?JSON.parse(d.json)||{}:{}; }catch(e){ o={}; }
       try{ if(o.g) localStorage.setItem(GKEY,o.g); else localStorage.removeItem(GKEY); if(o.p) localStorage.setItem(PKEY,o.p); else localStorage.removeItem(PKEY); if(d) localStorage.setItem(GVER_KEY,String(GVER)); }catch(e){} } },
   courses:{ local:function(){ var m={}; (state.courses||[]).forEach(function(c){ m[c.id]=blob(c.id,c,''); }); return m; }, canon:blobCanon,
-    apply:function(m){ state.courses=Object.keys(m).map(function(id){ return JSON.parse(m[id].json); }); ccSort(); ensureGameState(); } }
+    apply:function(m){ state.courses=Object.keys(m).map(function(id){ var c=null; try{ c=ccSane(JSON.parse(m[id].json),id); }catch(e){} return c; }).filter(Boolean); ccSort(); ensureGameState(); } }
 };
 function localMap(c){ var m=SYNC[c].local(), o={}; Object.keys(m).forEach(function(id){ o[id]=JSON.stringify(m[id]); }); return o; }
 function hashes(m){ var o={}; Object.keys(m).forEach(function(id){ o[id]=hsh(m[id]); }); return o; }
@@ -3100,7 +3116,7 @@ function stashSpace(){ if(!CL.space||!CL.ready||!CL.user) return; flushPush();
   try{ localStorage.setItem(dkey(),JSON.stringify({friends:state.friends, saved:state.saved, teeTimes:state.teeTimes, signups:state.signups, pairings:state.pairings, rounds:state.rounds, courses:state.courses||[], g:localStorage.getItem(GKEY), p:localStorage.getItem(PKEY)})); }catch(e){} }
 function unstash(k){ var d=null; try{ d=JSON.parse(localStorage.getItem(dkey(k))); }catch(e){} if(!d||!localStorage.getItem(skey(k))) return false;
   state.friends=d.friends||[]; state.saved=d.saved||[]; state.teeTimes=d.teeTimes||[]; state.signups=d.signups||{}; state.pairings=d.pairings||{}; state.rounds=d.rounds||[];
-  if(d.courses && !CL.coursesOff) state.courses=d.courses;
+  if(Array.isArray(d.courses) && !CL.coursesOff) state.courses=d.courses.map(function(c){ return ccSane(c); }).filter(Boolean);
   try{ if(d.g) localStorage.setItem(GKEY,d.g); else localStorage.removeItem(GKEY); if(d.p) localStorage.setItem(PKEY,d.p); else localStorage.removeItem(PKEY); }catch(e){} return true; }
 function detachSpace(){ CL.unsubs.forEach(function(u){ try{ u(); }catch(e){} }); CL.unsubs=[]; clearTimeout(CL.pushT); CL.pushT=null; CL.ready=false; CL.space=null; CL.liveList=[]; }
 function switchSpace(k){

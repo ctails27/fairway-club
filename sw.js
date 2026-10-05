@@ -1,6 +1,6 @@
 /* Fairway Club service worker — cache-first app shell so the app opens with no signal after one visit.
    VERSION is a hash of the built files; a new deploy installs a new cache and the page offers "New version available — tap to refresh". */
-var VERSION = '880b04694609';
+var VERSION = 'd4fb80c6f463';
 var SHELL = 'fairway-shell-' + VERSION;
 var SDK = 'fairway-sdk-v1';            // Firebase SDK files (versioned URLs), cached the first time they load
 var ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png', './privacy.html', './terms.html'];
